@@ -37,3 +37,7 @@ out/
 .vscode/
 
 ### MAC OS ###
+.DS_Store
+
+### secret ###
+*.properties
