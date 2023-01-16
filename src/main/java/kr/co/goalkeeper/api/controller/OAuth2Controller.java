@@ -19,8 +19,12 @@ public class OAuth2Controller {
     private String clientSecret;
     @Value("${oauth2.redirect-uri}")
     private String redirectURI;
-    @Autowired
-    private GoogleOAuth2Service googleOAuth2Service;
+    private final GoogleOAuth2Service googleOAuth2Service;
+
+    public OAuth2Controller(GoogleOAuth2Service googleOAuth2Service) {
+        this.googleOAuth2Service = googleOAuth2Service;
+    }
+
     @GetMapping("/{snsType}")
     public ResponseEntity<?> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code){
         OAuthAccessToken authAccessToken = googleOAuth2Service.getAccessToken(code);
