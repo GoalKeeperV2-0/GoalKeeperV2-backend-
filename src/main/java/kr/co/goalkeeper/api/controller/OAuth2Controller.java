@@ -1,60 +1,88 @@
 package kr.co.goalkeeper.api.controller;
 
+import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
+import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
+import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
 import kr.co.goalkeeper.api.service.GoogleOAuth2Service;
+import kr.co.goalkeeper.api.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 @RestController
 @RequestMapping("api/oauth2/")
 @Slf4j
 public class OAuth2Controller {
-    @Value("${oauth2.client-id}")
-    private String clientID;
-    @Value("${oauth2.client-secret}")
-    private String clientSecret;
-    @Value("${oauth2.redirect-uri}")
-    private String redirectURI;
     private final GoogleOAuth2Service googleOAuth2Service;
+    private final UserService userService;
+    private final GoalKeeperTokenService goalKeeperTokenService;
 
-    public OAuth2Controller(GoogleOAuth2Service googleOAuth2Service) {
+    public OAuth2Controller(GoogleOAuth2Service googleOAuth2Service, UserService userService, GoalKeeperTokenService goalKeeperTokenService) {
         this.googleOAuth2Service = googleOAuth2Service;
+        this.userService = userService;
+        this.goalKeeperTokenService = goalKeeperTokenService;
     }
 
     @GetMapping("/{snsType}")
-    public ResponseEntity<?> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code){
-        Map<String, Object> credential;
+    public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code){
+        GoalKeeperToken goalKeeperToken;
         switch (oAuthType){
             case GOOGLE:
-                credential = googleOAuth(code);
+                goalKeeperToken = googleLogin(code);
                 break;
             case KAKAO:
-                credential = kakaoOAuth(code);
+                goalKeeperToken = kakaoLogin(code);
                 break;
             case NAVER:
-                credential = naverOAuth(code);
+                goalKeeperToken = naverLogin(code);
                 break;
             default:
                 throw new IllegalArgumentException("지원하지 않는 방식 입니다.");
         }
-        log.info(credential.toString());
-        return ResponseEntity.ok(credential);
+        return ResponseEntity.ok(goalKeeperToken);
     }
-    private Map<String, Object> googleOAuth(String code){
+    private GoalKeeperToken googleLogin(String code){
+        Map<String,String> credential = googleOAuth(code);
+        String email = credential.get("email");
+        GoalKeeperToken goalKeeperToken;
+        User user;
+        if(isAlreadyRegistered(email)){
+            user = getUserByEmail(email);
+        }else {
+            user = joinUseGoogleCredential(credential);
+        }
+        goalKeeperToken = createToken(user);
+        return goalKeeperToken;
+    }
+    private Map<String, String> googleOAuth(String code){
         OAuthAccessToken authAccessToken = googleOAuth2Service.getAccessToken(code);
-
         return googleOAuth2Service.getCredential(authAccessToken);
     }
-    private Map<String, Object> naverOAuth(String code){
-        return new HashMap<>();
+    private boolean isAlreadyRegistered(String email){
+        return userService.isAlreadyRegistered(email);
     }
-    private Map<String, Object> kakaoOAuth(String code){
-        return new HashMap<>();
+    private User getUserByEmail(String email){
+        return userService.getUserByEmail(email);
+    }
+    private User joinUseGoogleCredential(Map<String,String> credential){
+        User user = new User();
+        user.setEmail(credential.get("email"));
+        user.setName(credential.get("name"));
+        user.setPicture(credential.get("picture"));
+        userService.addUser(user);
+        return user;
+    }
+    private GoalKeeperToken createToken(User user){
+        return goalKeeperTokenService.createToken(user);
+    }
+
+    private GoalKeeperToken naverLogin(String code){
+        return null;
+    }
+    private GoalKeeperToken kakaoLogin(String code){
+        return null;
     }
 }

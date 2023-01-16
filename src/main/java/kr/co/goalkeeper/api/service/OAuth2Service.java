@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface OAuth2Service {
     OAuthAccessToken getAccessToken(String code);
-    Map<String,Object> getCredential(OAuthAccessToken oAuthAccessToken);
+    Map<String,String> getCredential(OAuthAccessToken oAuthAccessToken);
 }

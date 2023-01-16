@@ -39,16 +39,16 @@ public class GoogleOAuth2Service implements OAuth2Service {
     }
 
     @Override
-    public Map<String, Object> getCredential(OAuthAccessToken authAccessToken) {
+    public Map<String, String> getCredential(OAuthAccessToken authAccessToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization","Bearer "+authAccessToken);
         String userInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo";
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(httpHeaders);
         ResponseEntity<String> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET,request,String.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> result;
+        Map<String, String> result;
         try {
-            result = objectMapper.readValue(userInfoResponse.getBody(), new TypeReference<Map<String, Object>>() {});
+            result = objectMapper.readValue(userInfoResponse.getBody(), new TypeReference<>() {});
         }catch (Exception e){
             result = new HashMap<>();
         }
