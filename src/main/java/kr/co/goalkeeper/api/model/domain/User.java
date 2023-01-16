@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model;
+package kr.co.goalkeeper.api.model.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

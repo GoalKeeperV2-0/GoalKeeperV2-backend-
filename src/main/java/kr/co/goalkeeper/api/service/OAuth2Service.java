@@ -1,10 +1,10 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.Token;
+import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 
 import java.util.Map;
 
 public interface OAuth2Service {
-    Token getTokens(String code);
-    Map<String,Object> getCredential(Token token);
+    OAuthAccessToken getAccessToken(String code);
+    Map<String,Object> getCredential(OAuthAccessToken oAuthAccessToken);
 }

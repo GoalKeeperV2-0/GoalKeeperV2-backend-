@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.User;
+import kr.co.goalkeeper.api.model.domain.User;
 
 public interface UserService {
     void addUser(User user);
