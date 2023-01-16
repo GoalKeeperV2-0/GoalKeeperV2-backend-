@@ -1,5 +1,8 @@
 package kr.co.goalkeeper.api.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
@@ -12,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+@Api(tags = {"OAuth2.0 기반의 소셜 로그인을 구현하는 컨트롤러"})
 @RestController
 @RequestMapping("api/oauth2/")
 @Slf4j
@@ -27,6 +32,9 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/{snsType}")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "code", value = "임시 인증 코드", required = true, dataType = "String", paramType = "query")
+    )
     public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code){
         GoalKeeperToken goalKeeperToken;
         switch (oAuthType){
