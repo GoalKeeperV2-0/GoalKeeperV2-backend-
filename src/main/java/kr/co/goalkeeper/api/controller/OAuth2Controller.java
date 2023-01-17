@@ -1,8 +1,6 @@
 package kr.co.goalkeeper.api.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.*;
 import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
@@ -32,6 +30,7 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/{snsType}")
+    @ApiOperation(value = "OAuth 2.0 소셜 로그인", notes = "응답의 isNewbie 필드는 성별, 연령대 등 추가 정보 입력이 필요한 상태인지 나타내는 필드이다. 소셜 로그인으로 회원가입한 회원의 경우만 이 필드가 true일 수 있다.")
     @ApiImplicitParams(
             @ApiImplicitParam(name = "code", value = "임시 인증 코드", required = true, dataType = "String", paramType = "query")
     )
@@ -57,12 +56,16 @@ public class OAuth2Controller {
         String email = credential.get("email");
         GoalKeeperToken goalKeeperToken;
         User user;
+        boolean isNewbie;
         if(isAlreadyRegistered(email)){
             user = getUserByEmail(email);
+            isNewbie = false;
         }else {
             user = joinUseGoogleCredential(credential);
+            isNewbie = true;
         }
         goalKeeperToken = createToken(user);
+        goalKeeperToken.setNewbie(isNewbie);
         return goalKeeperToken;
     }
     private Map<String, String> googleOAuth(String code){
