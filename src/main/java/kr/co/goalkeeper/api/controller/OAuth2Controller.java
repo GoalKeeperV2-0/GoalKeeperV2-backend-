@@ -9,9 +9,11 @@ import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
 import kr.co.goalkeeper.api.service.GoogleOAuth2Service;
 import kr.co.goalkeeper.api.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Api(tags = {"OAuth2.0 기반의 소셜 로그인을 구현하는 컨트롤러"})
@@ -34,7 +36,7 @@ public class OAuth2Controller {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "code", value = "임시 인증 코드", required = true, dataType = "String", paramType = "query")
     )
-    public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code,@RequestHeader("Origin") String origin){
+    public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code, @RequestHeader("Origin") String origin, HttpServletResponse response){
         GoalKeeperToken goalKeeperToken;
         switch (oAuthType){
             case GOOGLE:
@@ -49,6 +51,12 @@ public class OAuth2Controller {
             default:
                 throw new IllegalArgumentException("지원하지 않는 방식 입니다.");
         }
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", goalKeeperToken.getRefreshToken())
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .build();
+        response.addHeader("Set-Cookie",cookie.toString());;
         return ResponseEntity.ok(goalKeeperToken);
     }
     private GoalKeeperToken googleLogin(String code,String origin){
