@@ -23,17 +23,19 @@ public class GoogleOAuth2Service implements OAuth2Service {
     private String clientSecret;
     @Value("${oauth2.redirect-uri}")
     private String redirectURI;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public OAuthAccessToken getAccessToken(String code) {
+    public OAuthAccessToken getAccessToken(String code,String origin) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("code", code);
         parameters.put("client_id", clientID);
         parameters.put("client_secret", clientSecret);
-        parameters.put("redirect_uri", redirectURI);
+        parameters.put("redirect_uri", origin+redirectURI);
         parameters.put("grant_type", "authorization_code");
-        ResponseEntity<GoogleResponse> response = restTemplate.postForEntity("https://oauth2.googleapis.com/token",parameters, GoogleResponse.class);
+        ResponseEntity<GoogleResponse> response;
+        response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", parameters, GoogleResponse.class);
         GoogleResponse googleResponse = response.getBody();
         return new OAuthAccessToken(googleResponse.getAccess_token());
     }

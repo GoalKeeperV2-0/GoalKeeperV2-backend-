@@ -34,11 +34,11 @@ public class OAuth2Controller {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "code", value = "임시 인증 코드", required = true, dataType = "String", paramType = "query")
     )
-    public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code){
+    public ResponseEntity<GoalKeeperToken> oauth(@PathVariable("snsType")OAuthType oAuthType, @RequestParam String code,@RequestHeader("Origin") String origin){
         GoalKeeperToken goalKeeperToken;
         switch (oAuthType){
             case GOOGLE:
-                goalKeeperToken = googleLogin(code);
+                goalKeeperToken = googleLogin(code,origin);
                 break;
             case KAKAO:
                 goalKeeperToken = kakaoLogin(code);
@@ -51,8 +51,8 @@ public class OAuth2Controller {
         }
         return ResponseEntity.ok(goalKeeperToken);
     }
-    private GoalKeeperToken googleLogin(String code){
-        Map<String,String> credential = googleOAuth(code);
+    private GoalKeeperToken googleLogin(String code,String origin){
+        Map<String,String> credential = googleOAuth(code,origin);
         String email = credential.get("email");
         GoalKeeperToken goalKeeperToken;
         User user;
@@ -68,8 +68,8 @@ public class OAuth2Controller {
         goalKeeperToken.setNewbie(isNewbie);
         return goalKeeperToken;
     }
-    private Map<String, String> googleOAuth(String code){
-        OAuthAccessToken authAccessToken = googleOAuth2Service.getAccessToken(code);
+    private Map<String, String> googleOAuth(String code,String origin){
+        OAuthAccessToken authAccessToken = googleOAuth2Service.getAccessToken(code,origin);
         return googleOAuth2Service.getCredential(authAccessToken);
     }
     private boolean isAlreadyRegistered(String email){
