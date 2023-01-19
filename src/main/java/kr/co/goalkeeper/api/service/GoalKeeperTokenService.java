@@ -29,7 +29,6 @@ public class GoalKeeperTokenService {
         headers.put("typ", "JWT");
         headers.put("alg", "HS256");
         JwtBuilder jwtBuilder = Jwts.builder();
-
         String accessTokenString = jwtBuilder
                 .setHeader(headers)
                 .setSubject("access")

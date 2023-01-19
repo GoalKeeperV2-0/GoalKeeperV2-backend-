@@ -2,8 +2,10 @@ package kr.co.goalkeeper.api.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.oauth.GoogleResponse;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
+import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,10 +36,15 @@ public class GoogleOAuth2Service implements OAuth2Service {
         parameters.put("client_secret", clientSecret);
         parameters.put("redirect_uri", origin+redirectURI);
         parameters.put("grant_type", "authorization_code");
-        ResponseEntity<GoogleResponse> response;
-        response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", parameters, GoogleResponse.class);
-        GoogleResponse googleResponse = response.getBody();
-        return new OAuthAccessToken(googleResponse.getAccess_token());
+        try {
+            ResponseEntity<GoogleResponse> response;
+            response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", parameters, GoogleResponse.class);
+            GoogleResponse googleResponse = response.getBody();
+            return new OAuthAccessToken(googleResponse.getAccess_token());
+        }catch (Exception e){
+            ErrorMessage errorMessage = new ErrorMessage(401,e.getMessage());
+            throw new GoalkeeperException(errorMessage);
+        }
     }
 
     @Override
