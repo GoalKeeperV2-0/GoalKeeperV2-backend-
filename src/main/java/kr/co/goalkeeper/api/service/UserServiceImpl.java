@@ -1,5 +1,6 @@
 package kr.co.goalkeeper.api.service;
 
+import kr.co.goalkeeper.api.model.domain.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(long id) {
         return userRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public void completeJoin(User user, AdditionalUserInfo userInfo) {
+        if(!user.isJoinComplete()){
+            user.setAdditional(userInfo);
+            user.setJoinComplete(true);
+        }
+        userRepository.save(user);
     }
 }

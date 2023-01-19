@@ -1,6 +1,7 @@
 package kr.co.goalkeeper.api.controller;
 
 import io.swagger.annotations.*;
+import kr.co.goalkeeper.api.model.domain.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
@@ -67,13 +68,13 @@ public class OAuth2Controller {
         boolean isNewbie;
         if(isAlreadyRegistered(email)){
             user = getUserByEmail(email);
-            isNewbie = false;
+            isNewbie = user.isJoinComplete();
         }else {
             user = joinUseGoogleCredential(credential);
-            isNewbie = true;
+            isNewbie = user.isJoinComplete();
         }
         goalKeeperToken = createToken(user);
-        goalKeeperToken.setNewbie(isNewbie);
+        goalKeeperToken.setNewbie(!isNewbie);
         return goalKeeperToken;
     }
     private Map<String, String> googleOAuth(String code,String origin){
@@ -91,6 +92,7 @@ public class OAuth2Controller {
         user.setEmail(credential.get("email"));
         user.setName(credential.get("name"));
         user.setPicture(credential.get("picture"));
+        user.setJoinComplete(false);
         userService.addUser(user);
         return user;
     }
@@ -103,5 +105,15 @@ public class OAuth2Controller {
     }
     private GoalKeeperToken kakaoLogin(String code){
         return null;
+    }
+
+    @PatchMapping("additionalUserInfo")
+    @ApiOperation(value = "추가 회원 정보 입력", notes = "제공하지 않는 추가 정보는 바디에 아예 포함하지 않거나 null 로 지정한다.")
+    public ResponseEntity<?> completeJoin(@RequestBody AdditionalUserInfo userInfo,
+                                          @RequestHeader("Authorization") String accessToken){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        User user = userService.getUserById(userId);
+        userService.completeJoin(user,userInfo);
+        return ResponseEntity.ok().build();
     }
 }

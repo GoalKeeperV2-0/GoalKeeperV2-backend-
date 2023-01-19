@@ -1,5 +1,6 @@
 package kr.co.goalkeeper.api.service;
 
+import kr.co.goalkeeper.api.model.domain.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.domain.User;
 
 public interface UserService {
@@ -7,4 +8,5 @@ public interface UserService {
     boolean isAlreadyRegistered(String email);
     User getUserByEmail(String email);
     User getUserById(long id);
+    void completeJoin(User user, AdditionalUserInfo userInfo);
 }
