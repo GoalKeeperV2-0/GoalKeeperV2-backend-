@@ -1,8 +1,11 @@
 package kr.co.goalkeeper.api.service;
 
 import io.jsonwebtoken.*;
+import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.domain.User;
+import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,12 @@ public class GoalKeeperTokenService {
     private String secretKey;
     private static final long ACCESS_TOKEN_LIFE = 6000000;
     public static final long REFRESH_TOKEN_LIFE = 3 * ACCESS_TOKEN_LIFE;
+
+    private final RedisRefreshTokenRepository refreshTokenRepository;
+
+    public GoalKeeperTokenService(RedisRefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     /**
      * 내부 구조 <a href="https://bamdule.tistory.com/123">...</a> 참고
@@ -47,7 +56,29 @@ public class GoalKeeperTokenService {
                 .setIssuer("goalKeeper2")
                 .signWith(SignatureAlgorithm.HS256,Base64.getEncoder().encodeToString(secretKey.getBytes()))
                 .compact();
+        refreshTokenRepository.addRefreshToken(refreshTokenString,userId);
         return new GoalKeeperToken(accessTokenString,refreshTokenString);
+    }
+
+    public GoalKeeperToken reCreateToken(String refreshToken){
+        try {
+            Jws<Claims> jws = Jwts.parser()
+                    .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
+                    .parseClaimsJws(refreshToken);
+            long userIdInRedis = refreshTokenRepository.getUserId(refreshToken);
+            long userIdInToken = (Integer)jws.getBody().get("userID");
+            if(userIdInToken == userIdInRedis){
+                User user = new User();
+                user.setId(userIdInRedis);
+                return createToken(user);
+            }else {
+                ErrorMessage errorMessage = new ErrorMessage(401, "리프레쉬 토큰이 잘못되었습니다.");
+                throw new GoalkeeperException(errorMessage);
+            }
+        }catch (ExpiredJwtException e){
+            ErrorMessage errorMessage = new ErrorMessage(401, "리프레쉬 토큰이 만료되었습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
     }
 
     public long getUserId(String accessToken){

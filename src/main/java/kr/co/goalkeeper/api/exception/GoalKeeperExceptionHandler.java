@@ -19,6 +19,7 @@ public class GoalKeeperExceptionHandler {
             errorMessage.setRequestId((String)request.getAttribute("uuid"));
             return ResponseEntity.status(errorMessage.getCode()).body(errorMessage);
         }else {
+            e.printStackTrace();
             log.error(e.toString());
             ErrorMessage errorMessage = new ErrorMessage(500,"알수 없는 이유로 요청이 정상처리 되지 않았습니다.");
             errorMessage.setRequestId((String)request.getAttribute("uuid"));

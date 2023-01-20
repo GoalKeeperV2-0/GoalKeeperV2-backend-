@@ -57,7 +57,7 @@ public class OAuth2Controller {
                 .sameSite("None")
                 .secure(true)
                 .build();
-        response.addHeader("Set-Cookie",cookie.toString());;
+        response.addHeader("Set-Cookie",cookie.toString());
         return ResponseEntity.ok(goalKeeperToken);
     }
     private GoalKeeperToken googleLogin(String code,String origin){
