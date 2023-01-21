@@ -7,6 +7,7 @@ import kr.co.goalkeeper.api.model.domain.User;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -70,6 +71,7 @@ public class GoalKeeperTokenService {
             if(userIdInToken == userIdInRedis){
                 User user = new User();
                 user.setId(userIdInRedis);
+                refreshTokenRepository.deleteRefreshToken(refreshToken);
                 return createToken(user);
             }else {
                 ErrorMessage errorMessage = new ErrorMessage(401, "리프레쉬 토큰이 잘못되었습니다.");
@@ -87,5 +89,14 @@ public class GoalKeeperTokenService {
                 .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
                 .parseClaimsJws(accessToken);
         return jws.getBody().get("userID", Long.class);
+    }
+
+    public ResponseCookie createRefreshTokenCookie(String refreshToken){
+        return ResponseCookie.from("refreshToken",refreshToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .path("/")
+                .secure(true)
+                .build();
     }
 }

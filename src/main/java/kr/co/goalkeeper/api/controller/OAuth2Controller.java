@@ -52,11 +52,7 @@ public class OAuth2Controller {
             default:
                 throw new IllegalArgumentException("지원하지 않는 방식 입니다.");
         }
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", goalKeeperToken.getRefreshToken())
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .build();
+        ResponseCookie cookie = goalKeeperTokenService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
         response.addHeader("Set-Cookie",cookie.toString());
         return ResponseEntity.ok(goalKeeperToken);
     }

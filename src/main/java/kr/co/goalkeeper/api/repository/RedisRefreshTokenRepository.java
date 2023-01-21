@@ -30,4 +30,7 @@ public class RedisRefreshTokenRepository{
             throw new GoalkeeperException(errorMessage);
         }
     }
+    public void deleteRefreshToken(String refreshToken){
+        stringRedisTemplate.delete(refreshToken);
+    }
 }

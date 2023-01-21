@@ -31,11 +31,7 @@ public class LoginController {
                 .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
                 .findFirst().orElseThrow().getValue();
         GoalKeeperToken goalKeeperToken = goalKeeperTokenService.reCreateToken(refreshToken);
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", goalKeeperToken.getRefreshToken())
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .build();
+        ResponseCookie cookie = goalKeeperTokenService.createRefreshTokenCookie(refreshToken);
         response.addHeader("Set-Cookie",cookie.toString());
         Response<GoalKeeperToken> result = new Response<>();
         result.setData(goalKeeperToken);
