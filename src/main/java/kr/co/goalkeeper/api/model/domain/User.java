@@ -1,17 +1,14 @@
 package kr.co.goalkeeper.api.model.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.jpa.repository.Query;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     public static final User EMPTYUSER = new User();
     @Id
@@ -28,19 +25,37 @@ public class User {
 
     @Column
     private String picture;
-    @Column
-    private String description;
+
     @Column
     private Integer age;
+
     @Column
     @Enumerated(EnumType.STRING)
     private Sex sex;
     @Column
     @NotNull
     private boolean joinComplete;
+
+    @Column
+    @ColumnDefault("0")
+    private Integer point = 0;
+
+    @Builder
+    private User(Long id, String name, String email, String picture, Integer age, Sex sex, boolean joinComplete, Integer point) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.age = age;
+        this.sex = sex;
+        this.joinComplete = joinComplete;
+        this.point = point;
+    }
     public void setAdditional(AdditionalUserInfo userInfo){
-        description = userInfo.getDescription();
         age = userInfo.getAge();
         sex = userInfo.getSex();
+    }
+    public void joinComplete(){
+        joinComplete = true;
     }
 }

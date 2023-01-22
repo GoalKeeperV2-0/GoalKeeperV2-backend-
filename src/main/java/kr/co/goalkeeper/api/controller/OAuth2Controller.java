@@ -64,11 +64,10 @@ public class OAuth2Controller {
         boolean isNewbie;
         if(isAlreadyRegistered(email)){
             user = getUserByEmail(email);
-            isNewbie = user.isJoinComplete();
         }else {
             user = joinUseGoogleCredential(credential);
-            isNewbie = user.isJoinComplete();
         }
+        isNewbie = user.isJoinComplete();
         goalKeeperToken = createToken(user);
         goalKeeperToken.setNewbie(!isNewbie);
         return goalKeeperToken;
@@ -84,11 +83,12 @@ public class OAuth2Controller {
         return userService.getUserByEmail(email);
     }
     private User joinUseGoogleCredential(Map<String,String> credential){
-        User user = new User();
-        user.setEmail(credential.get("email"));
-        user.setName(credential.get("name"));
-        user.setPicture(credential.get("picture"));
-        user.setJoinComplete(false);
+        User user = User.builder()
+                .email(credential.get("email"))
+                .name(credential.get("name"))
+                .picture(credential.get("picture"))
+                .joinComplete(false)
+                .build();
         userService.addUser(user);
         return user;
     }

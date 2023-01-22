@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public void completeJoin(User user, AdditionalUserInfo userInfo) {
         if(!user.isJoinComplete()){
             user.setAdditional(userInfo);
-            user.setJoinComplete(true);
+            user.joinComplete();
         }
         userRepository.save(user);
     }

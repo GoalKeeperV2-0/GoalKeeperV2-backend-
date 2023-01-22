@@ -69,8 +69,7 @@ public class GoalKeeperTokenService {
             long userIdInRedis = refreshTokenRepository.getUserId(refreshToken);
             long userIdInToken = (Integer)jws.getBody().get("userID");
             if(userIdInToken == userIdInRedis){
-                User user = new User();
-                user.setId(userIdInRedis);
+                User user = User.builder().id(userIdInRedis).build();
                 refreshTokenRepository.deleteRefreshToken(refreshToken);
                 return createToken(user);
             }else {
