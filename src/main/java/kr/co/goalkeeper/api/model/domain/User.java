@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Getter
 @Entity
@@ -38,6 +39,7 @@ public class User {
 
     @Column
     @ColumnDefault("0")
+    @NotNull
     private Integer point = 0;
 
     @Builder
@@ -57,5 +59,11 @@ public class User {
     }
     public void joinComplete(){
         joinComplete = true;
+    }
+    public void plusPoint(@Positive int point){
+        this.point+=point;
+    }
+    public void minusPoint(@Positive int point){
+
     }
 }

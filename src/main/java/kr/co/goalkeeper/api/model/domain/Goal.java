@@ -50,11 +50,17 @@ public abstract class Goal {
     }
     public void success(){
         goalState = SUCCESS;
+        double rewardRate = reward.getRewardRate();
+        int rewardPoint = (int)Math.round(rewardRate*point);
+        user.plusPoint(rewardPoint);
     }
     public void hold(){
         goalState = HOLD;
     }
     public void fail(){
         goalState = FAIL;
+        double penaltyRate = reward.getPenaltyRate();
+        int penaltyPoint = (int)Math.round(penaltyRate*point);
+        user.plusPoint(penaltyPoint);
     }
 }
