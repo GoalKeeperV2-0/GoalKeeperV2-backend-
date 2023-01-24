@@ -87,6 +87,7 @@ public class OAuth2Controller {
                 .email(credential.get("email"))
                 .name(credential.get("name"))
                 .picture(credential.get("picture"))
+                .point(500)
                 .joinComplete(false)
                 .build();
         userService.addUser(user);
