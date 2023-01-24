@@ -5,6 +5,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDate;
+
 import static kr.co.goalkeeper.api.model.domain.CertificationState.*;
 
 @Entity
@@ -21,6 +23,8 @@ public abstract class Certification {
     @Enumerated(EnumType.STRING)
     @NotNull
     protected CertificationState state = ONGOING;
+    @Column
+    protected LocalDate date;
 
     protected void success(){
         state = SUCCESS;
