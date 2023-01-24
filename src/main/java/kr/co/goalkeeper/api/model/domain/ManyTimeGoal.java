@@ -27,4 +27,12 @@ public class ManyTimeGoal extends Goal {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    public void success80(){
+        int rewardPoint = (int) Math.round(point *0.1);
+        user.plusPoint(rewardPoint);
+    }
+    public void success100(){
+        int rewardPoint = (int) Math.round(point *0.3);
+        user.plusPoint(rewardPoint);
+    }
 }

@@ -4,8 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 
 import static kr.co.goalkeeper.api.model.domain.GoalState.*;
 
@@ -24,7 +25,8 @@ public abstract class Goal {
     protected String title;
     @NotNull
     protected String content;
-    @PositiveOrZero
+    @Min(0)
+    @Max(10000)
     protected int point;
     @Column
     @Enumerated(EnumType.STRING)

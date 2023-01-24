@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+    @Transient
     public static final User EMPTYUSER = new User();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +24,7 @@ public class User {
 
     @Column(nullable = false, updatable = false)
     @NotNull
+    @Email
     private String email;
 
     @Column
