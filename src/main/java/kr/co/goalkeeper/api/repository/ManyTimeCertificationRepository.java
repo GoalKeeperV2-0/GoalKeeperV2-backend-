@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.domain.ManyTimeCertification;
-import kr.co.goalkeeper.api.model.domain.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
+import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;

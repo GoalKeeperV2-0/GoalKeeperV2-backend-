@@ -1,9 +1,9 @@
 package kr.co.goalkeeper.api.controller;
 
 import io.swagger.annotations.*;
-import kr.co.goalkeeper.api.model.domain.AdditionalUserInfo;
-import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
-import kr.co.goalkeeper.api.model.domain.User;
+import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
+import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.service.GoalKeeperTokenService;

@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.domain;
+package kr.co.goalkeeper.api.model.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;

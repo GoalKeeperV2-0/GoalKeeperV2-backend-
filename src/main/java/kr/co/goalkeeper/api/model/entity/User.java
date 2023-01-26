@@ -1,5 +1,6 @@
-package kr.co.goalkeeper.api.model.domain;
+package kr.co.goalkeeper.api.model.entity;
 
+import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 

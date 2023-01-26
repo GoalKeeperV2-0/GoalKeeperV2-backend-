@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.domain.OneTimeCertification;
-import kr.co.goalkeeper.api.model.domain.OneTimeGoal;
+import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
+import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

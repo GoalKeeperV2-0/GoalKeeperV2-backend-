@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.domain;
+package kr.co.goalkeeper.api.model.response;
 
 import io.swagger.annotations.ApiParam;
 import lombok.*;

@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.domain;
+package kr.co.goalkeeper.api.model.entity;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -7,8 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import static kr.co.goalkeeper.api.model.domain.GoalState.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,16 +49,16 @@ public abstract class Goal {
         this.category = category;
     }
     public void success(){
-        goalState = SUCCESS;
+        goalState = GoalState.SUCCESS;
         double rewardRate = reward.getRewardRate();
         int rewardPoint = (int)Math.round(rewardRate*point);
         user.plusPoint(rewardPoint);
     }
     public void hold(){
-        goalState = HOLD;
+        goalState = GoalState.HOLD;
     }
     public void fail(){
-        goalState = FAIL;
+        goalState = GoalState.FAIL;
         double penaltyRate = reward.getPenaltyRate();
         int penaltyPoint = (int)Math.round(penaltyRate*point);
         user.plusPoint(penaltyPoint);

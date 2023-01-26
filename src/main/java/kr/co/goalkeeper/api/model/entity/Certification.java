@@ -1,13 +1,11 @@
-package kr.co.goalkeeper.api.model.domain;
-
-import org.springframework.boot.context.properties.bind.DefaultValue;
+package kr.co.goalkeeper.api.model.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-import static kr.co.goalkeeper.api.model.domain.CertificationState.*;
+import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

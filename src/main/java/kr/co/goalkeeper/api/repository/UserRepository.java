@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.domain.User;
+import kr.co.goalkeeper.api.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

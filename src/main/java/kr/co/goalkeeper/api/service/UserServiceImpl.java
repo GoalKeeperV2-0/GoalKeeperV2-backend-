@@ -1,11 +1,11 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.domain.AdditionalUserInfo;
-import kr.co.goalkeeper.api.model.domain.User;
+import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import static kr.co.goalkeeper.api.model.domain.User.EMPTYUSER;
+import static kr.co.goalkeeper.api.model.entity.User.EMPTYUSER;
 
 @Service
 public class UserServiceImpl implements UserService {

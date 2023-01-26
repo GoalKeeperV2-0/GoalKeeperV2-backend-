@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.domain;
+package kr.co.goalkeeper.api.model.entity;
 
 public enum CategoryType {
     STUDY,EXERCISE,HABIT,HOBBY,ETC

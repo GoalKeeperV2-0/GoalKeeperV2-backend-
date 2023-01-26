@@ -1,8 +1,8 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.domain.Category;
-import kr.co.goalkeeper.api.model.domain.ManyTimeGoal;
-import kr.co.goalkeeper.api.model.domain.User;
+import kr.co.goalkeeper.api.model.entity.Category;
+import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.model.domain.GoalKeeperToken;
+import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
 import org.springframework.http.ResponseCookie;
@@ -13,7 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("api/login/")

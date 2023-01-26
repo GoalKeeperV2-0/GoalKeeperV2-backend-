@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.domain.CategoryType;
-import kr.co.goalkeeper.api.model.domain.OneTimeCertification;
+import kr.co.goalkeeper.api.model.entity.CategoryType;
+import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
 
 import java.util.List;
 
