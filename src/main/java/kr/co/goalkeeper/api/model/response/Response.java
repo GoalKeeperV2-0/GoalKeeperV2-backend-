@@ -1,12 +1,17 @@
 package kr.co.goalkeeper.api.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Response<T> {
+    @Setter
     private String requestId;
+    @NonNull
+    private String message;
+    @NonNull
     private T data;
+
 }
