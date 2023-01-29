@@ -19,8 +19,8 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     }
 
     @Override
-    public void createManyTimeGoal(ManyTimeGoal manyTimeGoal) {
-
+    public long createManyTimeGoal(ManyTimeGoal manyTimeGoal) {
+        return manyTimeGoalRepository.save(manyTimeGoal).getId();
     }
 
     @Override
@@ -39,8 +39,8 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     }
 
     @Override
-    public void createOneTimeGoal(OneTimeGoal oneTimeGoal) {
-
+    public long createOneTimeGoal(OneTimeGoal oneTimeGoal) {
+        return oneTimeGoalRepository.save(oneTimeGoal).getId();
     }
 
     @Override
