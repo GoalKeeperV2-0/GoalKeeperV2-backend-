@@ -32,10 +32,7 @@ public class LoginController {
         GoalKeeperToken goalKeeperToken = goalKeeperTokenService.reCreateToken(refreshToken);
         ResponseCookie cookie = goalKeeperTokenService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
         response.addHeader("Set-Cookie",cookie.toString());
-        Response<GoalKeeperToken> result = new Response<>();
-        result.setData(goalKeeperToken);
-        String uuid = (String) request.getAttribute("uuid");
-        result.setRequestId(uuid);
+        Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
     }
 }
