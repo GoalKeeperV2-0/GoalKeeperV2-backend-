@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api;
 
-import kr.co.goalkeeper.api.model.domain.*;
 import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
 import kr.co.goalkeeper.api.repository.UserRepository;
