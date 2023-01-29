@@ -1,8 +1,11 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class Verification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

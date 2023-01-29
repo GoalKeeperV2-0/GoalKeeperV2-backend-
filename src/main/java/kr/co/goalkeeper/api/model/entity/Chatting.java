@@ -1,9 +1,12 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Getter
 public class Chatting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

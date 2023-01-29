@@ -1,5 +1,7 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -10,6 +12,7 @@ import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
+@Getter
 public abstract class Certification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

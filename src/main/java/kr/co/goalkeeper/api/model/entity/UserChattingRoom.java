@@ -1,8 +1,11 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class UserChattingRoom {
     @EmbeddedId
     private UserChattingRoomId id;

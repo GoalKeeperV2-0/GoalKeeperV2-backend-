@@ -2,6 +2,7 @@ package kr.co.goalkeeper.api.model.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Entity
 @DiscriminatorValue("OneTimeGoal")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class OneTimeGoal extends Goal {
     @Column
     @NotNull
