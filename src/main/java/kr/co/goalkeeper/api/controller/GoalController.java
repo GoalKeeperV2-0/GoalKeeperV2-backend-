@@ -67,6 +67,7 @@ public class GoalController {
                 .categoryType(manyTimeGoalRequest.getCategoryType())
                 .reward(manyTimeGoal.getReward())
                 .point(manyTimeGoal.getPoint())
+                .certDates(manyTimeGoalRequest.getCertDates())
                 .build();
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);

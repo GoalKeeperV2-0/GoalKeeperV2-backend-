@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("ManyTimeGoal")
@@ -23,6 +26,9 @@ public class ManyTimeGoal extends Goal {
     @Column
     @NotNull
     private LocalDate endDate;
+
+    @OneToMany(mappedBy = "manyTimeGoal")
+    private List<ManyTimeGoalCertDate> certDates;
 
     @Builder
     private ManyTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category, LocalDate startDate, LocalDate endDate) {
@@ -39,6 +45,13 @@ public class ManyTimeGoal extends Goal {
         this.title = request.getTitle();
         this.reward = request.getReward();
         this.startDate = request.getStartDate();
+        this.certDates = new ArrayList<>();
+        for (LocalDate certDate: request.getCertDates()) {
+            certDates.add(ManyTimeGoalCertDate.builder()
+                    .manyTimeGoal(this)
+                    .certDate(certDate)
+                    .build());
+        }
         this.user = user;
     }
     public void success80(){
