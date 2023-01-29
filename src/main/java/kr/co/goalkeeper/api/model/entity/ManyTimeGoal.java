@@ -1,5 +1,6 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,17 @@ public class ManyTimeGoal extends Goal {
         super(id, user, title, content, point, goalState, reward, category);
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+    public ManyTimeGoal(ManyTimeGoalRequest request,User user){
+        this.endDate = request.getEndDate();
+        this.goalState = GoalState.ONGOING;
+        this.category = new Category(request.getCategoryType());
+        this.point = request.getPoint();
+        this.content = request.getContent();
+        this.title = request.getTitle();
+        this.reward = request.getReward();
+        this.startDate = request.getStartDate();
+        this.user = user;
     }
     public void success80(){
         int rewardPoint = (int) Math.round(point *0.1);

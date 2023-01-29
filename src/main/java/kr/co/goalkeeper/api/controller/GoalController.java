@@ -1,10 +1,13 @@
 package kr.co.goalkeeper.api.controller;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
+import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
 import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
+import kr.co.goalkeeper.api.model.response.ManyTimeGoalResponse;
 import kr.co.goalkeeper.api.model.response.OneTimeGoalResponse;
 import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.*;
@@ -31,7 +34,7 @@ public class GoalController {
         this.userService = userService;
     }
 
-    @PostMapping("")
+    @PostMapping("/onetime")
     public ResponseEntity<Response<?>> addOneTimeGoal(@RequestBody OneTimeGoalRequest oneTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
         long userId = goalKeeperTokenService.getUserId(accessToken);
         User user = userService.getUserById(userId);
@@ -47,6 +50,25 @@ public class GoalController {
                 .point(oneTimeGoal.getPoint())
                 .build();
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/manytime")
+    public ResponseEntity<Response<?>> addManyTimeGoal(@RequestBody ManyTimeGoalRequest manyTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        User user = userService.getUserById(userId);
+        ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user);
+        long goalId = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+        ManyTimeGoalResponse result = ManyTimeGoalResponse.builder()
+                .id(goalId)
+                .content(manyTimeGoal.getContent())
+                .title(manyTimeGoal.getTitle())
+                .startDate(manyTimeGoal.getStartDate())
+                .endDate(manyTimeGoal.getEndDate())
+                .categoryType(manyTimeGoalRequest.getCategoryType())
+                .reward(manyTimeGoal.getReward())
+                .point(manyTimeGoal.getPoint())
+                .build();
+        Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/manytime/{category:[A-Z]+}/certifications")
