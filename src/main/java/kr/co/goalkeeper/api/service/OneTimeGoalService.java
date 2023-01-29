@@ -5,7 +5,7 @@ import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 
 import java.util.List;
 
-public interface OnTimeGoalService {
+public interface OneTimeGoalService {
     void createOneTimeGoal(OneTimeGoal oneTimeGoal);
     OneTimeGoal getOneTimeGoalById(long goalId);
     List<OneTimeGoal> getOneTimeGoalsByUserId(long userId);

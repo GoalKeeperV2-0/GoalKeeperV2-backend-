@@ -14,4 +14,5 @@ public interface ManyTimeCertificationRepository extends JpaRepository<ManyTimeC
     List<ManyTimeCertification> findAllByManyTimeGoal(ManyTimeGoal manyTimeGoal);
     ManyTimeCertification findByManyTimeGoalAndDate(ManyTimeGoal manyTimeGoal, LocalDate date);
     Page<ManyTimeCertification> findByManyTimeGoal_Category_CategoryType(CategoryType categoryType, Pageable pageable);
+    Page<ManyTimeCertification> findByManyTimeGoal_Id(long goalId,Pageable pageable);
 }

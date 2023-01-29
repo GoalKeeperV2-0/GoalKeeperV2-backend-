@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-public class GoalService implements OnTimeGoalService,ManyTimeGoalService{
+public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;
 
