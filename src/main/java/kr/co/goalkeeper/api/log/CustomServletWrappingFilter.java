@@ -25,6 +25,7 @@ public class CustomServletWrappingFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(wrappingRequest, wrappingResponse);
         String uuid = (String)wrappingRequest.getAttribute("uuid");
+        wrappingResponse.addHeader("requestId",uuid);
         String type="Response ===> uuid = ";
         log.info("{}{} {}",type,uuid,"headers start");
         Collection<String> headerNames = wrappingResponse.getHeaderNames();

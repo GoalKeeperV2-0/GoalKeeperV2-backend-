@@ -7,8 +7,6 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Getter
 public class ErrorMessage {
-    @Setter
-    private String requestId;
     @NonNull
     private int code;
     @NonNull
