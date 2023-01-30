@@ -19,16 +19,6 @@ public class ManyTimeCertificationResponse extends CertificationResponse {
         picture = entity.getPicture();
         state = entity.getState();
         date = entity.getDate();
-        ManyTimeGoal manyTimeGoal = entity.getManyTimeGoal();
-        this.manyTimeGoal = ManyTimeGoalResponse.builder()
-                .id(manyTimeGoal.getId())
-                .title(manyTimeGoal.getTitle())
-                .categoryType(manyTimeGoal.getCategory().getCategoryType())
-                .content(manyTimeGoal.getContent())
-                .point(manyTimeGoal.getPoint())
-                .reward(manyTimeGoal.getReward())
-                .startDate(manyTimeGoal.getStartDate())
-                .endDate(manyTimeGoal.getEndDate())
-                .build();
+        this.manyTimeGoal = new ManyTimeGoalResponse(entity.getManyTimeGoal());
     }
 }

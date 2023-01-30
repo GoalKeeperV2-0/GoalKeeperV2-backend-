@@ -12,4 +12,14 @@ public class ManyTimeGoalResponse extends GoalResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private List<LocalDate> certDates;
+    public ManyTimeGoalResponse(ManyTimeGoal entity){
+        id = entity.getId();
+        title = entity.getTitle();
+        content = entity.getContent();
+        categoryType = entity.getCategory().getCategoryType();
+        point = entity.getPoint();
+        reward = entity.getReward();
+        startDate = entity.getStartDate();
+        endDate = entity.getEndDate();
+    }
 }

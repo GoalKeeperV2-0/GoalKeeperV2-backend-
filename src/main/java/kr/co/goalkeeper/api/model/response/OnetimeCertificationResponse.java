@@ -15,15 +15,6 @@ public class OnetimeCertificationResponse extends CertificationResponse{
         picture = entity.getPicture();
         state = entity.getState();
         date = entity.getDate();
-        OneTimeGoal manyTimeGoal = entity.getOneTimeGoal();
-        this.oneTimeGoal = OneTimeGoalResponse.builder()
-                .id(manyTimeGoal.getId())
-                .title(manyTimeGoal.getTitle())
-                .categoryType(manyTimeGoal.getCategory().getCategoryType())
-                .content(manyTimeGoal.getContent())
-                .point(manyTimeGoal.getPoint())
-                .reward(manyTimeGoal.getReward())
-                .endDate(manyTimeGoal.getEndDate())
-                .build();
+        this.oneTimeGoal = new OneTimeGoalResponse(entity.getOneTimeGoal());
     }
 }
