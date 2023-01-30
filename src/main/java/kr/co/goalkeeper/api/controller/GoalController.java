@@ -52,8 +52,8 @@ public class GoalController {
     @GetMapping("/onetime/{category:[A-Z]+}")
     public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType,@RequestHeader("Authorization") String accessToken,@RequestParam int page){
         long userId = goalKeeperTokenService.getUserId(accessToken);
-        Page<OneTimeGoalResponse> responseResult = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(OneTimeGoalResponse::new);
-        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",responseResult);
+        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(OneTimeGoalResponse::new);
+        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/onetime/{category:[A-Z]+}/certifications")
@@ -90,7 +90,13 @@ public class GoalController {
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
-
+    @GetMapping("/manytime/{category:[A-Z]+}")
+    public ResponseEntity<Response<?>> getManyTimeGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType,@RequestHeader("Authorization") String accessToken,@RequestParam int page){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        Page<ManyTimeGoalResponse> result = manyTimeGoalService.getManyTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(ManyTimeGoalResponse::new);
+        Response<Page<ManyTimeGoalResponse>> response = new Response<>("자신이 등록한 지속 목표 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/manytime/{category:[A-Z]+}/certifications")
     public ResponseEntity<Response<Page<ManyTimeCertificationResponse>>> getManyTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
         Page<ManyTimeCertificationResponse> result = manyTimeCertificationService.getManyTimeCertificationsByCategory(categoryType,page).map(ManyTimeCertificationResponse::new);

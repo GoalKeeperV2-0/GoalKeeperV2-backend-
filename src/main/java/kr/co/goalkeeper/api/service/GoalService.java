@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;
-    private static int PAGE_SIZE = 9;
+    private static final int PAGE_SIZE = 9;
 
 
     public GoalService(ManyTimeGoalRepository manyTimeGoalRepository, OneTimeGoalRepository oneTimeGoalRepository) {
@@ -44,17 +44,20 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
 
     @Override
     public ManyTimeGoal getManyTimeGoalById(long goalId) {
-        return null;
+        return manyTimeGoalRepository.findById(goalId).orElseThrow(() -> {
+            ErrorMessage errorMessage = new ErrorMessage(404,"없는 goalId 입니다.");
+            return new GoalkeeperException(errorMessage);
+        });
     }
 
     @Override
-    public List<ManyTimeGoal> getManyTimeGoalsByUserId(long userId) {
-        return null;
+    public Page<ManyTimeGoal> getManyTimeGoalsByUserId(long userId,int page) {
+        return manyTimeGoalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
     }
 
     @Override
-    public List<ManyTimeGoal> getManyTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType) {
-        return null;
+    public Page<ManyTimeGoal> getManyTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType,int page) {
+        return manyTimeGoalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
     }
 
     @Override
