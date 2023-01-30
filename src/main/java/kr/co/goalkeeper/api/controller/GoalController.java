@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/goal")
 public class GoalController {
-   private ManyTimeCertificationService manyTimeCertificationService;
-   private OneTimeCertificationService oneTimeCertificationService;
-   private OneTimeGoalService oneTimeGoalService;
-   private ManyTimeGoalService manyTimeGoalService;
-   private GoalKeeperTokenService goalKeeperTokenService;
-   private UserService userService;
+   private final ManyTimeCertificationService manyTimeCertificationService;
+   private final OneTimeCertificationService oneTimeCertificationService;
+   private final OneTimeGoalService oneTimeGoalService;
+   private final ManyTimeGoalService manyTimeGoalService;
+   private final GoalKeeperTokenService goalKeeperTokenService;
+   private final UserService userService;
 
     public GoalController(ManyTimeCertificationService manyTimeCertificationService, OneTimeCertificationService oneTimeCertificationService, OneTimeGoalService oneTimeGoalService, ManyTimeGoalService manyTimeGoalService, GoalKeeperTokenService goalKeeperTokenService, UserService userService) {
         this.manyTimeCertificationService = manyTimeCertificationService;

@@ -17,7 +17,7 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("api/login/")
 public class LoginController {
-    private GoalKeeperTokenService goalKeeperTokenService;
+    private final GoalKeeperTokenService goalKeeperTokenService;
 
     public LoginController(GoalKeeperTokenService goalKeeperTokenService) {
         this.goalKeeperTokenService = goalKeeperTokenService;
