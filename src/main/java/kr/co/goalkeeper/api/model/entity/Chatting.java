@@ -17,8 +17,8 @@ public class Chatting {
     @Column
     @Enumerated(EnumType.STRING)
     private ChattingType type;
-    private long like;
-    private long check;
+    private long good;
+    private long see;
     @JoinColumn(name = "chatting_room_id")
     @ManyToOne
     private ChattingRoom chattingRoom;
