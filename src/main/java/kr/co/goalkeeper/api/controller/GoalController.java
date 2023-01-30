@@ -6,10 +6,7 @@ import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
-import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
-import kr.co.goalkeeper.api.model.response.ManyTimeGoalResponse;
-import kr.co.goalkeeper.api.model.response.OneTimeGoalResponse;
-import kr.co.goalkeeper.api.model.response.Response;
+import kr.co.goalkeeper.api.model.response.*;
 import kr.co.goalkeeper.api.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +56,19 @@ public class GoalController {
         Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",responseResult);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/onetime/{category:[A-Z]+}/certifications")
+    public ResponseEntity<Response<?>> getOneTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
+        Page<OnetimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OnetimeCertificationResponse::new);
+        Response<Page<OnetimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/onetime/{goalId:[0-9]+}/certification")
+    public ResponseEntity<Response<?>> getOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId){
+        OnetimeCertificationResponse result = new OnetimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
+        Response<OnetimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping("/manytime")
     public ResponseEntity<Response<?>> addManyTimeGoal(@RequestBody ManyTimeGoalRequest manyTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
@@ -80,6 +90,7 @@ public class GoalController {
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/manytime/{category:[A-Z]+}/certifications")
     public ResponseEntity<Response<Page<ManyTimeCertificationResponse>>> getManyTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
         Page<ManyTimeCertificationResponse> result = manyTimeCertificationService.getManyTimeCertificationsByCategory(categoryType,page).map(ManyTimeCertificationResponse::new);
@@ -90,7 +101,7 @@ public class GoalController {
     @GetMapping("/manytime/{goalId:[0-9]+}/certifications")
     public ResponseEntity<Response<Page<ManyTimeCertificationResponse>>> getManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId,@RequestParam int page){
         Page<ManyTimeCertificationResponse> result = manyTimeCertificationService.getCertificationsByGoalId(goalId,page).map(ManyTimeCertificationResponse::new);
-        Response<Page<ManyTimeCertificationResponse>> response = new Response<>("카테고리별 지속목표 인증 조회에 성공했습니다.",result);
+        Response<Page<ManyTimeCertificationResponse>> response = new Response<>("목표 ID별 지속목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 }
