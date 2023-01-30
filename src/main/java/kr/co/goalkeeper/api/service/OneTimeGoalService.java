@@ -2,12 +2,13 @@ package kr.co.goalkeeper.api.service;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface OneTimeGoalService {
     long createOneTimeGoal(OneTimeGoal oneTimeGoal);
     OneTimeGoal getOneTimeGoalById(long goalId);
-    List<OneTimeGoal> getOneTimeGoalsByUserId(long userId);
-    List<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType);
+    Page<OneTimeGoal> getOneTimeGoalsByUserId(long userId,int page);
+    Page<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page);
 }

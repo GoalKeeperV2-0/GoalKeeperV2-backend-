@@ -1,21 +1,28 @@
 package kr.co.goalkeeper.api.service;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.entity.Category;
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.function.Supplier;
+
 @Service
 public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;
+    private static int PAGE_SIZE = 9;
+
 
     public GoalService(ManyTimeGoalRepository manyTimeGoalRepository, OneTimeGoalRepository oneTimeGoalRepository) {
         this.manyTimeGoalRepository = manyTimeGoalRepository;
@@ -57,16 +64,19 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
 
     @Override
     public OneTimeGoal getOneTimeGoalById(long goalId) {
-        return null;
+        return oneTimeGoalRepository.findById(goalId).orElseThrow(() -> {
+            ErrorMessage errorMessage = new ErrorMessage(404,"없는 goalId 입니다.");
+            return new GoalkeeperException(errorMessage);
+        });
     }
 
     @Override
-    public List<OneTimeGoal> getOneTimeGoalsByUserId(long userId) {
-        return null;
+    public Page<OneTimeGoal> getOneTimeGoalsByUserId(long userId,int page) {
+        return oneTimeGoalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
     }
 
     @Override
-    public List<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType) {
-        return null;
+    public Page<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType,int page) {
+        return oneTimeGoalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
     }
 }

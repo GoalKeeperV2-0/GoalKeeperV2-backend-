@@ -52,6 +52,14 @@ public class GoalController {
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/onetime/{category:[A-Z]+}")
+    public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType,@RequestHeader("Authorization") String accessToken,@RequestParam int page){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        Page<OneTimeGoal> result = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page);
+        Page<OneTimeGoalResponse> responseResult = result.map(OneTimeGoalResponse::new);
+        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",responseResult);
+        return ResponseEntity.ok(response);
+    }
     @PostMapping("/manytime")
     public ResponseEntity<Response<?>> addManyTimeGoal(@RequestBody ManyTimeGoalRequest manyTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
         long userId = goalKeeperTokenService.getUserId(accessToken);
