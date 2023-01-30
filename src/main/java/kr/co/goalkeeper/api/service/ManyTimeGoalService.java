@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ManyTimeGoalService {
-    long createManyTimeGoal(ManyTimeGoal manyTimeGoal);
+    ManyTimeGoal createManyTimeGoal(ManyTimeGoal manyTimeGoal);
     ManyTimeGoal getManyTimeGoalById(long goalId);
     Page<ManyTimeGoal> getManyTimeGoalsByUserId(long userId,int page);
     Page<ManyTimeGoal> getManyTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType,int page);

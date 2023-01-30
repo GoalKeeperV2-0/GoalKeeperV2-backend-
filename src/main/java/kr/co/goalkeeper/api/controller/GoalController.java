@@ -36,16 +36,8 @@ public class GoalController {
         long userId = goalKeeperTokenService.getUserId(accessToken);
         User user = userService.getUserById(userId);
         OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user);
-        long goalId = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
-        OneTimeGoalResponse result = OneTimeGoalResponse.builder()
-                .id(goalId)
-                .content(oneTimeGoal.getContent())
-                .title(oneTimeGoal.getTitle())
-                .endDate(oneTimeGoal.getEndDate())
-                .categoryType(oneTimeGoalRequest.getCategoryType())
-                .reward(oneTimeGoal.getReward())
-                .point(oneTimeGoal.getPoint())
-                .build();
+        oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
+        OneTimeGoalResponse result = new OneTimeGoalResponse(oneTimeGoal);
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
@@ -75,18 +67,8 @@ public class GoalController {
         long userId = goalKeeperTokenService.getUserId(accessToken);
         User user = userService.getUserById(userId);
         ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user);
-        long goalId = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
-        ManyTimeGoalResponse result = ManyTimeGoalResponse.builder()
-                .id(goalId)
-                .content(manyTimeGoal.getContent())
-                .title(manyTimeGoal.getTitle())
-                .startDate(manyTimeGoal.getStartDate())
-                .endDate(manyTimeGoal.getEndDate())
-                .categoryType(manyTimeGoalRequest.getCategoryType())
-                .reward(manyTimeGoal.getReward())
-                .point(manyTimeGoal.getPoint())
-                .certDates(manyTimeGoalRequest.getCertDates())
-                .build();
+        manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+        ManyTimeGoalResponse result = new ManyTimeGoalResponse(manyTimeGoal);
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

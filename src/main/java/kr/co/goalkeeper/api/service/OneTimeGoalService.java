@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface OneTimeGoalService {
-    long createOneTimeGoal(OneTimeGoal oneTimeGoal);
+    OneTimeGoal createOneTimeGoal(OneTimeGoal oneTimeGoal);
     OneTimeGoal getOneTimeGoalById(long goalId);
     Page<OneTimeGoal> getOneTimeGoalsByUserId(long userId,int page);
     Page<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page);

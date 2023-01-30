@@ -30,12 +30,12 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     }
 
     @Override
-    public long createManyTimeGoal(ManyTimeGoal manyTimeGoal) {
+    public ManyTimeGoal createManyTimeGoal(ManyTimeGoal manyTimeGoal) {
         LocalDate start = manyTimeGoal.getStartDate();
         LocalDate end = manyTimeGoal.getEndDate();
         Period period = Period.between(start,end);
         if(period.getDays()>=4)
-            return manyTimeGoalRepository.save(manyTimeGoal).getId();
+            return manyTimeGoalRepository.save(manyTimeGoal);
         else {
             ErrorMessage errorMessage = new ErrorMessage(400,"목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다.");
             throw new GoalkeeperException(errorMessage);
@@ -61,8 +61,8 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     }
 
     @Override
-    public long createOneTimeGoal(OneTimeGoal oneTimeGoal) {
-        return oneTimeGoalRepository.save(oneTimeGoal).getId();
+    public OneTimeGoal createOneTimeGoal(OneTimeGoal oneTimeGoal) {
+        return oneTimeGoalRepository.save(oneTimeGoal);
     }
 
     @Override
