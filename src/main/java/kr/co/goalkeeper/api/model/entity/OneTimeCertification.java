@@ -10,6 +10,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue("OneTimeCertification")
@@ -17,8 +18,9 @@ import javax.persistence.OneToOne;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneTimeCertification extends Certification {
     @OneToOne
-    @JoinColumn(name="goal_id")
+    @JoinColumn(name="goal_id",nullable = false)
     @Setter
+    @NotNull
     private OneTimeGoal oneTimeGoal;
 
     public OneTimeCertification(OnetimeCertificationRequest dto){

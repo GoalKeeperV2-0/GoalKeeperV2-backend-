@@ -10,6 +10,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue("ManyTimeCertification")
@@ -17,7 +18,8 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManyTimeCertification extends Certification {
     @ManyToOne
-    @JoinColumn(name = "goal_id")
+    @JoinColumn(name = "goal_id",nullable = false)
+    @NotNull
     @Setter
     private ManyTimeGoal manyTimeGoal;
     public ManyTimeCertification(ManyTimeCertificationRequest dto){

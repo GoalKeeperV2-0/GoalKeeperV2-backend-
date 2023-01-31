@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class ManyTimeGoal extends Goal {
     @NotNull
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "manyTimeGoal")
+    @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)
     private List<ManyTimeGoalCertDate> certDates;
 
     @Builder
