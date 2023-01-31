@@ -107,7 +107,7 @@ public class GoalController {
     }
 
     @PostMapping("/manytime/{goalId:[0-9]+}/certification")
-    public ResponseEntity<Response<?>> getManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto){
+    public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto){
         if(goalId != dto.getGoalId()){
             ErrorMessage errorMessage = new ErrorMessage(400,"goalId가 잘못되었습니다.");
             throw new GoalkeeperException(errorMessage);
