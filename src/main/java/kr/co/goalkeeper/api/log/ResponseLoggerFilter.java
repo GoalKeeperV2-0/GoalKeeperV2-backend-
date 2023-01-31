@@ -13,27 +13,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.UUID;
 
 @Component
 @Slf4j
-public class CustomServletWrappingFilter extends OncePerRequestFilter {
+public class ResponseLoggerFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String uuid = UUID.randomUUID().toString();
+        request.setAttribute("uuid",uuid);
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
-
         filterChain.doFilter(wrappingRequest, wrappingResponse);
-        String uuid = (String)wrappingRequest.getAttribute("uuid");
-        wrappingResponse.addHeader("requestId",uuid);
+
+        ObjectMapper objectMapper = new ObjectMapper();
         String type="Response ===> uuid = ";
         log.info("{}{} {}",type,uuid,"headers start");
-        Collection<String> headerNames = wrappingResponse.getHeaderNames();
+        Collection<String> headerNames = response.getHeaderNames();
         for (String headerName : headerNames) {
-            String header = wrappingResponse.getHeader(headerName);
+            String header = response.getHeader(headerName);
             log.info("{}{} {}: {}",type,uuid,headerName,header);
         }
         log.info("{}{} {}",type,uuid,"headers end");
+        log.info("{}{}, Response Body : {}",type, uuid, objectMapper.readTree(wrappingResponse.getContentAsByteArray()));
         wrappingResponse.copyBodyToResponse();
     }
 }
