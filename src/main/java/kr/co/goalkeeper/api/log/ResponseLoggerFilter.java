@@ -25,7 +25,7 @@ public class ResponseLoggerFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
         filterChain.doFilter(wrappingRequest, wrappingResponse);
-
+        wrappingResponse.addHeader("requestId",uuid);
         ObjectMapper objectMapper = new ObjectMapper();
         String type="Response ===> uuid = ";
         log.info("{}{} {}",type,uuid,"headers start");
