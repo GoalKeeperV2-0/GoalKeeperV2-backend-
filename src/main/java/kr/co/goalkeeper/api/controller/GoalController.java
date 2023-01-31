@@ -1,11 +1,10 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
-import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
+import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import kr.co.goalkeeper.api.model.response.*;
 import kr.co.goalkeeper.api.service.*;
 import org.springframework.data.domain.Page;
@@ -58,6 +57,19 @@ public class GoalController {
     public ResponseEntity<Response<?>> getOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId){
         OnetimeCertificationResponse result = new OnetimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
         Response<OnetimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/onetime/{goalId:[0-9]+}/certification")
+    public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody OnetimeCertificationRequest dto){
+        OneTimeCertification oneTimeCertification = new OneTimeCertification(dto);
+        if(goalId != dto.getGoalId()){
+            ErrorMessage errorMessage = new ErrorMessage(400,"goalId가 잘못되었습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        OneTimeGoal oneTimeGoal = oneTimeGoalService.getOneTimeGoalById(goalId);
+        oneTimeCertification.setOneTimeGoal(oneTimeGoal);
+        OnetimeCertificationResponse result = oneTimeCertificationService.createCertification(oneTimeCertification);
+        Response<OnetimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 

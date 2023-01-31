@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.service;
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
 import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
+import kr.co.goalkeeper.api.model.response.OnetimeCertificationResponse;
 import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
 import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
 import org.springframework.data.domain.Page;
@@ -38,8 +39,8 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
     }
 
     @Override
-    public void createCertification(OneTimeCertification certification) {
-        oneTimeCertificationRepository.save(certification);
+    public OnetimeCertificationResponse createCertification(OneTimeCertification certification) {
+        return new OnetimeCertificationResponse(oneTimeCertificationRepository.save(certification));
     }
 
     @Override
