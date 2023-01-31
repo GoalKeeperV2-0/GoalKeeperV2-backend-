@@ -2,6 +2,7 @@ package kr.co.goalkeeper.api.controller;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
@@ -102,6 +103,20 @@ public class GoalController {
     public ResponseEntity<Response<Page<ManyTimeCertificationResponse>>> getManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId,@RequestParam int page){
         Page<ManyTimeCertificationResponse> result = manyTimeCertificationService.getCertificationsByGoalId(goalId,page).map(ManyTimeCertificationResponse::new);
         Response<Page<ManyTimeCertificationResponse>> response = new Response<>("목표 ID별 지속목표 인증 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/manytime/{goalId:[0-9]+}/certification")
+    public ResponseEntity<Response<?>> getManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto){
+        if(goalId != dto.getGoalId()){
+            ErrorMessage errorMessage = new ErrorMessage(400,"goalId가 잘못되었습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        ManyTimeGoal manyTimeGoal = manyTimeGoalService.getManyTimeGoalById(goalId);
+        ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
+        manyTimeCertification.setManyTimeGoal(manyTimeGoal);
+        ManyTimeCertificationResponse result = manyTimeCertificationService.createCertification(manyTimeCertification);
+        Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 }

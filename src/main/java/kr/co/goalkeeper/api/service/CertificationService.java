@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.service;
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
 import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
+import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
 import kr.co.goalkeeper.api.model.response.OnetimeCertificationResponse;
 import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
 import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
@@ -24,8 +25,8 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
         this.manyTimeCertificationRepository = manyTimeCertificationRepository;
     }
 
-    public void createCertification(ManyTimeCertification certification) {
-        manyTimeCertificationRepository.save(certification);
+    public ManyTimeCertificationResponse createCertification(ManyTimeCertification certification) {
+        return new ManyTimeCertificationResponse(manyTimeCertificationRepository.save(certification));
     }
 
     @Override
