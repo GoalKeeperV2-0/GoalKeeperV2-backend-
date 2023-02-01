@@ -3,8 +3,6 @@ package kr.co.goalkeeper.api.service;
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
 import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
-import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
-import kr.co.goalkeeper.api.model.response.OnetimeCertificationResponse;
 import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
 import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
 import org.springframework.data.domain.Page;
@@ -13,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CertificationService implements OneTimeCertificationService,ManyTimeCertificationService{
-    private static int PAGE_SIZE = 9;
-    private OneTimeCertificationRepository oneTimeCertificationRepository;
-    private ManyTimeCertificationRepository manyTimeCertificationRepository;
+    private final OneTimeCertificationRepository oneTimeCertificationRepository;
+    private final ManyTimeCertificationRepository manyTimeCertificationRepository;
     private PageRequest makePageRequest(int page){
-        return PageRequest.of(page,PAGE_SIZE);
+        int PAGE_SIZE = 9;
+        return PageRequest.of(page, PAGE_SIZE);
     }
 
     public CertificationService(OneTimeCertificationRepository oneTimeCertificationRepository, ManyTimeCertificationRepository manyTimeCertificationRepository) {
@@ -25,8 +23,8 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
         this.manyTimeCertificationRepository = manyTimeCertificationRepository;
     }
 
-    public ManyTimeCertificationResponse createCertification(ManyTimeCertification certification) {
-        return new ManyTimeCertificationResponse(manyTimeCertificationRepository.save(certification));
+    public ManyTimeCertification createCertification(ManyTimeCertification certification) {
+        return manyTimeCertificationRepository.save(certification);
     }
 
     @Override
@@ -40,8 +38,8 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
     }
 
     @Override
-    public OnetimeCertificationResponse createCertification(OneTimeCertification certification) {
-        return new OnetimeCertificationResponse(oneTimeCertificationRepository.save(certification));
+    public OneTimeCertification createCertification(OneTimeCertification certification) {
+        return oneTimeCertificationRepository.save(certification);
     }
 
     @Override

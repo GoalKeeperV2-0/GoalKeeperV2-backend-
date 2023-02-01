@@ -50,14 +50,14 @@ public class GoalController {
     }
     @GetMapping("/onetime/{category:[A-Z]+}/certifications")
     public ResponseEntity<Response<?>> getOneTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
-        Page<OnetimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OnetimeCertificationResponse::new);
-        Response<Page<OnetimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
+        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OneTimeCertificationResponse::new);
+        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/onetime/{goalId:[0-9]+}/certification")
     public ResponseEntity<Response<?>> getOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId){
-        OnetimeCertificationResponse result = new OnetimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
-        Response<OnetimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
+        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
+        Response<OneTimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/onetime/{goalId:[0-9]+}/certification")
@@ -69,8 +69,8 @@ public class GoalController {
         }
         OneTimeGoal oneTimeGoal = oneTimeGoalService.getOneTimeGoalById(goalId);
         oneTimeCertification.setOneTimeGoal(oneTimeGoal);
-        OnetimeCertificationResponse result = oneTimeCertificationService.createCertification(oneTimeCertification);
-        Response<OnetimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
+        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification));
+        Response<OneTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 
@@ -115,7 +115,7 @@ public class GoalController {
         ManyTimeGoal manyTimeGoal = manyTimeGoalService.getManyTimeGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
         manyTimeCertification.setManyTimeGoal(manyTimeGoal);
-        ManyTimeCertificationResponse result = manyTimeCertificationService.createCertification(manyTimeCertification);
+        ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
