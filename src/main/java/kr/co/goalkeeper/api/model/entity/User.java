@@ -68,6 +68,6 @@ public class User {
         this.point+=point;
     }
     protected void minusPoint(@Positive int point){
-
+        this.point-=point;
     }
 }
