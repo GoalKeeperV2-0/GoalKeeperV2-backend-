@@ -1,10 +1,7 @@
 package kr.co.goalkeeper.api.service;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.Category;
-import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
-import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
+import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.function.Supplier;
 
 @Service
 public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
@@ -31,15 +27,38 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
 
     @Override
     public ManyTimeGoal createManyTimeGoal(ManyTimeGoal manyTimeGoal) {
-        LocalDate start = manyTimeGoal.getStartDate();
-        LocalDate end = manyTimeGoal.getEndDate();
-        Period period = Period.between(start,end);
-        if(period.getDays()>=4)
-            return manyTimeGoalRepository.save(manyTimeGoal);
-        else {
-            ErrorMessage errorMessage = new ErrorMessage(400,"목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다.");
+        if(!validateStartDateAndEndDate(manyTimeGoal)) {
+            ErrorMessage errorMessage = new ErrorMessage(400,"목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다." +
+                    "\n목표 시작날짜와 목표 종료날짜는 오늘보다 빠르면 안됩니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        if(!validatePoint(manyTimeGoal)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"포인트가 부족 합니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        if(!validateCertDates(manyTimeGoal)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"인증 날은 마지막 날을 포함해 최소 4일 이상이어야 합니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        return manyTimeGoalRepository.save(manyTimeGoal);
+    }
+    private boolean validateStartDateAndEndDate(ManyTimeGoal manyTimeGoal){
+        LocalDate now = LocalDate.now();
+        LocalDate start = manyTimeGoal.getStartDate();
+        LocalDate end = manyTimeGoal.getEndDate();
+        if(start.isBefore(now)|| end.isBefore(now) || end.isBefore(start)) return false;
+        Period period = Period.between(start,end);
+        return period.getDays()>=4;
+    }
+    private boolean validatePoint(ManyTimeGoal manyTimeGoal){
+        User user = manyTimeGoal.getUser();
+        return user.getPoint()>manyTimeGoal.getPoint();
+    }
+    private boolean validateCertDates(ManyTimeGoal manyTimeGoal){
+        List<ManyTimeGoalCertDate> certDates = manyTimeGoal.getCertDates();
+        boolean validateCertDatesCount = certDates.size()>=4;
+        boolean validateCertDatesContainEndDates = certDates.stream().anyMatch(certDate-> certDate.getCertDate().equals(manyTimeGoal.getEndDate()));
+        return validateCertDatesCount && validateCertDatesContainEndDates;
     }
 
     @Override
