@@ -18,7 +18,7 @@ public abstract class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     protected User user;
     @NotNull
@@ -50,19 +50,9 @@ public abstract class Goal {
         this.reward = reward;
         this.category = category;
     }
-    public void success(){
-        goalState = GoalState.SUCCESS;
-        double rewardRate = reward.getRewardRate();
-        int rewardPoint = (int)Math.round(rewardRate*point);
-        user.plusPoint(rewardPoint);
-    }
-    public void hold(){
-        goalState = GoalState.HOLD;
-    }
-    public void fail(){
-        goalState = GoalState.FAIL;
-        double penaltyRate = reward.getPenaltyRate();
-        int penaltyPoint = (int)Math.round(penaltyRate*point);
-        user.plusPoint(penaltyPoint);
+    protected void minusUserPoint(){
+        if(user!=null){
+            user.minusPoint(point);
+        }
     }
 }

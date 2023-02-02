@@ -64,10 +64,10 @@ public class User {
     public void joinComplete(){
         joinComplete = true;
     }
-    public void plusPoint(@Positive int point){
+    protected void plusPoint(@Positive int point){
         this.point+=point;
     }
-    public void minusPoint(@Positive int point){
+    protected void minusPoint(@Positive int point){
 
     }
 }

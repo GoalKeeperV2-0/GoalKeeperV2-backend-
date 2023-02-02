@@ -50,6 +50,7 @@ public class ManyTimeGoal extends Goal {
                     .build());
         }
         this.user = user;
+        minusUserPoint();
     }
     public void success80(){
         int rewardPoint = (int) Math.round(point *0.1);

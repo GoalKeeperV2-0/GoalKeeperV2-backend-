@@ -34,5 +34,6 @@ public class OneTimeGoal extends Goal {
         this.title = request.getTitle();
         this.reward = request.getReward();
         this.user = user;
+        minusUserPoint();
     }
 }
