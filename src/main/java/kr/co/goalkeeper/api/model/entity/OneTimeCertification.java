@@ -26,7 +26,7 @@ public class OneTimeCertification extends Certification {
     public OneTimeCertification(OnetimeCertificationRequest dto){
         content = dto.getContent();
         picture = dto.getPicture();
-        state = dto.getState();
+        state = CertificationState.ONGOING;
         date = dto.getDate();
     }
 }

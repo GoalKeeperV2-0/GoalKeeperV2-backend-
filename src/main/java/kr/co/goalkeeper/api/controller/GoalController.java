@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
@@ -61,15 +60,13 @@ public class GoalController {
         return ResponseEntity.ok(response);
     }
     @PostMapping("/onetime/{goalId:[0-9]+}/certification")
-    public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody OnetimeCertificationRequest dto){
+    public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody OnetimeCertificationRequest dto,@RequestHeader("Authorization") String accessToken){
+        dto.fixGoalId(goalId);
         OneTimeCertification oneTimeCertification = new OneTimeCertification(dto);
-        if(goalId != dto.getGoalId()){
-            ErrorMessage errorMessage = new ErrorMessage(400,"goalId가 잘못되었습니다.");
-            throw new GoalkeeperException(errorMessage);
-        }
         OneTimeGoal oneTimeGoal = oneTimeGoalService.getOneTimeGoalById(goalId);
         oneTimeCertification.setOneTimeGoal(oneTimeGoal);
-        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification));
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification,userId));
         Response<OneTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
@@ -107,15 +104,13 @@ public class GoalController {
     }
 
     @PostMapping("/manytime/{goalId:[0-9]+}/certification")
-    public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto){
-        if(goalId != dto.getGoalId()){
-            ErrorMessage errorMessage = new ErrorMessage(400,"goalId가 잘못되었습니다.");
-            throw new GoalkeeperException(errorMessage);
-        }
+    public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto,@RequestHeader("Authorization") String accessToken){
+        dto.fixGoalId(goalId);
         ManyTimeGoal manyTimeGoal = manyTimeGoalService.getManyTimeGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
         manyTimeCertification.setManyTimeGoal(manyTimeGoal);
-        ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification));
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

@@ -5,7 +5,7 @@ import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
 import org.springframework.data.domain.Page;
 
 public interface OneTimeCertificationService {
-    OneTimeCertification createCertification(OneTimeCertification certification);
+    OneTimeCertification createCertification(OneTimeCertification certification,long userId);
     OneTimeCertification getCertificationByGoalId(long goalId);
     Page<OneTimeCertification> getOneTimeCertificationsByCategory(CategoryType categoryType,int page);
 }

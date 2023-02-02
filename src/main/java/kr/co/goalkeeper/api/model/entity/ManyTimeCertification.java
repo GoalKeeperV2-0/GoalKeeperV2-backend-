@@ -25,7 +25,7 @@ public class ManyTimeCertification extends Certification {
     public ManyTimeCertification(ManyTimeCertificationRequest dto){
         content = dto.getContent();
         picture = dto.getPicture();
-        state = dto.getState();
+        state = CertificationState.ONGOING;
         date = dto.getDate();
     }
 }
