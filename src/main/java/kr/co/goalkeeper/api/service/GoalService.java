@@ -50,9 +50,9 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
         Period period = Period.between(start,end);
         return period.getDays()>=4;
     }
-    private boolean validatePoint(ManyTimeGoal manyTimeGoal){
-        User user = manyTimeGoal.getUser();
-        return user.getPoint()>manyTimeGoal.getPoint();
+    private boolean validatePoint(Goal goal){
+        User user = goal.getUser();
+        return user.getPoint()>goal.getPoint();
     }
     private boolean validateCertDates(ManyTimeGoal manyTimeGoal){
         List<ManyTimeGoalCertDate> certDates = manyTimeGoal.getCertDates();
@@ -81,9 +81,22 @@ public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
 
     @Override
     public OneTimeGoal createOneTimeGoal(OneTimeGoal oneTimeGoal) {
+        if(!validatePoint(oneTimeGoal)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"포인트가 부족 합니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        if(!validateEndDate(oneTimeGoal)){
+            ErrorMessage errorMessage = new ErrorMessage(400,"목표 종료날짜는 오늘보다 전날이나 오늘로 설정할 수 없습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         return oneTimeGoalRepository.save(oneTimeGoal);
     }
-
+    private boolean validateEndDate(OneTimeGoal oneTimeGoal){
+        LocalDate endDate = oneTimeGoal.getEndDate();
+        LocalDate now = LocalDate.now();
+        Period period = Period.between(now,endDate);
+        return period.getDays()>0;
+    }
     @Override
     public OneTimeGoal getOneTimeGoalById(long goalId) {
         return oneTimeGoalRepository.findById(goalId).orElseThrow(() -> {
