@@ -26,4 +26,32 @@ public class OneTimeCertification extends Certification {
         state = CertificationState.ONGOING;
         date = dto.getDate();
     }
+    @Override
+    public void verificationSuccess() {
+        int requiredSuccessCount = oneTimeGoal.requiredSuccessCount();
+        successCount++;
+        if(successCount>=requiredSuccessCount){
+            success();
+        }
+    }
+
+    @Override
+    public void verificationFail() {
+        int requiredSuccessCount = oneTimeGoal.requiredSuccessCount();
+        failCount++;
+        if(failCount>=Math.round(0.7 * requiredSuccessCount)){
+            hold();
+        }
+    }
+    @Override
+    protected void success() {
+        super.success();
+        oneTimeGoal.success();
+    }
+
+    @Override
+    protected void hold() {
+        super.hold();
+        oneTimeGoal.hold();
+    }
 }

@@ -26,11 +26,19 @@ public abstract class Certification {
     protected CertificationState state = ONGOING;
     @Column
     protected LocalDate date;
-
+    @Column
+    protected int successCount;
+    @Column
+    protected int failCount;
+    public abstract void verificationSuccess();
+    public abstract void verificationFail();
     protected void success(){
         state = SUCCESS;
     }
     protected void fail(){
         state = FAIL;
+    }
+    protected void hold(){
+        state=HOLD;
     }
 }

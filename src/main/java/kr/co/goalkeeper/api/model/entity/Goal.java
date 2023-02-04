@@ -9,6 +9,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static kr.co.goalkeeper.api.model.entity.GoalState.HOLD;
+import static kr.co.goalkeeper.api.model.entity.GoalState.SUCCESS;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
@@ -54,5 +57,22 @@ public abstract class Goal {
         if(user!=null){
             user.minusPoint(point);
         }
+    }
+    public int requiredSuccessCount(){
+        if(point<=500){
+            return 5;
+        }else if(point<=1000){
+            return 10;
+        } else if (point<=5000) {
+            return 20;
+        }else{
+            return 30;
+        }
+    }
+    public void success(){
+        goalState = SUCCESS;
+    }
+    public void hold(){
+        goalState = HOLD;
     }
 }

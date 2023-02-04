@@ -25,4 +25,22 @@ public class ManyTimeCertification extends Certification {
         state = CertificationState.ONGOING;
         date = dto.getDate();
     }
+
+    @Override
+    public void verificationSuccess() {
+        int requiredSuccessCount = manyTimeGoal.requiredSuccessCount();
+        successCount++;
+        if(successCount>=requiredSuccessCount){
+            success();
+        }
+    }
+
+    @Override
+    public void verificationFail() {
+        int requiredSuccessCount = manyTimeGoal.requiredSuccessCount();
+        failCount++;
+        if(failCount>=Math.round(0.7 * requiredSuccessCount)){
+            hold();
+        }
+    }
 }
