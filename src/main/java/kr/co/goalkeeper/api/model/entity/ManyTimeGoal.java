@@ -69,11 +69,11 @@ public class ManyTimeGoal extends Goal {
     private void success80(){
         goalState = GoalState.SUCCESS;
         int rewardPoint = (int) Math.round(point *0.1);
-        user.plusPoint(rewardPoint);
+        user.plusPoint(rewardPoint,category.getCategoryType());
     }
     private void success100(){
         goalState = GoalState.SUCCESS;
         int rewardPoint = (int) Math.round(point *0.3);
-        user.plusPoint(rewardPoint);
+        user.plusPoint(rewardPoint,category.getCategoryType());
     }
 }

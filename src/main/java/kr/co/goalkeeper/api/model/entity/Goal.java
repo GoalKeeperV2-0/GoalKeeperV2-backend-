@@ -9,8 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import static kr.co.goalkeeper.api.model.entity.GoalState.HOLD;
-import static kr.co.goalkeeper.api.model.entity.GoalState.SUCCESS;
+import static kr.co.goalkeeper.api.model.entity.GoalState.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -71,8 +70,19 @@ public abstract class Goal {
     }
     public void success(){
         goalState = SUCCESS;
+        user.plusPoint(point,category.getCategoryType());
     }
     public void hold(){
         goalState = HOLD;
+    }
+    public void fail(){
+        goalState = FAIL;
+        minusUserPoint();
+        minusUserCategoryPoint();
+    }
+    private void minusUserCategoryPoint(){
+        if(user!=null){
+            user.minusCategoryPoint(point,category.getCategoryType());
+        }
     }
 }
