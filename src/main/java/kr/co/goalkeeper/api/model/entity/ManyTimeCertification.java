@@ -32,6 +32,7 @@ public class ManyTimeCertification extends Certification {
         successCount++;
         if(successCount>=requiredSuccessCount){
             success();
+            manyTimeGoal.successCertification();
         }
     }
 

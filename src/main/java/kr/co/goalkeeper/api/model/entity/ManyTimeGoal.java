@@ -23,6 +23,9 @@ public class ManyTimeGoal extends Goal {
     @Column
     @NotNull
     private LocalDate endDate;
+    @Column
+    @NotNull
+    private int successCount;
 
     @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)
     private List<ManyTimeGoalCertDate> certDates;
@@ -52,11 +55,24 @@ public class ManyTimeGoal extends Goal {
         this.user = user;
         minusUserPoint();
     }
-    public void success80(){
+    public void successCertification(){
+        successCount++;
+        int maxSuccessCount = certDates.size();
+        if(successCount == maxSuccessCount){
+            success100();
+        }else if(successCount>Math.round(maxSuccessCount*0.8f)){
+            success80();
+        }else if(successCount>Math.round(maxSuccessCount*0.7f)){
+            success();
+        }
+    }
+    private void success80(){
+        goalState = GoalState.SUCCESS;
         int rewardPoint = (int) Math.round(point *0.1);
         user.plusPoint(rewardPoint);
     }
-    public void success100(){
+    private void success100(){
+        goalState = GoalState.SUCCESS;
         int rewardPoint = (int) Math.round(point *0.3);
         user.plusPoint(rewardPoint);
     }
