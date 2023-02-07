@@ -1,13 +1,20 @@
 package kr.co.goalkeeper.api.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.oauth.OAuthType;
+import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
+import kr.co.goalkeeper.api.service.LoginService;
+import kr.co.goalkeeper.api.service.UserService;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +25,13 @@ import java.util.Arrays;
 @RequestMapping("api/login/")
 public class LoginController {
     private final GoalKeeperTokenService goalKeeperTokenService;
+    private final LoginService loginService;
+    private final UserService userService;
 
-    public LoginController(GoalKeeperTokenService goalKeeperTokenService) {
+    public LoginController(GoalKeeperTokenService goalKeeperTokenService, LoginService loginService, UserService userService) {
         this.goalKeeperTokenService = goalKeeperTokenService;
+        this.loginService = loginService;
+        this.userService = userService;
     }
 
     @GetMapping("")
@@ -29,10 +40,32 @@ public class LoginController {
         String refreshToken = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
                 .findFirst().orElseThrow().getValue();
-        GoalKeeperToken goalKeeperToken = goalKeeperTokenService.reCreateToken(refreshToken);
+        GoalKeeperToken goalKeeperToken = goalKeeperTokenService.reCreateToken(refreshToken,OAuthType.NONE);
         ResponseCookie cookie = goalKeeperTokenService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
         response.addHeader("Set-Cookie",cookie.toString());
         Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
+    }
+    @GetMapping("oauth2/{snsType}")
+    public ResponseEntity<Response<GoalKeeperToken>> oauth(@PathVariable("snsType") OAuthType oAuthType, @RequestParam String code,
+                                                           @RequestHeader("Origin") String origin, HttpServletResponse response){
+        OAuthRequest oAuthRequest = OAuthRequest.builder()
+                .oAuthType(oAuthType)
+                .code(code)
+                .origin(origin).build();
+        GoalKeeperToken goalKeeperToken = loginService.loginByOAuth2(oAuthRequest);
+        ResponseCookie cookie = goalKeeperToken.createRefreshTokenCookie();
+        response.addHeader("Set-Cookie",cookie.toString());
+        Response<GoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공햇습니다.",goalKeeperToken);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PatchMapping("oauth2/additionalUserInfo")
+    public ResponseEntity<?> completeJoin(@RequestBody AdditionalUserInfo userInfo, @RequestHeader("Authorization") String accessToken){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        User user = userService.getUserById(userId);
+        userService.completeJoin(user,userInfo);
+        Response<String> response = new Response<>("sns 회원가입이 완료되었습니다.","");
+        return ResponseEntity.ok(response);
     }
 }

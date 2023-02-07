@@ -2,9 +2,12 @@ package kr.co.goalkeeper.api.service;
 
 import io.jsonwebtoken.*;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.oauth.OAuthType;
+import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -33,7 +36,7 @@ public class GoalKeeperTokenService {
      * @param user
      * @return
      */
-    public GoalKeeperToken createToken(User user) {
+    public GoalKeeperToken createToken(User user, OAuthType oAuthType) {
         long userId = user.getId();
         Map<String, Object> headers = new HashMap<>();
         headers.put("typ", "JWT");
@@ -58,10 +61,14 @@ public class GoalKeeperTokenService {
                 .signWith(SignatureAlgorithm.HS256,Base64.getEncoder().encodeToString(secretKey.getBytes()))
                 .compact();
         refreshTokenRepository.addRefreshToken(refreshTokenString,userId);
-        return new GoalKeeperToken(accessTokenString,refreshTokenString);
+        if(oAuthType==OAuthType.NONE){
+            return new BasicGoalKeeperToken(accessTokenString,refreshTokenString);
+        }else{
+            return new OAuthGoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete());
+        }
     }
 
-    public GoalKeeperToken reCreateToken(String refreshToken){
+    public GoalKeeperToken reCreateToken(String refreshToken,OAuthType oAuthType){
         try {
             Jws<Claims> jws = Jwts.parser()
                     .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
@@ -71,7 +78,7 @@ public class GoalKeeperTokenService {
             if(userIdInToken == userIdInRedis){
                 User user = User.builder().id(userIdInRedis).build();
                 refreshTokenRepository.deleteRefreshToken(refreshToken);
-                return createToken(user);
+                return createToken(user,oAuthType);
             }else {
                 ErrorMessage errorMessage = new ErrorMessage(401, "리프레쉬 토큰이 잘못되었습니다.");
                 throw new GoalkeeperException(errorMessage);
