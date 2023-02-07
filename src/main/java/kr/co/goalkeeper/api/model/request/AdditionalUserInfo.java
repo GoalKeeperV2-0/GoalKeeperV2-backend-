@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class AdditionalUserInfo {
+    private String nickName;
     private int age;
     private Sex sex;
 }

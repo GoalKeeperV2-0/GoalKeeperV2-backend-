@@ -64,7 +64,7 @@ public class GoalKeeperTokenService {
         if(oAuthType==OAuthType.NONE){
             return new BasicGoalKeeperToken(accessTokenString,refreshTokenString);
         }else{
-            return new OAuthGoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete());
+            return new OAuthGoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete(), user.getName());
         }
     }
 

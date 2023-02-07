@@ -66,6 +66,7 @@ public class User {
     public void setAdditional(AdditionalUserInfo userInfo){
         age = userInfo.getAge();
         sex = userInfo.getSex();
+        name = userInfo.getNickName();
     }
     public void joinComplete(){
         joinComplete = true;
