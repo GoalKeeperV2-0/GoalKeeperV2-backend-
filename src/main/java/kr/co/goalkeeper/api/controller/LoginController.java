@@ -1,8 +1,5 @@
 package kr.co.goalkeeper.api.controller;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
@@ -56,7 +53,7 @@ public class LoginController {
         GoalKeeperToken goalKeeperToken = loginService.loginByOAuth2(oAuthRequest);
         ResponseCookie cookie = goalKeeperToken.createRefreshTokenCookie();
         response.addHeader("Set-Cookie",cookie.toString());
-        Response<GoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공햇습니다.",goalKeeperToken);
+        Response<GoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공했습니다.",goalKeeperToken);
         return ResponseEntity.ok(responseDto);
     }
 
