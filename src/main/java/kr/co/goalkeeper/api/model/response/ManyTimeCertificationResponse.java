@@ -1,13 +1,7 @@
 package kr.co.goalkeeper.api.model.response;
 
-import kr.co.goalkeeper.api.model.entity.CertificationState;
 import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import lombok.Getter;
-
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.time.LocalDate;
 
 
 @Getter

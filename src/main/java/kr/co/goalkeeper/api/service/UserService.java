@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 
 public interface UserService {
     void addUser(User user);

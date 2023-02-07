@@ -2,11 +2,11 @@ package kr.co.goalkeeper.api.service;
 
 import io.jsonwebtoken.*;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
-import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
-import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;

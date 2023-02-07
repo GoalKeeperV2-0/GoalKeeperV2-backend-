@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api.service;
 
-import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.Email;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.request.Password;

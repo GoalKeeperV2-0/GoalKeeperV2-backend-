@@ -5,8 +5,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 
-import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
-
 @Getter
 public abstract class CertificationResponse {
     protected long id;

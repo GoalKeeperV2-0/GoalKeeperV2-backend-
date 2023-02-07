@@ -4,8 +4,6 @@ import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface ManyTimeGoalService {
     ManyTimeGoal createManyTimeGoal(ManyTimeGoal manyTimeGoal);
     ManyTimeGoal getManyTimeGoalById(long goalId);

@@ -1,6 +1,8 @@
 package kr.co.goalkeeper.api.model.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor

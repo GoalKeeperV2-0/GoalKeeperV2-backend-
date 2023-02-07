@@ -1,7 +1,8 @@
 package kr.co.goalkeeper.api.model.response;
 
-import io.swagger.annotations.ApiParam;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 
 import javax.validation.constraints.NotBlank;

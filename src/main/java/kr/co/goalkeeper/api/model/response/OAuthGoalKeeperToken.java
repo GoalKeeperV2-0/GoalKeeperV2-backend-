@@ -1,7 +1,6 @@
 package kr.co.goalkeeper.api.model.response;
 
 import lombok.NonNull;
-import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 

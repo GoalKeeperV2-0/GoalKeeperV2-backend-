@@ -4,7 +4,6 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 import static kr.co.goalkeeper.api.model.entity.CertificationState.*;

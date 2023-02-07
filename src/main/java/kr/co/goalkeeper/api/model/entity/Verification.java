@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api.model.entity;
 
-import kr.co.goalkeeper.api.model.request.VerificationRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
