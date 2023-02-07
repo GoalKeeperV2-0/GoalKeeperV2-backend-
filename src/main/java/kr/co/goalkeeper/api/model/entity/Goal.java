@@ -70,7 +70,7 @@ public abstract class Goal {
     }
     public void success(){
         goalState = SUCCESS;
-        user.plusPoint(point,category.getCategoryType());
+        user.plusPoint(Math.round(point*reward.getRewardRate()),category.getCategoryType());
     }
     public void hold(){
         goalState = HOLD;

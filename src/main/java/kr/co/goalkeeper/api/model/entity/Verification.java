@@ -13,16 +13,15 @@ public class Verification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cert_id")
     private Certification certification;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
     private boolean state;
 
-    public Verification(long id, Certification certification, User user, boolean state) {
-        this.id = id;
+    public Verification(Certification certification, User user, boolean state) {
         this.certification = certification;
         this.user = user;
         this.state = state;

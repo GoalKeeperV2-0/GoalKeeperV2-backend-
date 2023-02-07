@@ -10,7 +10,7 @@ import javax.validation.constraints.Positive;
 public class UserCategoryPoint {
     @EmbeddedId
     UserCategoryPointId id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @MapsId("userId")
     private User user;

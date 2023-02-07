@@ -3,18 +3,18 @@ package kr.co.goalkeeper.api.model.entity;
 public enum Reward {
     HIGH_RETURN,LOW_RETURN;
 
-    public double getRewardRate(){
+    public float getRewardRate(){
         if(this == HIGH_RETURN){
-            return 1.5;
+            return 1.5f;
         }else {
-            return 1.1;
+            return 1.1f;
         }
     }
-    public double getPenaltyRate(){
+    public float getPenaltyRate(){
         if(this == HIGH_RETURN){
             return 0;
         }else {
-            return 0.5;
+            return 0.5f;
         }
     }
 }
