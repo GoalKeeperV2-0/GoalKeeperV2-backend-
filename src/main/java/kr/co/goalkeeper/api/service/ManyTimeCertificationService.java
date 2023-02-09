@@ -8,4 +8,5 @@ public interface ManyTimeCertificationService {
     ManyTimeCertification createCertification(ManyTimeCertification certification,long userId);
     Page<ManyTimeCertification> getCertificationsByGoalId(long goalId,int page);
     Page<ManyTimeCertification> getManyTimeCertificationsByCategory(CategoryType categoryType,int page);
+    Page<ManyTimeCertification> getManyTimeCertifications(int page);
 }

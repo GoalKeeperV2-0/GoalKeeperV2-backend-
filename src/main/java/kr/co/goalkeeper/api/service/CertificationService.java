@@ -54,7 +54,12 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
 
     @Override
     public Page<ManyTimeCertification> getManyTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return manyTimeCertificationRepository.findByManyTimeGoal_Category_CategoryType(categoryType,makePageRequest(page));
+        return manyTimeCertificationRepository.findByManyTimeGoal_Category_CategoryTypeAndManyTimeGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+    }
+
+    @Override
+    public Page<ManyTimeCertification> getManyTimeCertifications(int page) {
+        return manyTimeCertificationRepository.findByManyTimeGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
