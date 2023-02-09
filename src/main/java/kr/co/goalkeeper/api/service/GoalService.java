@@ -8,12 +8,14 @@ import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
 @Service
+@Transactional
 public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;

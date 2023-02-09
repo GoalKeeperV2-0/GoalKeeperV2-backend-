@@ -38,6 +38,13 @@ public class OneTimeGoalController {
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("")
+    public ResponseEntity<Response<?>> getOneTimeGoalsByUser(@RequestHeader("Authorization") String accessToken, @RequestParam int page){
+        long userId = goalKeeperTokenService.getUserId(accessToken);
+        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserId(userId,page).map(OneTimeGoalResponse::new);
+        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
     @GetMapping("/{category:[A-Z]+}")
     public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category") CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
         long userId = goalKeeperTokenService.getUserId(accessToken);
@@ -48,6 +55,12 @@ public class OneTimeGoalController {
     @GetMapping("/{category:[A-Z]+}/certifications")
     public ResponseEntity<Response<?>> getOneTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
         Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OneTimeCertificationResponse::new);
+        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/certifications")
+    public ResponseEntity<Response<?>> getOneTimeCertification(@RequestParam int page){
+        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertifications(page).map(OneTimeCertificationResponse::new);
         Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

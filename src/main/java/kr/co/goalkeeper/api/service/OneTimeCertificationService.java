@@ -8,4 +8,5 @@ public interface OneTimeCertificationService {
     OneTimeCertification createCertification(OneTimeCertification certification,long userId);
     OneTimeCertification getCertificationByGoalId(long goalId);
     Page<OneTimeCertification> getOneTimeCertificationsByCategory(CategoryType categoryType,int page);
+    Page<OneTimeCertification> getOneTimeCertifications(int page);
 }

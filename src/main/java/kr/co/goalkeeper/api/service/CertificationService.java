@@ -8,10 +8,12 @@ import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class CertificationService implements OneTimeCertificationService,ManyTimeCertificationService{
     private final OneTimeCertificationRepository oneTimeCertificationRepository;
     private final ManyTimeCertificationRepository manyTimeCertificationRepository;
@@ -93,6 +95,11 @@ public class CertificationService implements OneTimeCertificationService,ManyTim
 
     @Override
     public Page<OneTimeCertification> getOneTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return oneTimeCertificationRepository.findByOneTimeGoal_Category_CategoryType(categoryType,makePageRequest(page));
+        return oneTimeCertificationRepository.findByOneTimeGoal_Category_CategoryTypeAndOneTimeGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+    }
+
+    @Override
+    public Page<OneTimeCertification> getOneTimeCertifications(int page) {
+        return oneTimeCertificationRepository.findByOneTimeGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
     }
 }
