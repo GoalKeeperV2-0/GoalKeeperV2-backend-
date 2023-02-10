@@ -5,6 +5,7 @@ import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
+import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
 import kr.co.goalkeeper.api.service.LoginService;
@@ -44,16 +45,16 @@ public class LoginController {
         return ResponseEntity.ok(result);
     }
     @GetMapping("oauth2/{snsType}")
-    public ResponseEntity<Response<GoalKeeperToken>> oauth(@PathVariable("snsType") OAuthType oAuthType, @RequestParam String code,
-                                                           @RequestHeader("Origin") String origin, HttpServletResponse response){
+    public ResponseEntity<Response<OAuthGoalKeeperToken>> oauth(@PathVariable("snsType") OAuthType oAuthType, @RequestParam String code,
+                                                                @RequestHeader("Origin") String origin, HttpServletResponse response){
         OAuthRequest oAuthRequest = OAuthRequest.builder()
                 .oAuthType(oAuthType)
                 .code(code)
                 .origin(origin).build();
-        GoalKeeperToken goalKeeperToken = loginService.loginByOAuth2(oAuthRequest);
+        OAuthGoalKeeperToken goalKeeperToken = (OAuthGoalKeeperToken) loginService.loginByOAuth2(oAuthRequest);
         ResponseCookie cookie = goalKeeperToken.createRefreshTokenCookie();
         response.addHeader("Set-Cookie",cookie.toString());
-        Response<GoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공했습니다.",goalKeeperToken);
+        Response<OAuthGoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공했습니다.",goalKeeperToken);
         return ResponseEntity.ok(responseDto);
     }
 
