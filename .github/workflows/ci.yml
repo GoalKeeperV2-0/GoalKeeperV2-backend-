@@ -45,7 +45,7 @@ jobs:
               echo -e "${{ secrets.APPLICATION_OAUTH}}" >> ./src/main/resources/application-oauth.yml
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test --stacktrace
+        run: ./gradlew clean build  --stacktrace
 #      - name: deploy file
 #        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
 #        with:
