@@ -56,3 +56,5 @@ jobs:
 #          remote_path: '/home/j2kb'
 #          sftp_only: true
 #          password: ${{ secrets.FTP_PASSWORD }}
+      - name: buildErr
+        run: cat ./build/reports/tests/test/index.html
