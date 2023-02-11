@@ -3,7 +3,9 @@ package kr.co.goalkeeper.api.controller;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
+import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
@@ -20,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 @RestController
-@RequestMapping("api/login/")
+@RequestMapping("api/login")
 public class LoginController {
     private final GoalKeeperTokenService goalKeeperTokenService;
     private final LoginService loginService;
@@ -44,7 +46,7 @@ public class LoginController {
         Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
     }
-    @GetMapping("oauth2/{snsType}")
+    @GetMapping("/oauth2/{snsType}")
     public ResponseEntity<Response<OAuthGoalKeeperToken>> oauth(@PathVariable("snsType") OAuthType oAuthType, @RequestParam String code,
                                                                 @RequestHeader("Origin") String origin, HttpServletResponse response){
         OAuthRequest oAuthRequest = OAuthRequest.builder()
@@ -65,5 +67,14 @@ public class LoginController {
         userService.completeJoin(user,userInfo);
         Response<String> response = new Response<>("sns 회원가입이 완료되었습니다.","");
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Response<BasicGoalKeeperToken>> login(@RequestBody LoginRequest loginRequest,HttpServletResponse response){
+        BasicGoalKeeperToken basicGoalKeeperToken = (BasicGoalKeeperToken) loginService.loginByEmailPassword(loginRequest);
+        Response<BasicGoalKeeperToken> result = new Response<>("로그인 성공",basicGoalKeeperToken);
+        ResponseCookie cookie = basicGoalKeeperToken.createRefreshTokenCookie();
+        response.addHeader("Set-Cookie",cookie.toString());
+        return ResponseEntity.ok(result);
     }
 }

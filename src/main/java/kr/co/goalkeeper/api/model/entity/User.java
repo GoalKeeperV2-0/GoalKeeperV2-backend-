@@ -4,7 +4,7 @@ import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
-import kr.co.goalkeeper.api.util.PasswordGenerator;
+import kr.co.goalkeeper.api.util.PasswordManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,7 +67,7 @@ public class User {
                 picture = credential.get("picture");
                 point = 500;
                 joinComplete = false;
-                password = PasswordGenerator.randomPassword(14);
+                password = PasswordManager.randomPassword(14);
                 break;
             case NAVER:
             case KAKAO:

@@ -4,13 +4,14 @@ import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
-import kr.co.goalkeeper.api.model.request.Email;
+import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
-import kr.co.goalkeeper.api.model.request.Password;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
+import kr.co.goalkeeper.api.util.PasswordManager;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 @Service
 public class LoginServiceV2 implements LoginService {
@@ -25,8 +26,16 @@ public class LoginServiceV2 implements LoginService {
     }
 
     @Override
-    public GoalKeeperToken loginByEmailPassword(Email email, Password password) {
-        return null;
+    public GoalKeeperToken loginByEmailPassword(LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+        password = PasswordManager.sha256(password);
+        if(password==null){
+            ErrorMessage errorMessage =new ErrorMessage(500,"암호화 오류!");
+            throw new GoalkeeperException(errorMessage);
+        }
+        User user = userService.getUserByEmailAndPassword(email,password);
+        return goalKeeperTokenService.createToken(user,OAuthType.NONE);
     }
 
     @Override
