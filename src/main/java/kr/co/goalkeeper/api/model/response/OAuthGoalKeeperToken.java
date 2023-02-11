@@ -1,9 +1,10 @@
 package kr.co.goalkeeper.api.model.response;
 
+import lombok.Getter;
 import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
-
+@Getter
 public class OAuthGoalKeeperToken extends GoalKeeperToken {
     private boolean isNewbie;
     private String nickName;
