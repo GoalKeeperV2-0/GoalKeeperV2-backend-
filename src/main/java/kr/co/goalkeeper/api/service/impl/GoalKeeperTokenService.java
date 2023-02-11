@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.service;
+package kr.co.goalkeeper.api.service.impl;
 
 import io.jsonwebtoken.*;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
@@ -19,7 +19,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 @Service
-public class GoalKeeperTokenService {
+class GoalKeeperTokenService {
     @Value("${jwt.key}")
     private String secretKey;
     private static final long ACCESS_TOKEN_LIFE = 6000000;
@@ -27,7 +27,7 @@ public class GoalKeeperTokenService {
 
     private final RedisRefreshTokenRepository refreshTokenRepository;
 
-    public GoalKeeperTokenService(RedisRefreshTokenRepository refreshTokenRepository) {
+    GoalKeeperTokenService(RedisRefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
@@ -36,7 +36,7 @@ public class GoalKeeperTokenService {
      * @param user
      * @return
      */
-    public GoalKeeperToken createToken(User user, OAuthType oAuthType) {
+    GoalKeeperToken createToken(User user, OAuthType oAuthType) {
         long userId = user.getId();
         Map<String, Object> headers = new HashMap<>();
         headers.put("typ", "JWT");
@@ -67,8 +67,7 @@ public class GoalKeeperTokenService {
             return new OAuthGoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete(), user.getName());
         }
     }
-
-    public GoalKeeperToken reCreateToken(String refreshToken,OAuthType oAuthType){
+    GoalKeeperToken reCreateToken(String refreshToken,OAuthType oAuthType){
         try {
             Jws<Claims> jws = Jwts.parser()
                     .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
@@ -88,21 +87,11 @@ public class GoalKeeperTokenService {
             throw new GoalkeeperException(errorMessage);
         }
     }
-
-    public long getUserId(String accessToken){
+    long getUserId(String accessToken){
         accessToken = accessToken.replace("Bearer","");
         Jws<Claims> jws = Jwts.parser()
                 .setSigningKey(Base64.getEncoder().encodeToString(secretKey.getBytes()))
                 .parseClaimsJws(accessToken);
         return jws.getBody().get("userID", Long.class);
-    }
-
-    public ResponseCookie createRefreshTokenCookie(String refreshToken){
-        return ResponseCookie.from("refreshToken",refreshToken)
-                .httpOnly(true)
-                .sameSite("None")
-                .path("/")
-                .secure(true)
-                .build();
     }
 }

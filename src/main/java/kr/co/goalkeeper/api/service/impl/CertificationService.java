@@ -1,10 +1,12 @@
-package kr.co.goalkeeper.api.service;
+package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
 import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
+import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
+import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class CertificationService implements OneTimeCertificationService,ManyTimeCertificationService{
+class CertificationService implements OneTimeCertificationService, ManyTimeCertificationService {
     private final OneTimeCertificationRepository oneTimeCertificationRepository;
     private final ManyTimeCertificationRepository manyTimeCertificationRepository;
     private PageRequest makePageRequest(int page){

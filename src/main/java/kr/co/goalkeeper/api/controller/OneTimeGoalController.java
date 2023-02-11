@@ -9,7 +9,9 @@ import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import kr.co.goalkeeper.api.model.response.OneTimeCertificationResponse;
 import kr.co.goalkeeper.api.model.response.OneTimeGoalResponse;
 import kr.co.goalkeeper.api.model.response.Response;
-import kr.co.goalkeeper.api.service.*;
+import kr.co.goalkeeper.api.service.port.CredentialService;
+import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
+import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +20,18 @@ import org.springframework.web.bind.annotation.*;
 public class OneTimeGoalController {
     private final OneTimeCertificationService oneTimeCertificationService;
     private final OneTimeGoalService oneTimeGoalService;
-    private final GoalKeeperTokenService goalKeeperTokenService;
-    private final UserService userService;
+    private final CredentialService credentialService;
 
-    public OneTimeGoalController(OneTimeCertificationService oneTimeCertificationService, OneTimeGoalService oneTimeGoalService, GoalKeeperTokenService goalKeeperTokenService, UserService userService) {
+    public OneTimeGoalController(OneTimeCertificationService oneTimeCertificationService, OneTimeGoalService oneTimeGoalService, CredentialService credentialService) {
         this.oneTimeCertificationService = oneTimeCertificationService;
         this.oneTimeGoalService = oneTimeGoalService;
-        this.goalKeeperTokenService = goalKeeperTokenService;
-        this.userService = userService;
+        this.credentialService = credentialService;
     }
 
     @PostMapping("")
     public ResponseEntity<Response<?>> addOneTimeGoal(@RequestBody OneTimeGoalRequest oneTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
-        User user = userService.getUserById(userId);
+        long userId = credentialService.getUserId(accessToken);
+        User user = credentialService.getUserById(userId);
         OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user);
         oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
         OneTimeGoalResponse result = new OneTimeGoalResponse(oneTimeGoal);
@@ -40,14 +40,14 @@ public class OneTimeGoalController {
     }
     @GetMapping("")
     public ResponseEntity<Response<?>> getOneTimeGoalsByUser(@RequestHeader("Authorization") String accessToken, @RequestParam int page){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserId(userId,page).map(OneTimeGoalResponse::new);
         Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{category:[A-Z]+}")
     public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category") CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(OneTimeGoalResponse::new);
         Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
@@ -76,7 +76,7 @@ public class OneTimeGoalController {
         OneTimeCertification oneTimeCertification = new OneTimeCertification(dto);
         OneTimeGoal oneTimeGoal = oneTimeGoalService.getOneTimeGoalById(goalId);
         oneTimeCertification.setOneTimeGoal(oneTimeGoal);
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification,userId));
         Response<OneTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);

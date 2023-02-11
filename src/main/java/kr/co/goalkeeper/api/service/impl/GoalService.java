@@ -1,10 +1,12 @@
-package kr.co.goalkeeper.api.service;
+package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
+import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
+import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class GoalService implements OneTimeGoalService,ManyTimeGoalService{
+class GoalService implements OneTimeGoalService, ManyTimeGoalService {
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;
     private static final int PAGE_SIZE = 9;

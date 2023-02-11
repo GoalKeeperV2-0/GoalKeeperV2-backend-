@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.service;
+package kr.co.goalkeeper.api.service.port;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;

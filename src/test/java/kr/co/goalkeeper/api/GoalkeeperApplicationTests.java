@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
-import kr.co.goalkeeper.api.service.*;
+import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.stream.Stream;
 
 
 @SpringBootTest
@@ -28,20 +27,18 @@ class GoalkeeperApplicationTests {
 	@Autowired
 	ManyTimeCertificationService manyTimeCertificationService;
 	@Autowired
-	GoalKeeperTokenService goalKeeperTokenService;
-	@Autowired
-	UserService userService;
+	CredentialService credentialService;
 
 	@Test
 	@Transactional
 	void OneTimeGoalServiceTest() throws JsonProcessingException {
-		final User user1 = userService.getUserById(1);
+		final User user1 = credentialService.getUserById(1);
 		createFailOneTimeGoalTest();
 		OneTimeGoal created = createSuccessOneTimeGoalTest();
 		getOneTimeGoalTest(created);
 	}
 	private void createFailOneTimeGoalTest() throws JsonProcessingException {
-		final User user1 = userService.getUserById(1);
+		final User user1 = credentialService.getUserById(1);
 		String createGoalRequestString ="{\n" +
 				"  \"endDate\": \"2023-02-03\",\n" +
 				"  \"title\": \"test\",\n" +
@@ -57,12 +54,12 @@ class GoalkeeperApplicationTests {
 		OneTimeGoalRequest cantCreate2 = objectMapper.readValue(createGoalRequestString.replace("2023-02-03",LocalDate.now().toString()),OneTimeGoalRequest.class);
 		assertThrows(GoalkeeperException.class,()-> oneTimeGoalService.createOneTimeGoal(new OneTimeGoal(cantCreate2,user1)));
 
-		final User user2 = userService.getUserById(2);
+		final User user2 = credentialService.getUserById(2);
 		OneTimeGoalRequest cantCreate3 = objectMapper.readValue(createGoalRequestString.replace("2023-02-03",LocalDate.now().plusDays(14).toString()),OneTimeGoalRequest.class);
 		assertThrows(GoalkeeperException.class,()-> oneTimeGoalService.createOneTimeGoal(new OneTimeGoal(cantCreate3,user2)));
 	}
 	private OneTimeGoal createSuccessOneTimeGoalTest() throws JsonProcessingException {
-		final User user1 = userService.getUserById(1);
+		final User user1 = credentialService.getUserById(1);
 
 		String createGoalRequestString ="{\n" +
 				"  \"endDate\": \"2023-02-03\",\n" +

@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.service;
+package kr.co.goalkeeper.api.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 @Service
-public class GoogleOAuth2Service implements OAuth2Service {
+class GoogleOAuth2Service implements OAuth2Service {
     @Value("${oauth2.client-id}")
     private String clientID;
     @Value("${oauth2.client-secret}")

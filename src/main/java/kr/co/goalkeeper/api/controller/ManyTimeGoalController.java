@@ -4,7 +4,9 @@ import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.response.*;
-import kr.co.goalkeeper.api.service.*;
+import kr.co.goalkeeper.api.service.port.CredentialService;
+import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
+import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +16,18 @@ import org.springframework.web.bind.annotation.*;
 public class ManyTimeGoalController {
    private final ManyTimeCertificationService manyTimeCertificationService;
    private final ManyTimeGoalService manyTimeGoalService;
-   private final GoalKeeperTokenService goalKeeperTokenService;
-   private final UserService userService;
+   private final CredentialService credentialService;
 
-    public ManyTimeGoalController(ManyTimeCertificationService manyTimeCertificationService, ManyTimeGoalService manyTimeGoalService, GoalKeeperTokenService goalKeeperTokenService, UserService userService) {
+    public ManyTimeGoalController(ManyTimeCertificationService manyTimeCertificationService, ManyTimeGoalService manyTimeGoalService, CredentialService credentialService) {
         this.manyTimeCertificationService = manyTimeCertificationService;
         this.manyTimeGoalService = manyTimeGoalService;
-        this.goalKeeperTokenService = goalKeeperTokenService;
-        this.userService = userService;
+        this.credentialService = credentialService;
     }
 
     @PostMapping("")
     public ResponseEntity<Response<?>> addManyTimeGoal(@RequestBody ManyTimeGoalRequest manyTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
-        User user = userService.getUserById(userId);
+        long userId = credentialService.getUserId(accessToken);
+        User user = credentialService.getUserById(userId);
         ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user);
         manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
         ManyTimeGoalResponse result = new ManyTimeGoalResponse(manyTimeGoal);
@@ -36,14 +36,14 @@ public class ManyTimeGoalController {
     }
     @GetMapping("")
     public ResponseEntity<Response<?>> getManyTimeGoalsByUser(@RequestHeader("Authorization") String accessToken,@RequestParam int page){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         Page<ManyTimeGoalResponse> result = manyTimeGoalService.getManyTimeGoalsByUserId(userId,page).map(ManyTimeGoalResponse::new);
         Response<Page<ManyTimeGoalResponse>> response = new Response<>("자신이 등록한 지속 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{category:[A-Z]+}")
     public ResponseEntity<Response<?>> getManyTimeGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType,@RequestHeader("Authorization") String accessToken,@RequestParam int page){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         Page<ManyTimeGoalResponse> result = manyTimeGoalService.getManyTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(ManyTimeGoalResponse::new);
         Response<Page<ManyTimeGoalResponse>> response = new Response<>("자신이 등록한 지속 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
@@ -75,7 +75,7 @@ public class ManyTimeGoalController {
         ManyTimeGoal manyTimeGoal = manyTimeGoalService.getManyTimeGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
         manyTimeCertification.setManyTimeGoal(manyTimeGoal);
-        long userId = goalKeeperTokenService.getUserId(accessToken);
+        long userId = credentialService.getUserId(accessToken);
         ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);

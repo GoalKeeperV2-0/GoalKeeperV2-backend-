@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.LoginRequest;
@@ -9,9 +8,7 @@ import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
-import kr.co.goalkeeper.api.service.GoalKeeperTokenService;
-import kr.co.goalkeeper.api.service.LoginService;
-import kr.co.goalkeeper.api.service.UserService;
+import kr.co.goalkeeper.api.service.port.CredentialService;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +20,11 @@ import java.util.Arrays;
 
 @RestController
 @RequestMapping("api/login")
-public class LoginController {
-    private final GoalKeeperTokenService goalKeeperTokenService;
-    private final LoginService loginService;
-    private final UserService userService;
+public class CredentialController {
+    private final CredentialService credentialService;
 
-    public LoginController(GoalKeeperTokenService goalKeeperTokenService, LoginService loginService, UserService userService) {
-        this.goalKeeperTokenService = goalKeeperTokenService;
-        this.loginService = loginService;
-        this.userService = userService;
+    public CredentialController(CredentialService credentialService) {
+        this.credentialService = credentialService;
     }
 
     @GetMapping("")
@@ -40,8 +33,8 @@ public class LoginController {
         String refreshToken = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
                 .findFirst().orElseThrow().getValue();
-        GoalKeeperToken goalKeeperToken = goalKeeperTokenService.reCreateToken(refreshToken,OAuthType.NONE);
-        ResponseCookie cookie = goalKeeperTokenService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
+        GoalKeeperToken goalKeeperToken = credentialService.refreshToken(refreshToken,OAuthType.NONE);
+        ResponseCookie cookie = credentialService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
         response.addHeader("Set-Cookie",cookie.toString());
         Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
@@ -53,7 +46,7 @@ public class LoginController {
                 .oAuthType(oAuthType)
                 .code(code)
                 .origin(origin).build();
-        OAuthGoalKeeperToken goalKeeperToken = (OAuthGoalKeeperToken) loginService.loginByOAuth2(oAuthRequest);
+        OAuthGoalKeeperToken goalKeeperToken = (OAuthGoalKeeperToken) credentialService.loginByOAuth2(oAuthRequest);
         ResponseCookie cookie = goalKeeperToken.createRefreshTokenCookie();
         response.addHeader("Set-Cookie",cookie.toString());
         Response<OAuthGoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공했습니다.",goalKeeperToken);
@@ -62,16 +55,15 @@ public class LoginController {
 
     @PatchMapping("oauth2/additionalUserInfo")
     public ResponseEntity<?> completeJoin(@RequestBody AdditionalUserInfo userInfo, @RequestHeader("Authorization") String accessToken){
-        long userId = goalKeeperTokenService.getUserId(accessToken);
-        User user = userService.getUserById(userId);
-        userService.completeJoin(user,userInfo);
+        long userId = credentialService.getUserId(accessToken);
+        credentialService.joinCompleteAfterOAuthJoin(userId,userInfo);
         Response<String> response = new Response<>("sns 회원가입이 완료되었습니다.","");
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
     public ResponseEntity<Response<BasicGoalKeeperToken>> login(@RequestBody LoginRequest loginRequest,HttpServletResponse response){
-        BasicGoalKeeperToken basicGoalKeeperToken = (BasicGoalKeeperToken) loginService.loginByEmailPassword(loginRequest);
+        BasicGoalKeeperToken basicGoalKeeperToken = (BasicGoalKeeperToken) credentialService.loginByEmailPassword(loginRequest);
         Response<BasicGoalKeeperToken> result = new Response<>("로그인 성공",basicGoalKeeperToken);
         ResponseCookie cookie = basicGoalKeeperToken.createRefreshTokenCookie();
         response.addHeader("Set-Cookie",cookie.toString());
