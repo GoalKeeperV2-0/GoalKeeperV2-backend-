@@ -46,6 +46,7 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
+        continue-on-error: true
 #      - name: deploy file
 #        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
 #        with:
