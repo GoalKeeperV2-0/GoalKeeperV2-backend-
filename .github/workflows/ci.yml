@@ -44,10 +44,12 @@ jobs:
         run: |
               echo -e "${{ secrets.APPLICATION_OAUTH}}" >> ./src/main/resources/application-oauth.yml
               echo -e "${{ secrets.APPLICATION_PROD}}" >> ./src/main/resources/application-prod.yml
-              echo -e "${{ secrets.APPLICATION}}" >> ./src/main/resources/application.yml
-
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
+      - name: Copy keystore
+        run: |
+              echo -e "${{ secrets.KEYSTORE}}" > ./key
+              base64 -d -i ./key >> ./build/libs/goalkeeper.p12
       - name: deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
