@@ -43,10 +43,11 @@ jobs:
       - name: Create application-oauth.yml
         run: |
               echo -e "${{ secrets.APPLICATION_OAUTH}}" >> ./src/main/resources/application-oauth.yml
+              echo -e "${{ secrets.APPLICATION_PROD}}" >> ./src/main/resources/application-prod.yml
+              echo -e "${{ secrets.APPLICATION}}" >> ./src/main/resources/application.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
-        continue-on-error: true
       - name: deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
