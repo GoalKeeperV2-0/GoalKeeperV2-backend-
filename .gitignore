@@ -42,3 +42,4 @@ out/
 ### secret ###
 *.properties
 application-oauth.yml
+application-prod.yml
