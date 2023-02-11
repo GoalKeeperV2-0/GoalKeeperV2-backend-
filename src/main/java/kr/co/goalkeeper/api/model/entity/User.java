@@ -68,6 +68,7 @@ public class User {
                 point = 500;
                 joinComplete = false;
                 password = PasswordManager.randomPassword(14);
+                password = PasswordManager.sha256(password);
                 break;
             case NAVER:
             case KAKAO:
