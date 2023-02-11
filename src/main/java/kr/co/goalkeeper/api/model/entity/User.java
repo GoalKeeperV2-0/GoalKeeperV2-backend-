@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,6 +70,11 @@ public class User {
                 joinComplete = false;
                 password = PasswordManager.randomPassword(14);
                 password = PasswordManager.sha256(password);
+                userCategoryPointSet = new HashSet<>();
+                for (CategoryType categoryType:CategoryType.values()) {
+                    UserCategoryPoint usp = new UserCategoryPoint(this,categoryType);
+                    userCategoryPointSet.add(usp);
+                }
                 break;
             case NAVER:
             case KAKAO:
