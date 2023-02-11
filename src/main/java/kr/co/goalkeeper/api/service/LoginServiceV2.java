@@ -4,8 +4,10 @@ import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
+import kr.co.goalkeeper.api.model.request.JoinRequest;
 import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
+import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.util.PasswordManager;
@@ -55,6 +57,19 @@ public class LoginServiceV2 implements LoginService {
                 throw new GoalkeeperException(errorMessage);
         }
     }
+
+    @Override
+    public GoalKeeperToken join(JoinRequest joinRequest) {
+        if(userService.isAlreadyRegistered(joinRequest.getEmail())){
+            ErrorMessage errorMessage = new ErrorMessage(409,"이미 가입된 이메일 입니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        User user = new User(joinRequest);
+        userService.addUser(user);
+        user = userService.getUserByEmail(joinRequest.getEmail());
+        return goalKeeperTokenService.createToken(user,OAuthType.NONE);
+    }
+
     private GoalKeeperToken googleLogin(String code,String origin){
         Map<String,String> credential = googleOAuth(code,origin);
         String email = credential.get("email");

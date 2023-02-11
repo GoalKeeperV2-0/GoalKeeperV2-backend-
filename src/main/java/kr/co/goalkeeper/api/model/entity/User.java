@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.model.entity;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.request.JoinRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.util.PasswordManager;
 import lombok.AccessLevel;
@@ -24,6 +25,8 @@ import java.util.Set;
 public class User {
     @Transient
     public static final User EMPTYUSER = new User();
+    @Transient
+    private final int INIT_POINT = 10000000;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -66,7 +69,7 @@ public class User {
                 email = credential.get("email");
                 name = credential.get("name");
                 picture = credential.get("picture");
-                point = 500;
+                point = INIT_POINT;
                 joinComplete = false;
                 password = PasswordManager.randomPassword(14);
                 password = PasswordManager.sha256(password);
@@ -84,6 +87,21 @@ public class User {
                 errorMessage = new ErrorMessage(400, "지원하지 않는 타입입니다.");
                 throw new GoalkeeperException(errorMessage);
         }
+    }
+    public User(JoinRequest joinRequest){
+        email = joinRequest.getEmail();
+        password = PasswordManager.sha256(joinRequest.getPassword());
+        name = joinRequest.getName();
+        sex = joinRequest.getSex();
+        joinComplete = true;
+        age = joinRequest.getAge();
+        userCategoryPointSet = new HashSet<>();
+        for (CategoryType categoryType:CategoryType.values()) {
+            UserCategoryPoint usp = new UserCategoryPoint(this,categoryType);
+            userCategoryPointSet.add(usp);
+        }
+        point = INIT_POINT;
+        picture = joinRequest.getPicture();
     }
     public User(long id){
         this.id = id;
