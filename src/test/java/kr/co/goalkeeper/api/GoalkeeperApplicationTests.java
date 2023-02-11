@@ -31,6 +31,11 @@ class GoalkeeperApplicationTests {
 
 	@Test
 	@Transactional
+	void CredentialServiceTest(){
+
+	}
+	@Test
+	@Transactional
 	void OneTimeGoalServiceTest() throws JsonProcessingException {
 		final User user1 = credentialService.getUserById(1);
 		createFailOneTimeGoalTest();
@@ -79,5 +84,23 @@ class GoalkeeperApplicationTests {
 		assertEquals(required,oneTimeGoalService.getOneTimeGoalsByUserId(required.getUser().getId(),0).get().findFirst().get());
 		assertEquals(required,oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(required.getUser().getId(),CategoryType.STUDY,0).get().findFirst().get());
 		assertTrue(oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(required.getUser().getId(), CategoryType.ETC, 0).get().findAny().isEmpty());
+	}
+
+	@Test
+	@Transactional
+	void OneTimeCertificationServiceTest(){
+
+	}
+
+	@Test
+	@Transactional
+	void ManyTimeGoalServiceTest(){
+
+	}
+
+	@Test
+	@Transactional
+	void ManyTimeCertificationServiceTest(){
+
 	}
 }
