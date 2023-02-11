@@ -47,15 +47,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
         continue-on-error: true
-#      - name: deploy file
-#        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-#        with:
-#          username: ${{ secrets.FTP_USERNAME }}
-#          server: ${{ secrets.FTP_HOST }}
-#          port: ${{ secrets.FTP_PORT }}
-#          local_path: './build/libs/*'
-#          remote_path: '/home/j2kb'
-#          sftp_only: true
-#          password: ${{ secrets.FTP_PASSWORD }}
-      - name: buildErr
-        run: cat ./build/reports/tests/test/index.html
+      - name: deploy file
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.SSH_USERNAME }}
+          server: ${{ secrets.SSH_HOST }}
+          local_path: './build/libs/*'
+          remote_path: ${{ secrets.SSH_REMOTE_PATH }}
+          sftp_only: true
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
