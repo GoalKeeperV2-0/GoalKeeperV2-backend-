@@ -78,6 +78,9 @@ public class User {
                 throw new GoalkeeperException(errorMessage);
         }
     }
+    public User(long id){
+        this.id = id;
+    }
     public void setAdditional(AdditionalUserInfo userInfo){
         age = userInfo.getAge();
         sex = userInfo.getSex();
