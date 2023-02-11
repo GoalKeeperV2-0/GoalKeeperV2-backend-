@@ -70,13 +70,7 @@ public class LoginServiceV2 implements LoginService {
         return userService.getUserByEmail(email);
     }
     private User joinUseGoogleCredential(Map<String,String> credential){
-        User user = User.builder()
-                .email(credential.get("email"))
-                .name(credential.get("name"))
-                .picture(credential.get("picture"))
-                .point(500)
-                .joinComplete(false)
-                .build();
+        User user = new User(credential,OAuthType.GOOGLE);
         userService.addUser(user);
         return user;
     }

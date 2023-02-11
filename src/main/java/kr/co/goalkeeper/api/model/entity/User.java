@@ -1,10 +1,11 @@
 package kr.co.goalkeeper.api.model.entity;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.util.PasswordGenerator;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -33,6 +35,8 @@ public class User {
     @NotNull
     @Email
     private String email;
+    @NotNull
+    private String password;
 
     @Column
     private String picture;
@@ -55,16 +59,24 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private Set<UserCategoryPoint> userCategoryPointSet;
 
-    @Builder
-    private User(Long id, String name, String email, String picture, Integer age, Sex sex, boolean joinComplete, Integer point) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.picture = picture;
-        this.age = age;
-        this.sex = sex;
-        this.joinComplete = joinComplete;
-        this.point = point;
+    public User(Map<String,String> credential, OAuthType oAuthType){
+        switch (oAuthType){
+            case GOOGLE:
+                email = credential.get("email");
+                name = credential.get("name");
+                picture = credential.get("picture");
+                point = 500;
+                joinComplete = false;
+                password = PasswordGenerator.randomPassword(14);
+                break;
+            case NAVER:
+            case KAKAO:
+                ErrorMessage errorMessage = new ErrorMessage(500, "아직 구현되지 않았습니다.");
+                throw new GoalkeeperException(errorMessage);
+            default:
+                errorMessage = new ErrorMessage(400, "지원하지 않는 타입입니다.");
+                throw new GoalkeeperException(errorMessage);
+        }
     }
     public void setAdditional(AdditionalUserInfo userInfo){
         age = userInfo.getAge();
