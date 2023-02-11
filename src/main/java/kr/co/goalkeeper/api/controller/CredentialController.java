@@ -2,6 +2,7 @@ package kr.co.goalkeeper.api.controller;
 
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.request.JoinRequest;
 import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
@@ -19,27 +20,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 @RestController
-@RequestMapping("api/login")
+@RequestMapping("api/credential")
 public class CredentialController {
     private final CredentialService credentialService;
 
     public CredentialController(CredentialService credentialService) {
         this.credentialService = credentialService;
     }
-
-    @GetMapping("")
-    public ResponseEntity<Response<?>> reCreateTokens(HttpServletRequest request, HttpServletResponse response){
-        Cookie[] cookies = request.getCookies();
-        String refreshToken = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
-                .findFirst().orElseThrow().getValue();
-        GoalKeeperToken goalKeeperToken = credentialService.refreshToken(refreshToken,OAuthType.NONE);
-        ResponseCookie cookie = credentialService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
-        response.addHeader("Set-Cookie",cookie.toString());
-        Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
-        return ResponseEntity.ok(result);
-    }
-    @GetMapping("/oauth2/{snsType}")
+    @GetMapping("/login/oauth2/{snsType}")
     public ResponseEntity<Response<OAuthGoalKeeperToken>> oauth(@PathVariable("snsType") OAuthType oAuthType, @RequestParam String code,
                                                                 @RequestHeader("Origin") String origin, HttpServletResponse response){
         OAuthRequest oAuthRequest = OAuthRequest.builder()
@@ -52,8 +40,7 @@ public class CredentialController {
         Response<OAuthGoalKeeperToken> responseDto = new Response<>("sns 로그인에 성공했습니다.",goalKeeperToken);
         return ResponseEntity.ok(responseDto);
     }
-
-    @PatchMapping("oauth2/additionalUserInfo")
+    @PatchMapping("/login/oauth2/additionalUserInfo")
     public ResponseEntity<?> completeJoin(@RequestBody AdditionalUserInfo userInfo, @RequestHeader("Authorization") String accessToken){
         long userId = credentialService.getUserId(accessToken);
         credentialService.joinCompleteAfterOAuthJoin(userId,userInfo);
@@ -61,12 +48,34 @@ public class CredentialController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("")
+    @PostMapping("/login")
     public ResponseEntity<Response<BasicGoalKeeperToken>> login(@RequestBody LoginRequest loginRequest,HttpServletResponse response){
         BasicGoalKeeperToken basicGoalKeeperToken = (BasicGoalKeeperToken) credentialService.loginByEmailPassword(loginRequest);
         Response<BasicGoalKeeperToken> result = new Response<>("로그인 성공",basicGoalKeeperToken);
         ResponseCookie cookie = basicGoalKeeperToken.createRefreshTokenCookie();
         response.addHeader("Set-Cookie",cookie.toString());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Response<?>> join(@RequestBody JoinRequest joinRequest,HttpServletResponse response){
+        GoalKeeperToken goalKeeperToken = credentialService.join(joinRequest);
+        Response<GoalKeeperToken> result = new Response<>("회원가입에 성공했습니다.",goalKeeperToken);
+        ResponseCookie cookie = credentialService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
+        response.addHeader("Set-Cookie",cookie.toString());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<Response<?>> reCreateTokens(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+        String refreshToken = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
+                .findFirst().orElseThrow().getValue();
+        GoalKeeperToken goalKeeperToken = credentialService.refreshToken(refreshToken,OAuthType.NONE);
+        ResponseCookie cookie = credentialService.createRefreshTokenCookie(goalKeeperToken.getRefreshToken());
+        response.addHeader("Set-Cookie",cookie.toString());
+        Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
     }
 }
