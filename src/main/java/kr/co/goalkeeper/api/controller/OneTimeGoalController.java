@@ -38,38 +38,38 @@ public class OneTimeGoalController {
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("")
-    public ResponseEntity<Response<?>> getOneTimeGoalsByUser(@RequestHeader("Authorization") String accessToken, @RequestParam int page){
-        long userId = credentialService.getUserId(accessToken);
-        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserId(userId,page).map(OneTimeGoalResponse::new);
-        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/{category:[A-Z]+}")
-    public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category") CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
-        long userId = credentialService.getUserId(accessToken);
-        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(OneTimeGoalResponse::new);
-        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/{category:[A-Z]+}/certifications")
-    public ResponseEntity<Response<?>> getOneTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
-        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OneTimeCertificationResponse::new);
-        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/certifications")
-    public ResponseEntity<Response<?>> getOneTimeCertification(@RequestParam int page){
-        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertifications(page).map(OneTimeCertificationResponse::new);
-        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/{goalId:[0-9]+}/certification")
-    public ResponseEntity<Response<?>> getOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId){
-        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
-        Response<OneTimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping("")
+//    public ResponseEntity<Response<?>> getOneTimeGoalsByUser(@RequestHeader("Authorization") String accessToken, @RequestParam int page){
+//        long userId = credentialService.getUserId(accessToken);
+//        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserId(userId,page).map(OneTimeGoalResponse::new);
+//        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/{category:[A-Z]+}")
+//    public ResponseEntity<Response<?>> getOneTimeGoalsByCategoryAndUser(@PathVariable("category") CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
+//        long userId = credentialService.getUserId(accessToken);
+//        Page<OneTimeGoalResponse> result = oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(userId,categoryType,page).map(OneTimeGoalResponse::new);
+//        Response<Page<OneTimeGoalResponse>> response = new Response<>("자신이 등록한 일반 목표 조회에 성공했습니다.",result);
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/{category:[A-Z]+}/certifications")
+//    public ResponseEntity<Response<?>> getOneTimeCertificationByCategory(@PathVariable("category")CategoryType categoryType,@RequestParam int page){
+//        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertificationsByCategory(categoryType,page).map(OneTimeCertificationResponse::new);
+//        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/certifications")
+//    public ResponseEntity<Response<?>> getOneTimeCertification(@RequestParam int page){
+//        Page<OneTimeCertificationResponse> result = oneTimeCertificationService.getOneTimeCertifications(page).map(OneTimeCertificationResponse::new);
+//        Response<Page<OneTimeCertificationResponse>> response = new Response<>("카테고리별 일반목표 인증 조회에 성공했습니다.",result);
+//        return ResponseEntity.ok(response);
+//    }
+//    @GetMapping("/{goalId:[0-9]+}/certification")
+//    public ResponseEntity<Response<?>> getOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId){
+//        OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.getCertificationByGoalId(goalId));
+//        Response<OneTimeCertificationResponse> response = new Response<>("목표 ID별 일반목표 인증 조회에 성공했습니다.",result);
+//        return ResponseEntity.ok(response);
+//    }
     @PostMapping("/{goalId:[0-9]+}/certification")
     public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody OnetimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
         dto.fixGoalId(goalId);

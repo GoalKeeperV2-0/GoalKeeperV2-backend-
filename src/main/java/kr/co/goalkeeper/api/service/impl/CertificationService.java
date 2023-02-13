@@ -3,8 +3,8 @@ package kr.co.goalkeeper.api.service.impl;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
-import kr.co.goalkeeper.api.repository.ManyTimeCertificationRepository;
-import kr.co.goalkeeper.api.repository.OneTimeCertificationRepository;
+import kr.co.goalkeeper.api.repository.CertificationRepository;
+import kr.co.goalkeeper.api.service.port.CertificationGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
 import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
 import org.springframework.data.domain.Page;
@@ -16,20 +16,19 @@ import java.util.List;
 
 @Service
 @Transactional
-class CertificationService implements OneTimeCertificationService, ManyTimeCertificationService {
-    private final OneTimeCertificationRepository oneTimeCertificationRepository;
-    private final ManyTimeCertificationRepository manyTimeCertificationRepository;
+class CertificationService implements OneTimeCertificationService, ManyTimeCertificationService , CertificationGetService {
+
+    private final CertificationRepository certificationRepository;
     private PageRequest makePageRequest(int page){
         int PAGE_SIZE = 9;
         return PageRequest.of(page, PAGE_SIZE);
     }
 
-    public CertificationService(OneTimeCertificationRepository oneTimeCertificationRepository, ManyTimeCertificationRepository manyTimeCertificationRepository) {
-        this.oneTimeCertificationRepository = oneTimeCertificationRepository;
-        this.manyTimeCertificationRepository = manyTimeCertificationRepository;
+    public CertificationService(CertificationRepository certificationRepository) {
+        this.certificationRepository = certificationRepository;
     }
 
-    public ManyTimeCertification createCertification(ManyTimeCertification certification,long userId) {
+    public ManyTimeCertification createCertification(ManyTimeCertification certification, long userId) {
         if(!validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
@@ -38,7 +37,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(400,"오늘은 인증날이 아닙니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        return manyTimeCertificationRepository.save(certification);
+        return certificationRepository.save(certification);
     }
     private boolean validatePermission(ManyTimeCertification certification, long userId){
         User user = certification.getGoal().getUser();
@@ -50,18 +49,18 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
 
     @Override
-    public Page<ManyTimeCertification> getCertificationsByGoalId(long goalId,int page) {
-        return manyTimeCertificationRepository.findByGoal_Id(goalId, makePageRequest(page));
+    public Page<Certification> getCertificationsByGoalId(long goalId,int page) {
+        return certificationRepository.findAllByGoal_Id(goalId, makePageRequest(page));
     }
 
     @Override
-    public Page<ManyTimeCertification> getManyTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return manyTimeCertificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+    public Page<Certification> getCertificationsByCategory(CategoryType categoryType,int page) {
+        return certificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
-    public Page<ManyTimeCertification> getManyTimeCertifications(int page) {
-        return manyTimeCertificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
+    public Page<Certification> getCertifications(int page) {
+        return certificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
@@ -78,7 +77,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(409,"현재 진행중인 목표만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        return oneTimeCertificationRepository.save(certification);
+        return certificationRepository.save(certification);
     }
     private boolean validatePermission(OneTimeCertification certification, long userId){
         User user = certification.getGoal().getUser();
@@ -89,24 +88,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         return state==GoalState.ONGOING;
     }
     private boolean validateUniqueCertification(OneTimeCertification certification){
-        OneTimeCertification searchResult = oneTimeCertificationRepository.findByGoal_Id(certification.getGoal().getId()).orElse(null);
-        return searchResult==null;
-    }
-    @Override
-    public OneTimeCertification getCertificationByGoalId(long goalId) {
-        return oneTimeCertificationRepository.findByGoal_Id(goalId).orElseThrow(() -> {
-            ErrorMessage errorMessage = new ErrorMessage(404,"없는 목표입니다.");
-            return new GoalkeeperException(errorMessage);
-        });
-    }
-
-    @Override
-    public Page<OneTimeCertification> getOneTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return oneTimeCertificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
-    }
-
-    @Override
-    public Page<OneTimeCertification> getOneTimeCertifications(int page) {
-        return oneTimeCertificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
+        Page<Certification> searchResult = certificationRepository.findAllByGoal_Id(certification.getGoal().getId(),makePageRequest(0));
+        return searchResult.getContent().isEmpty();
     }
 }

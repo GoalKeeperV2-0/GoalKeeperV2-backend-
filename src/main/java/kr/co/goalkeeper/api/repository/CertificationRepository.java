@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface CertificationRepository extends JpaRepository<Certification,Long> {
     List<Certification> findAllByGoal_Category_CategoryType(CategoryType categoryType);
-    Optional<Certification> findByGoal_Id(long goalId);
+    Page<Certification> findAllByGoal_Id(long goalId,Pageable pageable);
     Page<Certification> findByGoal_Category_CategoryTypeAndGoal_GoalState(CategoryType categoryType, GoalState goalState, Pageable pageable);
     Page<Certification> findByGoal_GoalState(GoalState goalState, Pageable pageable);
 }
