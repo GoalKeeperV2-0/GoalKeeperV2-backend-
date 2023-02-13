@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -39,6 +40,7 @@ public class ManyTimeGoal extends Goal {
         this.reward = request.getReward();
         this.startDate = LocalDate.now();
         this.certDates = new ArrayList<>();
+        Collections.sort(request.getCertDates());
         for (LocalDate certDate: request.getCertDates()) {
             certDates.add(ManyTimeGoalCertDate.builder()
                     .manyTimeGoal(this)
