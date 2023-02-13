@@ -19,12 +19,6 @@ import java.util.List;
 public class ManyTimeGoal extends Goal {
     @Column
     @NotNull
-    private LocalDate startDate;
-    @Column
-    @NotNull
-    private LocalDate endDate;
-    @Column
-    @NotNull
     private int successCount;
 
     @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)

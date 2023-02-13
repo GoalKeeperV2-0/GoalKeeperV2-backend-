@@ -38,6 +38,10 @@ class GoalkeeperApplicationTests {
 	CredentialService credentialService;
 	@Autowired
 	CertificationRepository certificationRepository;
+	@Autowired
+	GoalGetService goalGetService;
+	@Autowired
+	CertificationGetService certificationGetService;
 
 	@Test
 	@Transactional
@@ -90,10 +94,10 @@ class GoalkeeperApplicationTests {
 		return oneTimeGoalService.createOneTimeGoal(new OneTimeGoal(canCreate,user1));
 	}
 	private void getOneTimeGoalTest(OneTimeGoal required){
-		assertEquals(required,oneTimeGoalService.getOneTimeGoalById(required.getId()));
-		assertEquals(required,oneTimeGoalService.getOneTimeGoalsByUserId(required.getUser().getId(),0).get().findFirst().get());
-		assertEquals(required,oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(required.getUser().getId(),CategoryType.STUDY,0).get().findFirst().get());
-		assertTrue(oneTimeGoalService.getOneTimeGoalsByUserIdAndCategory(required.getUser().getId(), CategoryType.ETC, 0).get().findAny().isEmpty());
+		assertEquals(required,goalGetService.getGoalById(required.getId()));
+		assertEquals(required,goalGetService.getGoalsByUserId(required.getUser().getId(),0).get().findFirst().get());
+		assertEquals(required,goalGetService.getGoalsByUserIdAndCategory(required.getUser().getId(),CategoryType.STUDY,0).get().findFirst().get());
+		assertTrue(goalGetService.getGoalsByUserIdAndCategory(required.getUser().getId(), CategoryType.ETC, 0).get().findAny().isEmpty());
 	}
 
 	@Test

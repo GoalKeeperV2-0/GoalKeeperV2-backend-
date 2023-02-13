@@ -17,9 +17,6 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class OneTimeGoal extends Goal {
-    @Column
-    @NotNull
-    private LocalDate endDate;
     @Builder
     private OneTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category, LocalDate endDate) {
         super(id, user, title, content, point, goalState, reward, category);

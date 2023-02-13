@@ -9,6 +9,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDate;
+
 import static kr.co.goalkeeper.api.model.entity.GoalState.*;
 
 @Entity
@@ -41,6 +43,12 @@ public abstract class Goal {
     @OneToOne
     @JoinColumn(name = "category")
     protected Category category;
+    @Column
+    @NotNull
+    protected LocalDate startDate;
+    @Column
+    @NotNull
+    protected LocalDate endDate;
 
     protected Goal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category) {
         this.id = id;

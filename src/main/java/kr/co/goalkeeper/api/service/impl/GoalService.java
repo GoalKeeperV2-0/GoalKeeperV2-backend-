@@ -3,8 +3,10 @@ package kr.co.goalkeeper.api.service.impl;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.repository.GoalRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
+import kr.co.goalkeeper.api.service.port.GoalGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
 import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
 import org.springframework.data.domain.Page;
@@ -18,15 +20,18 @@ import java.util.List;
 
 @Service
 @Transactional
-class GoalService implements OneTimeGoalService, ManyTimeGoalService {
+class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService {
     private final ManyTimeGoalRepository manyTimeGoalRepository;
     private final OneTimeGoalRepository oneTimeGoalRepository;
+
+    private final GoalRepository goalRepository;
     private static final int PAGE_SIZE = 9;
 
 
-    public GoalService(ManyTimeGoalRepository manyTimeGoalRepository, OneTimeGoalRepository oneTimeGoalRepository) {
+    public GoalService(ManyTimeGoalRepository manyTimeGoalRepository, OneTimeGoalRepository oneTimeGoalRepository, GoalRepository goalRepository) {
         this.manyTimeGoalRepository = manyTimeGoalRepository;
         this.oneTimeGoalRepository = oneTimeGoalRepository;
+        this.goalRepository = goalRepository;
     }
 
     @Override
@@ -66,24 +71,6 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService {
     }
 
     @Override
-    public ManyTimeGoal getManyTimeGoalById(long goalId) {
-        return manyTimeGoalRepository.findById(goalId).orElseThrow(() -> {
-            ErrorMessage errorMessage = new ErrorMessage(404,"없는 goalId 입니다.");
-            return new GoalkeeperException(errorMessage);
-        });
-    }
-
-    @Override
-    public Page<ManyTimeGoal> getManyTimeGoalsByUserId(long userId,int page) {
-        return manyTimeGoalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
-    }
-
-    @Override
-    public Page<ManyTimeGoal> getManyTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType,int page) {
-        return manyTimeGoalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
-    }
-
-    @Override
     public OneTimeGoal createOneTimeGoal(OneTimeGoal oneTimeGoal) {
         if(!validatePoint(oneTimeGoal)){
             ErrorMessage errorMessage = new ErrorMessage(409,"포인트가 부족 합니다.");
@@ -101,21 +88,22 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService {
         Period period = Period.between(now,endDate);
         return period.getDays()>0;
     }
+
     @Override
-    public OneTimeGoal getOneTimeGoalById(long goalId) {
-        return oneTimeGoalRepository.findById(goalId).orElseThrow(() -> {
+    public Goal getGoalById(long goalId) {
+        return goalRepository.findById(goalId).orElseThrow(() -> {
             ErrorMessage errorMessage = new ErrorMessage(404,"없는 goalId 입니다.");
             return new GoalkeeperException(errorMessage);
         });
     }
 
     @Override
-    public Page<OneTimeGoal> getOneTimeGoalsByUserId(long userId,int page) {
-        return oneTimeGoalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
+    public Page<Goal> getGoalsByUserId(long userId, int page) {
+        return goalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
     }
 
     @Override
-    public Page<OneTimeGoal> getOneTimeGoalsByUserIdAndCategory(long userId, CategoryType categoryType,int page) {
-        return oneTimeGoalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
+    public Page<Goal> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
+        return goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
     }
 }
