@@ -38,6 +38,10 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
             ErrorMessage errorMessage = new ErrorMessage(409,"포인트가 부족 합니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        if(!validateCertDatesBetweenStartAndEnd(manyTimeGoal)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"인증날은 [시작날,마지막날] 구간에 있어야 합니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         if(!validateCertDates(manyTimeGoal)){
             ErrorMessage errorMessage = new ErrorMessage(409,"인증 날은 마지막 날을 포함해 최소 4일 이상이어야 합니다.");
             throw new GoalkeeperException(errorMessage);
@@ -59,8 +63,13 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
     private boolean validateCertDates(ManyTimeGoal manyTimeGoal){
         List<ManyTimeGoalCertDate> certDates = manyTimeGoal.getCertDates();
         boolean validateCertDatesCount = certDates.size()>=4;
-        boolean validateCertDatesContainEndDates = certDates.stream().anyMatch(certDate-> certDate.getCertDate().equals(manyTimeGoal.getEndDate()));
+        boolean validateCertDatesContainEndDates = certDates.get(certDates.size()-1).getCertDate().isEqual(manyTimeGoal.getEndDate());
         return validateCertDatesCount && validateCertDatesContainEndDates;
+    }
+    private boolean validateCertDatesBetweenStartAndEnd(ManyTimeGoal manyTimeGoal){
+        List<ManyTimeGoalCertDate> certDates = manyTimeGoal.getCertDates();
+        boolean validateCertDatesBetweenStartAndEnd = certDates.get(0).getCertDate().isAfter(manyTimeGoal.getStartDate());
+        return validateCertDatesBetweenStartAndEnd && certDates.get(certDates.size()-1).getCertDate().isEqual(manyTimeGoal.getEndDate());
     }
 
     @Override
