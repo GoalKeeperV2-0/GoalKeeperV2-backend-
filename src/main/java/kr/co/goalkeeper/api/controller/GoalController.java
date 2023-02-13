@@ -70,8 +70,7 @@ public class GoalController {
     public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody ManyTimeCertificationRequest dto,@RequestHeader("Authorization") String accessToken){
         dto.fixGoalId(goalId);
         Goal goal = goalGetService.getGoalById(goalId);
-        ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
-        manyTimeCertification.setGoal(goal);
+        ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto,goal);
         long userId = credentialService.getUserId(accessToken);
         ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
@@ -92,9 +91,8 @@ public class GoalController {
     @PostMapping("/oneTime/{goalId:[0-9]+}/certification")
     public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestBody OnetimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
         dto.fixGoalId(goalId);
-        OneTimeCertification oneTimeCertification = new OneTimeCertification(dto);
         Goal goal = goalGetService.getGoalById(goalId);
-        oneTimeCertification.setGoal(goal);
+        OneTimeCertification oneTimeCertification = new OneTimeCertification(dto,goal);
         long userId = credentialService.getUserId(accessToken);
         OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification,userId));
         Response<OneTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);

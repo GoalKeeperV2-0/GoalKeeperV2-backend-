@@ -4,10 +4,10 @@ import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("OneTimeCertification")
@@ -15,11 +15,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneTimeCertification extends Certification {
 
-    public OneTimeCertification(OnetimeCertificationRequest dto){
+    public OneTimeCertification(OnetimeCertificationRequest dto,Goal goal){
         content = dto.getContent();
         picture = dto.getPicture();
         state = CertificationState.ONGOING;
-        date = dto.getDate();
+        date = LocalDate.now();
+        this.goal = goal;
     }
     @Override
     public void verificationSuccess() {
