@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.function.Function;
 
 @RestController
-@RequestMapping("/api/certification")
+@RequestMapping("/api/certifications")
 public class CertificationController {
     private final CertificationGetService certificationGetService;
     private final ManyTimeCertificationService manyTimeCertificationService;
@@ -37,21 +37,21 @@ public class CertificationController {
         this.manyTimeCertificationService = manyTimeCertificationService;
         this.oneTimeCertificationService = oneTimeCertificationService;
     }
-    @GetMapping("/{category:[A-Z]+}/certifications")
+    @GetMapping("/{category:[A-Z]+}")
     public ResponseEntity<Response<Page<CertificationResponse>>> getManyTimeCertificationByCategory(@PathVariable("category") CategoryType categoryType, @RequestParam int page){
         Page<CertificationResponse> result = certificationGetService.getCertificationsByCategory(categoryType,page).map(mapper);
         Response<Page<CertificationResponse>> response = new Response<>("카테고리별 목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("certifications")
+    @GetMapping("")
     public ResponseEntity<Response<Page<CertificationResponse>>> getManyTimeCertification(@RequestParam int page){
         Page<CertificationResponse> result = certificationGetService.getCertifications(page).map(mapper);
         Response<Page<CertificationResponse>> response = new Response<>("카테고리별 목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{goalId:[0-9]+}/certifications")
+    @GetMapping("/{goalId:[0-9]+}")
     public ResponseEntity<Response<Page<CertificationResponse>>> getManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId,@RequestParam int page){
         Page<CertificationResponse> result = certificationGetService.getCertificationsByGoalId(goalId,page).map(mapper);
         Response<Page<CertificationResponse>> response = new Response<>("목표 ID별 목표 인증 조회에 성공했습니다.",result);
