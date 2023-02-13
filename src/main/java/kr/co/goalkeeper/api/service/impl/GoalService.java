@@ -4,8 +4,6 @@ import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.GoalRepository;
-import kr.co.goalkeeper.api.repository.ManyTimeGoalRepository;
-import kr.co.goalkeeper.api.repository.OneTimeGoalRepository;
 import kr.co.goalkeeper.api.service.port.GoalGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
 import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
@@ -21,16 +19,11 @@ import java.util.List;
 @Service
 @Transactional
 class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService {
-    private final ManyTimeGoalRepository manyTimeGoalRepository;
-    private final OneTimeGoalRepository oneTimeGoalRepository;
 
     private final GoalRepository goalRepository;
     private static final int PAGE_SIZE = 9;
 
-
-    public GoalService(ManyTimeGoalRepository manyTimeGoalRepository, OneTimeGoalRepository oneTimeGoalRepository, GoalRepository goalRepository) {
-        this.manyTimeGoalRepository = manyTimeGoalRepository;
-        this.oneTimeGoalRepository = oneTimeGoalRepository;
+    public GoalService(GoalRepository goalRepository) {
         this.goalRepository = goalRepository;
     }
 
@@ -49,7 +42,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
             ErrorMessage errorMessage = new ErrorMessage(409,"인증 날은 마지막 날을 포함해 최소 4일 이상이어야 합니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        return manyTimeGoalRepository.save(manyTimeGoal);
+        return goalRepository.save(manyTimeGoal);
     }
     private boolean validateStartDateAndEndDate(ManyTimeGoal manyTimeGoal){
         LocalDate now = LocalDate.now();
@@ -80,7 +73,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
             ErrorMessage errorMessage = new ErrorMessage(400,"목표 종료날짜는 오늘보다 전날이나 오늘로 설정할 수 없습니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        return oneTimeGoalRepository.save(oneTimeGoal);
+        return goalRepository.save(oneTimeGoal);
     }
     private boolean validateEndDate(OneTimeGoal oneTimeGoal){
         LocalDate endDate = oneTimeGoal.getEndDate();
