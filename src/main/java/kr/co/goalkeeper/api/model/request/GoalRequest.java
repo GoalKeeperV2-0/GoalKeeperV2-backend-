@@ -17,6 +17,5 @@ public abstract class GoalRequest {
     @Max(10000)
     protected int point;
     protected Reward reward;
-    protected LocalDate startDate;
     protected LocalDate endDate;
 }

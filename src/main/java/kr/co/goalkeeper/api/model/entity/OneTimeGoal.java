@@ -31,7 +31,7 @@ public class OneTimeGoal extends Goal {
         this.title = request.getTitle();
         this.reward = request.getReward();
         this.user = user;
-        this.startDate = request.getStartDate();
+        this.startDate = LocalDate.now();
         this.endDate = request.getEndDate();
         minusUserPoint();
     }

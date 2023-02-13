@@ -37,7 +37,7 @@ public class ManyTimeGoal extends Goal {
         this.content = request.getContent();
         this.title = request.getTitle();
         this.reward = request.getReward();
-        this.startDate = request.getStartDate();
+        this.startDate = LocalDate.now();
         this.certDates = new ArrayList<>();
         for (LocalDate certDate: request.getCertDates()) {
             certDates.add(ManyTimeGoalCertDate.builder()
