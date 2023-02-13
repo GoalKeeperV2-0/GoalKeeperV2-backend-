@@ -5,5 +5,4 @@ import lombok.Getter;
 import java.time.LocalDate;
 @Getter
 public class OneTimeGoalRequest extends GoalRequest {
-    private LocalDate endDate;
 }

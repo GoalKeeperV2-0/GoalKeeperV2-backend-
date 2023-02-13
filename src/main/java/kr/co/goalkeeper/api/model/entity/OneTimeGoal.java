@@ -18,11 +18,11 @@ import java.time.LocalDate;
 @Getter
 public class OneTimeGoal extends Goal {
     @Builder
-    private OneTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category, LocalDate endDate) {
+    private OneTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category) {
         super(id, user, title, content, point, goalState, reward, category);
-        this.endDate = endDate;
     }
-    public OneTimeGoal(OneTimeGoalRequest request,User user){
+
+    public OneTimeGoal(OneTimeGoalRequest request, User user){
         this.endDate = request.getEndDate();
         this.goalState = GoalState.ONGOING;
         this.category = new Category(request.getCategoryType());
@@ -31,6 +31,8 @@ public class OneTimeGoal extends Goal {
         this.title = request.getTitle();
         this.reward = request.getReward();
         this.user = user;
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
         minusUserPoint();
     }
 }

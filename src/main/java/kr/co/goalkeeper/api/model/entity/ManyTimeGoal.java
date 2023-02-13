@@ -23,12 +23,11 @@ public class ManyTimeGoal extends Goal {
 
     @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)
     private List<ManyTimeGoalCertDate> certDates;
-
     @Builder
-    private ManyTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category, LocalDate startDate, LocalDate endDate) {
+    private ManyTimeGoal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category, int successCount, List<ManyTimeGoalCertDate> certDates) {
         super(id, user, title, content, point, goalState, reward, category);
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.successCount = successCount;
+        this.certDates = certDates;
     }
     public ManyTimeGoal(ManyTimeGoalRequest request,User user){
         this.endDate = request.getEndDate();

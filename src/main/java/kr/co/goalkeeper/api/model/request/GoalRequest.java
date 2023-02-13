@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDate;
+
 @Getter
 public abstract class GoalRequest {
     protected String title;
@@ -15,4 +17,6 @@ public abstract class GoalRequest {
     @Max(10000)
     protected int point;
     protected Reward reward;
+    protected LocalDate startDate;
+    protected LocalDate endDate;
 }
