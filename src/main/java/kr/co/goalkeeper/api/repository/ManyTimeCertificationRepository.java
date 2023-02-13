@@ -11,9 +11,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ManyTimeCertificationRepository extends JpaRepository<ManyTimeCertification,Long> {
-    List<ManyTimeCertification> findAllByManyTimeGoal_Id(long goalId);
-    ManyTimeCertification findByManyTimeGoal_IdAndDate(long goalId, LocalDate date);
-    Page<ManyTimeCertification> findByManyTimeGoal_Category_CategoryTypeAndManyTimeGoal_GoalState(CategoryType categoryType, GoalState goalState, Pageable pageable);
-    Page<ManyTimeCertification> findByManyTimeGoal_GoalState(GoalState goalState, Pageable pageable);
-    Page<ManyTimeCertification> findByManyTimeGoal_Id(long goalId,Pageable pageable);
+    List<ManyTimeCertification> findAllByGoal_Id(long goalId);
+    ManyTimeCertification findByGoal_IdAndDate(long goalId, LocalDate date);
+    Page<ManyTimeCertification> findByGoal_Category_CategoryTypeAndGoal_GoalState(CategoryType categoryType, GoalState goalState, Pageable pageable);
+    Page<ManyTimeCertification> findByGoal_GoalState(GoalState goalState, Pageable pageable);
+    Page<ManyTimeCertification> findByGoal_Id(long goalId, Pageable pageable);
 }

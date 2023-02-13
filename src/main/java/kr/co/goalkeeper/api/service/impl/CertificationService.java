@@ -41,27 +41,27 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         return manyTimeCertificationRepository.save(certification);
     }
     private boolean validatePermission(ManyTimeCertification certification, long userId){
-        User user = certification.getManyTimeGoal().getUser();
+        User user = certification.getGoal().getUser();
         return userId == user.getId();
     }
     private boolean validateCertDate(ManyTimeCertification certification){
-        List<ManyTimeGoalCertDate> certDateList = certification.getManyTimeGoal().getCertDates();
+        List<ManyTimeGoalCertDate> certDateList = ((ManyTimeGoal)certification.getGoal()).getCertDates();
         return certDateList.stream().anyMatch((cert)-> cert.getCertDate().equals(certification.getDate()));
     }
 
     @Override
     public Page<ManyTimeCertification> getCertificationsByGoalId(long goalId,int page) {
-        return manyTimeCertificationRepository.findByManyTimeGoal_Id(goalId, makePageRequest(page));
+        return manyTimeCertificationRepository.findByGoal_Id(goalId, makePageRequest(page));
     }
 
     @Override
     public Page<ManyTimeCertification> getManyTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return manyTimeCertificationRepository.findByManyTimeGoal_Category_CategoryTypeAndManyTimeGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+        return manyTimeCertificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
     public Page<ManyTimeCertification> getManyTimeCertifications(int page) {
-        return manyTimeCertificationRepository.findByManyTimeGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
+        return manyTimeCertificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
@@ -81,20 +81,20 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         return oneTimeCertificationRepository.save(certification);
     }
     private boolean validatePermission(OneTimeCertification certification, long userId){
-        User user = certification.getOneTimeGoal().getUser();
+        User user = certification.getGoal().getUser();
         return userId == user.getId();
     }
     private boolean validateCertificationState(OneTimeCertification certification){
-        GoalState state = certification.getOneTimeGoal().getGoalState();
+        GoalState state = certification.getGoal().getGoalState();
         return state==GoalState.ONGOING;
     }
     private boolean validateUniqueCertification(OneTimeCertification certification){
-        OneTimeCertification searchResult = oneTimeCertificationRepository.findByOneTimeGoal_Id(certification.getOneTimeGoal().getId()).orElse(null);
+        OneTimeCertification searchResult = oneTimeCertificationRepository.findByGoal_Id(certification.getGoal().getId()).orElse(null);
         return searchResult==null;
     }
     @Override
     public OneTimeCertification getCertificationByGoalId(long goalId) {
-        return oneTimeCertificationRepository.findByOneTimeGoal_Id(goalId).orElseThrow(() -> {
+        return oneTimeCertificationRepository.findByGoal_Id(goalId).orElseThrow(() -> {
             ErrorMessage errorMessage = new ErrorMessage(404,"없는 목표입니다.");
             return new GoalkeeperException(errorMessage);
         });
@@ -102,11 +102,11 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
 
     @Override
     public Page<OneTimeCertification> getOneTimeCertificationsByCategory(CategoryType categoryType,int page) {
-        return oneTimeCertificationRepository.findByOneTimeGoal_Category_CategoryTypeAndOneTimeGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+        return oneTimeCertificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
     }
 
     @Override
     public Page<OneTimeCertification> getOneTimeCertifications(int page) {
-        return oneTimeCertificationRepository.findByOneTimeGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
+        return oneTimeCertificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
     }
 }

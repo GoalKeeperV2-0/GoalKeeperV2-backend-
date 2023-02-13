@@ -4,17 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
+import kr.co.goalkeeper.api.model.response.CertificationResponse;
+import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
+import kr.co.goalkeeper.api.model.response.OneTimeCertificationResponse;
+import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +36,8 @@ class GoalkeeperApplicationTests {
 	ManyTimeCertificationService manyTimeCertificationService;
 	@Autowired
 	CredentialService credentialService;
+	@Autowired
+	CertificationRepository certificationRepository;
 
 	@Test
 	@Transactional
@@ -105,5 +112,20 @@ class GoalkeeperApplicationTests {
 	@Transactional
 	void ManyTimeCertificationServiceTest(){
 
+	}
+	@Test
+	@Transactional
+	void CertificationRepoTest() throws JsonProcessingException {
+		List<Certification> certificationList = certificationRepository.findAllByGoal_Category_CategoryType(CategoryType.STUDY);
+		List<CertificationResponse> responses = new ArrayList<>();
+		for (Certification certification: certificationList) {
+			if(certification instanceof ManyTimeCertification){
+				responses.add(new ManyTimeCertificationResponse((ManyTimeCertification) certification));
+			}else {
+				responses.add(new OneTimeCertificationResponse((OneTimeCertification) certification));
+			}
+		}
+		ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+		System.out.println(objectMapper.writeValueAsString(responses));
 	}
 }

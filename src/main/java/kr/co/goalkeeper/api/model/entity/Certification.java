@@ -1,6 +1,7 @@
 package kr.co.goalkeeper.api.model.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,12 @@ public abstract class Certification {
     protected LocalDate date;
     @Column
     protected int successCount;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "goal_id",nullable = false)
+    @NotNull
+    @Setter
+    protected Goal goal;
     @Column
     protected int failCount;
     public abstract void verificationSuccess();

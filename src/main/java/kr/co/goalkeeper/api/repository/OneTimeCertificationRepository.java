@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface OneTimeCertificationRepository extends JpaRepository<OneTimeCertification,Long> {
-    Optional<OneTimeCertification> findByOneTimeGoal_Id(long goalId);
-    Page<OneTimeCertification> findByOneTimeGoal_Category_CategoryTypeAndOneTimeGoal_GoalState(CategoryType categoryType,GoalState goalState, Pageable pageable);
-    Page<OneTimeCertification> findByOneTimeGoal_GoalState(GoalState goalState,Pageable pageable);
+    Optional<OneTimeCertification> findByGoal_Id(long goalId);
+    Page<OneTimeCertification> findByGoal_Category_CategoryTypeAndGoal_GoalState(CategoryType categoryType, GoalState goalState, Pageable pageable);
+    Page<OneTimeCertification> findByGoal_GoalState(GoalState goalState, Pageable pageable);
 }

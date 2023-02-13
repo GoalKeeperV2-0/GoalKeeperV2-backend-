@@ -4,21 +4,15 @@ import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("OneTimeCertification")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneTimeCertification extends Certification {
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="goal_id",nullable = false)
-    @Setter
-    @NotNull
-    private OneTimeGoal oneTimeGoal;
 
     public OneTimeCertification(OnetimeCertificationRequest dto){
         content = dto.getContent();
@@ -28,7 +22,7 @@ public class OneTimeCertification extends Certification {
     }
     @Override
     public void verificationSuccess() {
-        int requiredSuccessCount = oneTimeGoal.requiredSuccessCount();
+        int requiredSuccessCount = goal.requiredSuccessCount();
         successCount++;
         if(successCount>=requiredSuccessCount){
             success();
@@ -37,7 +31,7 @@ public class OneTimeCertification extends Certification {
 
     @Override
     public void verificationFail() {
-        int requiredSuccessCount = oneTimeGoal.requiredSuccessCount();
+        int requiredSuccessCount = goal.requiredSuccessCount();
         failCount++;
         if(failCount>=Math.round(0.7 * requiredSuccessCount)){
             hold();
@@ -46,12 +40,12 @@ public class OneTimeCertification extends Certification {
     @Override
     protected void success() {
         super.success();
-        oneTimeGoal.success();
+        goal.success();
     }
 
     @Override
     protected void hold() {
         super.hold();
-        oneTimeGoal.hold();
+        goal.hold();
     }
 }

@@ -79,7 +79,7 @@ public class ManyTimeGoalController {
         dto.fixGoalId(goalId);
         ManyTimeGoal manyTimeGoal = manyTimeGoalService.getManyTimeGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto);
-        manyTimeCertification.setManyTimeGoal(manyTimeGoal);
+        manyTimeCertification.setGoal(manyTimeGoal);
         long userId = credentialService.getUserId(accessToken);
         ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);

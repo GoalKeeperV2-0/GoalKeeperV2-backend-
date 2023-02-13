@@ -1,6 +1,7 @@
 package kr.co.goalkeeper.api.model.response;
 
 import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
+import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
 import lombok.Getter;
 
 
@@ -14,6 +15,6 @@ public class OneTimeCertificationResponse extends CertificationResponse{
         picture = entity.getPicture();
         state = entity.getState();
         date = entity.getDate();
-        this.oneTimeGoal = new OneTimeGoalResponse(entity.getOneTimeGoal());
+        this.oneTimeGoal = new OneTimeGoalResponse((OneTimeGoal) entity.getGoal());
     }
 }

@@ -75,7 +75,7 @@ public class OneTimeGoalController {
         dto.fixGoalId(goalId);
         OneTimeCertification oneTimeCertification = new OneTimeCertification(dto);
         OneTimeGoal oneTimeGoal = oneTimeGoalService.getOneTimeGoalById(goalId);
-        oneTimeCertification.setOneTimeGoal(oneTimeGoal);
+        oneTimeCertification.setGoal(oneTimeGoal);
         long userId = credentialService.getUserId(accessToken);
         OneTimeCertificationResponse result = new OneTimeCertificationResponse(oneTimeCertificationService.createCertification(oneTimeCertification,userId));
         Response<OneTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
