@@ -16,7 +16,7 @@ public interface CredentialService {
     GoalKeeperToken loginByEmailPassword(LoginRequest loginRequest);
     GoalKeeperToken loginByOAuth2(OAuthRequest oAuthRequest);
     GoalKeeperToken join(JoinRequest joinRequest);
-    GoalKeeperToken refreshToken(String refreshToken, OAuthType oAuthType);
+    GoalKeeperToken refreshToken(String refreshToken, OAuthType oAuthType); //Todo 테스트 코드 작성 필요
     ResponseCookie createRefreshTokenCookie(String refreshToken);
     void joinCompleteAfterOAuthJoin(long userId, AdditionalUserInfo additionalUserInfo);
     User getUserById(long userId);
