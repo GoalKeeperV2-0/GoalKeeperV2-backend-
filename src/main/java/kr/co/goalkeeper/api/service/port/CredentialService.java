@@ -1,6 +1,5 @@
 package kr.co.goalkeeper.api.service.port;
 
-import kr.co.goalkeeper.api.model.entity.Category;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
@@ -9,8 +8,6 @@ import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import org.springframework.http.ResponseCookie;
-
-import java.util.List;
 
 public interface CredentialService {
     GoalKeeperToken loginByEmailPassword(LoginRequest loginRequest);

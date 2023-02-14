@@ -1,7 +1,6 @@
 package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.model.entity.Category;
-import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.repository.CategoryRepository;
 import kr.co.goalkeeper.api.service.port.CategoryService;
 import org.springframework.stereotype.Service;

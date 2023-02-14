@@ -2,7 +2,6 @@ package kr.co.goalkeeper.api.repository;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.entity.Goal;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

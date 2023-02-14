@@ -7,7 +7,6 @@ import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.service.port.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
