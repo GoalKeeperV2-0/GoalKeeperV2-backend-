@@ -37,6 +37,10 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(400,"오늘은 인증날이 아닙니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        if(validateAlreadyCert(certification)){
+            ErrorMessage errorMessage = new ErrorMessage(400,"이미 인증이 등록된 인증날 입니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         return certificationRepository.save(certification);
     }
     private boolean validatePermission(ManyTimeCertification certification, long userId){
@@ -47,7 +51,10 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         List<ManyTimeGoalCertDate> certDateList = ((ManyTimeGoal)certification.getGoal()).getCertDates();
         return certDateList.stream().anyMatch((cert)-> cert.getCertDate().equals(certification.getDate()));
     }
-
+    private boolean validateAlreadyCert(ManyTimeCertification certification){
+        boolean b = certificationRepository.existsByDateAndGoal_Id(certification.getDate(), certification.getGoal().getId());
+        return b;
+    }
     @Override
     public Page<Certification> getCertificationsByGoalId(long goalId,int page) {
         return certificationRepository.findAllByGoal_Id(goalId, makePageRequest(page));
