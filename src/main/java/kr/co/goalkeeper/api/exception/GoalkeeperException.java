@@ -7,6 +7,7 @@ public class GoalkeeperException extends RuntimeException{
     @Getter
     private final ErrorMessage errorMessage;
     public GoalkeeperException(ErrorMessage errorMessage) {
+        super(errorMessage.getMessage());
         this.errorMessage = errorMessage;
     }
 
