@@ -43,7 +43,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         }
         return certificationRepository.save(certification);
     }
-    private boolean validatePermission(ManyTimeCertification certification, long userId){
+    private boolean validatePermission(Certification certification, long userId){
         User user = certification.getGoal().getUser();
         return userId == user.getId();
     }
@@ -85,10 +85,6 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             throw new GoalkeeperException(errorMessage);
         }
         return certificationRepository.save(certification);
-    }
-    private boolean validatePermission(OneTimeCertification certification, long userId){
-        User user = certification.getGoal().getUser();
-        return userId == user.getId();
     }
     private boolean validateCertificationState(OneTimeCertification certification){
         GoalState state = certification.getGoal().getGoalState();
