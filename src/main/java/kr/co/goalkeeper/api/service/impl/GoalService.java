@@ -68,7 +68,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
     }
     private boolean validateCertDatesBetweenStartAndEnd(ManyTimeGoal manyTimeGoal){
         List<ManyTimeGoalCertDate> certDates = manyTimeGoal.getCertDates();
-        boolean validateCertDatesBetweenStartAndEnd = certDates.get(0).getCertDate().isAfter(manyTimeGoal.getStartDate());
+        boolean validateCertDatesBetweenStartAndEnd = certDates.get(0).getCertDate().isAfter(manyTimeGoal.getStartDate().minusDays(1));
         return validateCertDatesBetweenStartAndEnd && certDates.get(certDates.size()-1).getCertDate().isEqual(manyTimeGoal.getEndDate());
     }
 
