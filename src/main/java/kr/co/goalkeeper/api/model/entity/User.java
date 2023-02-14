@@ -16,6 +16,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private Set<UserCategoryPoint> userCategoryPointSet;
 
-    public User(Map<String,String> credential, OAuthType oAuthType){
+    public User(Map<String,String> credential, OAuthType oAuthType, List<Category> categoryList){
         switch (oAuthType){
             case GOOGLE:
                 email = credential.get("email");
@@ -74,8 +75,8 @@ public class User {
                 password = PasswordManager.randomPassword(14);
                 password = PasswordManager.sha256(password);
                 userCategoryPointSet = new HashSet<>();
-                for (CategoryType categoryType:CategoryType.values()) {
-                    UserCategoryPoint usp = new UserCategoryPoint(this,categoryType);
+                for (Category category: categoryList) {
+                    UserCategoryPoint usp = new UserCategoryPoint(this,category);
                     userCategoryPointSet.add(usp);
                 }
                 break;
@@ -88,7 +89,7 @@ public class User {
                 throw new GoalkeeperException(errorMessage);
         }
     }
-    public User(JoinRequest joinRequest){
+    public User(JoinRequest joinRequest, List<Category> categoryList){
         email = joinRequest.getEmail();
         password = PasswordManager.sha256(joinRequest.getPassword());
         name = joinRequest.getName();
@@ -96,8 +97,8 @@ public class User {
         joinComplete = true;
         age = joinRequest.getAge();
         userCategoryPointSet = new HashSet<>();
-        for (CategoryType categoryType:CategoryType.values()) {
-            UserCategoryPoint usp = new UserCategoryPoint(this,categoryType);
+        for (Category category: categoryList) {
+            UserCategoryPoint usp = new UserCategoryPoint(this,category);
             userCategoryPointSet.add(usp);
         }
         point = INIT_POINT;

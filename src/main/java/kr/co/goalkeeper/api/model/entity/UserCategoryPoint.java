@@ -22,9 +22,11 @@ public class UserCategoryPoint {
     @MapsId("categoryType")
     private Category category;
 
-    public UserCategoryPoint(User user, CategoryType categoryType) {
+    public UserCategoryPoint(User user, Category category) {
+        id = new UserCategoryPointId();
+        id.setCategoryType(category.getCategoryType());
         this.user = user;
-        this.category = new Category(categoryType);
+        this.category = category;
         this.point = 10000000;
     }
 

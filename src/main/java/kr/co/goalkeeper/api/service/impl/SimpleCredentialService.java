@@ -1,6 +1,7 @@
 package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.entity.Category;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
@@ -10,12 +11,14 @@ import kr.co.goalkeeper.api.model.request.LoginRequest;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
+import kr.co.goalkeeper.api.repository.CategoryRepository;
 import kr.co.goalkeeper.api.repository.UserRepository;
 import kr.co.goalkeeper.api.service.port.CredentialService;
 import kr.co.goalkeeper.api.util.PasswordManager;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 import static kr.co.goalkeeper.api.model.entity.User.EMPTYUSER;
@@ -25,11 +28,13 @@ class SimpleCredentialService implements CredentialService {
     private final GoalKeeperTokenService goalKeeperTokenService;
     private final GoogleOAuth2Service googleOAuth2Service;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public SimpleCredentialService(GoalKeeperTokenService goalKeeperTokenService, GoogleOAuth2Service googleOAuth2Service, UserRepository userRepository) {
+    public SimpleCredentialService(GoalKeeperTokenService goalKeeperTokenService, GoogleOAuth2Service googleOAuth2Service, UserRepository userRepository, CategoryRepository categoryRepository) {
         this.goalKeeperTokenService = goalKeeperTokenService;
         this.googleOAuth2Service = googleOAuth2Service;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -96,7 +101,8 @@ class SimpleCredentialService implements CredentialService {
         });
     }
     private User joinUseGoogleCredential(Map<String, String> credential) {
-        User user = new User(credential, OAuthType.GOOGLE);
+        List<Category> categoryList = categoryRepository.findAll();
+        User user = new User(credential, OAuthType.GOOGLE,categoryList);
         addUser(user);
         return user;
     }
@@ -115,11 +121,12 @@ class SimpleCredentialService implements CredentialService {
 
     @Override
     public GoalKeeperToken join(JoinRequest joinRequest) {
+        List<Category> categoryList = categoryRepository.findAll();
         if (isAlreadyRegistered(joinRequest.getEmail())) {
             ErrorMessage errorMessage = new ErrorMessage(409, "이미 가입된 이메일 입니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        User user = new User(joinRequest);
+        User user = new User(joinRequest,categoryList);
         addUser(user);
         user = getUserByEmail(joinRequest.getEmail());
         return goalKeeperTokenService.createToken(user, OAuthType.NONE);
