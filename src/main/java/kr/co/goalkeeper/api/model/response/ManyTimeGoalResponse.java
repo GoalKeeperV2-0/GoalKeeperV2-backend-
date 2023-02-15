@@ -11,8 +11,6 @@ import java.util.List;
 @SuperBuilder
 @Getter
 public class ManyTimeGoalResponse extends GoalResponse {
-    private LocalDate startDate;
-    private LocalDate endDate;
     private List<LocalDate> certDates;
     public ManyTimeGoalResponse(ManyTimeGoal entity){
         id = entity.getId();

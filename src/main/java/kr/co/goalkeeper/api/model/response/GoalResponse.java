@@ -11,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDate;
+
 @SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,4 +33,6 @@ public abstract class GoalResponse {
     @Max(10000)
     protected int point;
     protected Reward reward;
+    protected LocalDate startDate;
+    protected LocalDate endDate;
 }
