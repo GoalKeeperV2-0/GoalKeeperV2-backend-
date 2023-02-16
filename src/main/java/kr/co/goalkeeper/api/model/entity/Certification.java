@@ -42,7 +42,5 @@ public abstract class Certification {
     protected void fail(){
         state = FAIL;
     }
-    protected void hold(){
-        state=HOLD;
-    }
+
 }

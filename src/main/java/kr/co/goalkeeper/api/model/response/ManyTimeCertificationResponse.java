@@ -14,6 +14,21 @@ public class ManyTimeCertificationResponse extends CertificationResponse {
         picture = entity.getPicture();
         state = entity.getState();
         date = entity.getDate();
-        this.manyTimeGoal = new ManyTimeGoalResponse((ManyTimeGoal) entity.getGoal());
+        this.manyTimeGoal = ManyTimeGoalResponse.makeInstanceWithOutCertifications((ManyTimeGoal) entity.getGoal());
+        failCount = entity.getFailCount();
+        successCount = entity.getSuccessCount();
+    }
+    public static ManyTimeCertificationResponse makeInstanceWithOutGoal(ManyTimeCertification entity){
+        return new ManyTimeCertificationResponse(entity,true);
+    }
+    private ManyTimeCertificationResponse(ManyTimeCertification entity,boolean ignore){
+        id = entity.getId();
+        content = entity.getContent();
+        picture = entity.getPicture();
+        state = entity.getState();
+        date = entity.getDate();
+        this.manyTimeGoal = null;
+        failCount = entity.getFailCount();
+        successCount = entity.getSuccessCount();
     }
 }

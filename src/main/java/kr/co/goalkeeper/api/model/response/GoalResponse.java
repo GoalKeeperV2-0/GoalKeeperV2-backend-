@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.util.List;
 
 @SuperBuilder
 @Getter
@@ -35,4 +36,5 @@ public abstract class GoalResponse {
     protected Reward reward;
     protected LocalDate startDate;
     protected LocalDate endDate;
+    protected List<CertificationResponse> certifications;
 }

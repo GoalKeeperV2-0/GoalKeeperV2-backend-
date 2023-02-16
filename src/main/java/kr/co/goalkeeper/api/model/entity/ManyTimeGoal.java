@@ -21,6 +21,9 @@ public class ManyTimeGoal extends Goal {
     @Column
     @NotNull
     private int successCount;
+    @Column
+    @NotNull
+    private int failCount;
 
     @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)
     private List<ManyTimeGoalCertDate> certDates;
@@ -70,5 +73,13 @@ public class ManyTimeGoal extends Goal {
         goalState = GoalState.SUCCESS;
         int rewardPoint = (int) Math.round(point *0.3);
         user.plusPoint(rewardPoint,category.getCategoryType());
+    }
+
+    public void failCertification(){
+        failCount++;
+        int maxSuccessCount = certDates.size();
+        if(failCount > Math.round(maxSuccessCount*0.7f)){
+            hold();
+        }
     }
 }

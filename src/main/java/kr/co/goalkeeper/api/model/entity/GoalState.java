@@ -1,5 +1,5 @@
 package kr.co.goalkeeper.api.model.entity;
 
 public enum GoalState {
-    ONGOING,SUCCESS,FAIL,HOLD
+    ONGOING,WAITING_CERT_COMPLETE,SUCCESS,FAIL,HOLD
 }

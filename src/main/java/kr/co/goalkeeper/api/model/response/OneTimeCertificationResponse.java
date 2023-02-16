@@ -15,6 +15,21 @@ public class OneTimeCertificationResponse extends CertificationResponse{
         picture = entity.getPicture();
         state = entity.getState();
         date = entity.getDate();
-        this.oneTimeGoal = new OneTimeGoalResponse((OneTimeGoal) entity.getGoal());
+        this.oneTimeGoal = OneTimeGoalResponse.makeInstanceWithOutCertifications((OneTimeGoal) entity.getGoal());
+        failCount = entity.getFailCount();
+        successCount = entity.getSuccessCount();
+    }
+    public static OneTimeCertificationResponse makeInstanceWithOutGoal(OneTimeCertification entity){
+        return new OneTimeCertificationResponse(entity,false);
+    }
+    private OneTimeCertificationResponse(OneTimeCertification entity,boolean ignore){
+        id = entity.getId();
+        content = entity.getContent();
+        picture = entity.getPicture();
+        state = entity.getState();
+        date = entity.getDate();
+        this.oneTimeGoal = null;
+        failCount = entity.getFailCount();
+        successCount = entity.getSuccessCount();
     }
 }

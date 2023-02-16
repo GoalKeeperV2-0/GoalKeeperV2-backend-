@@ -38,7 +38,8 @@ public class ManyTimeCertification extends Certification {
         int requiredSuccessCount = goal.requiredSuccessCount();
         failCount++;
         if(failCount>=Math.round(0.7 * requiredSuccessCount)){
-            hold();
+            fail();
+            ((ManyTimeGoal)goal).failCertification();
         }
     }
 }

@@ -35,8 +35,8 @@ public class OneTimeCertification extends Certification {
     public void verificationFail() {
         int requiredSuccessCount = goal.requiredSuccessCount();
         failCount++;
-        if(failCount>=Math.round(0.7 * requiredSuccessCount)){
-            hold();
+        if(failCount>=Math.round(0.7 * requiredSuccessCount)){ // 인증 상태가 실패로 바뀌어야 되는 경우
+            fail();
         }
     }
     @Override
@@ -46,8 +46,8 @@ public class OneTimeCertification extends Certification {
     }
 
     @Override
-    protected void hold() {
-        super.hold();
+    protected void fail() {
+        super.fail();
         goal.hold();
     }
 }

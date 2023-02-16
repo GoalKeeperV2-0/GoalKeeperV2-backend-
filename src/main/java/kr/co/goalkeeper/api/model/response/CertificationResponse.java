@@ -22,4 +22,6 @@ public abstract class CertificationResponse {
     protected String picture;
     protected CertificationState state;
     protected LocalDate date;
+    protected int successCount;
+    protected int failCount;
 }

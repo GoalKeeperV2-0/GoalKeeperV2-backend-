@@ -1,5 +1,7 @@
 package kr.co.goalkeeper.api.model.response;
 
+import kr.co.goalkeeper.api.model.entity.Certification;
+import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
 import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -24,5 +26,18 @@ public class ManyTimeGoalResponse extends GoalResponse {
         certDates = new ArrayList<>();
         entity.getCertDates().forEach((c)-> certDates.add(c.getCertDate()));
         Collections.sort(certDates);
+        certifications = new ArrayList<>();
+        try {
+            for (Certification manyTimeCertification: entity.getCertificationList()) {
+                certifications.add(ManyTimeCertificationResponse.makeInstanceWithOutGoal((ManyTimeCertification) manyTimeCertification));
+            }
+        }catch (NullPointerException e){
+            certifications = Collections.emptyList();
+        }
+    }
+    public static ManyTimeGoalResponse makeInstanceWithOutCertifications(ManyTimeGoal entity){
+        ManyTimeGoalResponse manyTimeGoalResponse = new ManyTimeGoalResponse(entity);
+        manyTimeGoalResponse.certifications = null;
+        return manyTimeGoalResponse;
     }
 }
