@@ -23,6 +23,7 @@ public class ManyTimeGoalResponse extends GoalResponse {
         reward = entity.getReward();
         startDate = entity.getStartDate();
         endDate = entity.getEndDate();
+        goalState = entity.getGoalState();
         certDates = new ArrayList<>();
         entity.getCertDates().forEach((c)-> certDates.add(c.getCertDate()));
         Collections.sort(certDates);

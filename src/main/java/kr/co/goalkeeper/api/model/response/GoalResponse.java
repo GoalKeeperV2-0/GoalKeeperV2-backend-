@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.model.response;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import kr.co.goalkeeper.api.model.entity.CategoryType;
+import kr.co.goalkeeper.api.model.entity.GoalState;
 import kr.co.goalkeeper.api.model.entity.Reward;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,4 +38,5 @@ public abstract class GoalResponse {
     protected LocalDate startDate;
     protected LocalDate endDate;
     protected List<CertificationResponse> certifications;
+    protected GoalState goalState;
 }

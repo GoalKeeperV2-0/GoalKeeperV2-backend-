@@ -22,6 +22,7 @@ public class OneTimeGoalResponse extends GoalResponse {
         this.point = entity.getPoint();
         this.reward = entity.getReward();
         this.title = entity.getTitle();
+        this.goalState = entity.getGoalState();
         certifications = new ArrayList<>();
         try {
             for (Certification certification : entity.getCertificationList()) {
