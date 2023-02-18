@@ -78,7 +78,7 @@ public class ManyTimeGoal extends Goal {
     public void failCertification(){
         failCount++;
         int maxSuccessCount = certDates.size();
-        if(failCount > Math.round(maxSuccessCount*0.7f)){
+        if(maxSuccessCount - failCount < Math.round(maxSuccessCount*0.7f)){
             hold();
         }
     }

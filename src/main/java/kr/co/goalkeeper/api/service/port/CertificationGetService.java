@@ -8,4 +8,5 @@ public interface CertificationGetService {
     Page<Certification> getCertificationsByGoalId(long goalId,int page);
     Page<Certification> getCertificationsByCategory(CategoryType categoryType, int page);
     Page<Certification> getCertifications(int page);
+    Certification getCertificationById(long certificationId);
 }

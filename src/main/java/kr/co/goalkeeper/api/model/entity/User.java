@@ -133,4 +133,7 @@ public class User {
             return new GoalkeeperException(errorMessage);
         });
     }
+    public void giveVerificationReward(){
+        point+=100;
+    }
 }

@@ -71,6 +71,14 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
 
     @Override
+    public Certification getCertificationById(long certificationId) {
+        return certificationRepository.findById(certificationId).orElseThrow(() -> {
+            ErrorMessage errorMessage = new ErrorMessage(404,"없는 인증입니다.");
+            return new GoalkeeperException(errorMessage);
+        });
+    }
+
+    @Override
     public OneTimeCertification createCertification(OneTimeCertification certification,long userId) {
         if(!validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
