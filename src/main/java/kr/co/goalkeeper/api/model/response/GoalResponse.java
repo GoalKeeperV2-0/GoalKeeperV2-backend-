@@ -39,4 +39,5 @@ public abstract class GoalResponse {
     protected LocalDate endDate;
     protected List<CertificationResponse> certifications;
     protected GoalState goalState;
+    protected boolean holdable;
 }

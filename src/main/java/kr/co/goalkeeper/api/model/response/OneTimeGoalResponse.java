@@ -23,6 +23,7 @@ public class OneTimeGoalResponse extends GoalResponse {
         this.reward = entity.getReward();
         this.title = entity.getTitle();
         this.goalState = entity.getGoalState();
+        this.holdable = entity.isHoldRequestAble();
         certifications = new ArrayList<>();
         try {
             for (Certification certification : entity.getCertificationList()) {

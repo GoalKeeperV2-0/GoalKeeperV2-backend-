@@ -24,6 +24,7 @@ public class ManyTimeGoalResponse extends GoalResponse {
         startDate = entity.getStartDate();
         endDate = entity.getEndDate();
         goalState = entity.getGoalState();
+        holdable = entity.isHoldRequestAble();
         certDates = new ArrayList<>();
         entity.getCertDates().forEach((c)-> certDates.add(c.getCertDate()));
         Collections.sort(certDates);
