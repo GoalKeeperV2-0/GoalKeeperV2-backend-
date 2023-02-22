@@ -48,6 +48,6 @@ public class OneTimeCertification extends Certification {
     @Override
     protected void fail() {
         super.fail();
-        goal.hold();
+        goal.failFromOngoing();
     }
 }

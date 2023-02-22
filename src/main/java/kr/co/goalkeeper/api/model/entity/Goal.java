@@ -51,6 +51,7 @@ public abstract class Goal {
     protected LocalDate endDate;
     @OneToMany(mappedBy = "goal",cascade = CascadeType.ALL)
     protected List<Certification> certificationList;
+    private boolean holdRequestAble = true;
 
     protected Goal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category) {
         this.id = id;
@@ -62,12 +63,12 @@ public abstract class Goal {
         this.reward = reward;
         this.category = category;
     }
-    protected void minusUserPoint(){
+    protected final void minusUserPoint(){
         if(user!=null){
             user.minusPoint(point);
         }
     }
-    public int requiredSuccessCount(){
+    public final int requiredSuccessCount(){
         if(point<=500){
             return 5;
         }else if(point<=1000){
@@ -78,16 +79,17 @@ public abstract class Goal {
             return 30;
         }
     }
-    public void success(){
+    public final void success(){
         goalState = SUCCESS;
         user.plusPoint(Math.round(point*reward.getRewardRate()),category.getCategoryType());
     }
-    public void hold(){
+    public final void hold(){
         goalState = HOLD;
+        holdRequestAble = false;
     }
-    public void fail(){
+    public final void failFromOngoing(){
         goalState = FAIL;
-        minusUserPoint();
+        holdRequestAble = true;
         minusUserCategoryPoint();
     }
     private void minusUserCategoryPoint(){

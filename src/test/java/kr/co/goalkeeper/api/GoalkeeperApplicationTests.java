@@ -494,6 +494,6 @@ class GoalkeeperApplicationTests {
 		assertThat(before).isEqualTo(CertificationState.ONGOING);
 		assertThat(after).isEqualTo(CertificationState.FAIL);
 		assertThat(beforeGoalState).isEqualTo(GoalState.ONGOING);
-		assertThat(afterGoalState).isEqualTo(GoalState.HOLD);
+		assertThat(afterGoalState).isEqualTo(GoalState.FAIL);
 	}
 }

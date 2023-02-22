@@ -79,7 +79,7 @@ public class ManyTimeGoal extends Goal {
         failCount++;
         int maxSuccessCount = certDates.size();
         if(maxSuccessCount - failCount < Math.round(maxSuccessCount*0.7f)){
-            hold();
+            failFromOngoing();
         }
     }
 }
