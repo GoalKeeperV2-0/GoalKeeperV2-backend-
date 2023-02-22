@@ -39,11 +39,11 @@ public class SimpleVerificationService implements VerificationService {
             ErrorMessage errorMessage = new ErrorMessage(401,"자신의 인증은 검증할 수 없습니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        if(validateVerifiableCertification(certification)){
+        if(!validateVerifiableCertification(certification)){
             ErrorMessage errorMessage = new ErrorMessage(409,"검증 기간이 지난 인증입니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        if(validateCertificationState(certification)){
+        if(!validateCertificationState(certification)){
             ErrorMessage errorMessage = new ErrorMessage(409,"이미 검증이 완료된 인증입니다.");
             throw new GoalkeeperException(errorMessage);
         }
