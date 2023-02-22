@@ -36,6 +36,8 @@ class GoalkeeperApplicationTests {
 	OneTimeGoalService oneTimeGoalService;
 	@Autowired
 	ManyTimeGoalService manyTimeGoalService;
+	@Autowired
+	VerificationService verificationService;
 
 	ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 	String user3JoinRequest = "{\n" +
@@ -415,5 +417,83 @@ class GoalkeeperApplicationTests {
 	@Transactional
 	void otherUserInfoTest(){
 
+	}
+	@Test
+	@Transactional
+	void VerificationTest() throws JsonProcessingException {
+		// 지속목표 등록
+		String manyTimeGoalString = "{\n" +
+				"  \"endDate\": \"End\",\n" +
+				"  \"certDates\": [\n" +
+				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
+				"  ],\n" +
+				"  \"title\": \"목표제목\",\n" +
+				"  \"categoryType\": \"STUDY\",\n" +
+				"  \"content\": \"목표본문\",\n" +
+				"  \"point\": 200,\n" +
+				"  \"reward\": \"HIGH_RETURN\"\n" +
+				"}";
+		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
+				.replace("one",LocalDate.now().toString())
+				.replace("two",LocalDate.now().plusDays(1).toString())
+				.replace("three",LocalDate.now().plusDays(2).toString())
+				.replace("four",LocalDate.now().plusDays(3).toString())
+				.replace("five",LocalDate.now().plusDays(4).toString())
+				.replace("six",LocalDate.now().plusDays(5).toString());
+		ManyTimeGoalRequest goalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+		User user1 = credentialService.getUserById(1);
+		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(goalRequest,user1);
+		manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+		//인증 등록
+		String certAddRequestString = "{\n" +
+				"  \"content\": \"test_2ddc8dc64f59\",\n" +
+				"  \"picture\": \"test_0bd2f129d410\",\n" +
+				"  \"goalId\": goalID\n" +
+				"}";
+		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
+		ManyTimeCertificationRequest certificationRequest = objectMapper.readValue(certAddRequestString,ManyTimeCertificationRequest.class);
+		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
+		certification = manyTimeCertificationService.createCertification(certification,1);
+		//감증 등록
+		User user = credentialService.getUserById(2);
+		Page<Certification> page = certificationGetService.getCertifications(0);
+		String req = "{\n" +
+				"  \"certificationId\": {certId},\n" +
+				"  \"userId\": {userId},\n" +
+				"  \"state\": true\n" +
+				"}";
+		req = req.replace("{certId}",certification.getId()+"").replace("{userId}",user.getId()+"");
+		VerificationRequest verificationRequest = objectMapper.readValue(req, VerificationRequest.class);
+		int beforePoint = user.getPoint();
+		int beforeCertSuccessCount = certification.getSuccessCount();
+		verificationService.createVerification(verificationRequest,user.getId());
+		int afterPoint = user.getPoint();
+		int afterCertSuccessCount = certification.getSuccessCount();
+		assertThat(beforePoint).isEqualTo(afterPoint-100);
+		assertThat(beforeCertSuccessCount).isEqualTo(afterCertSuccessCount-1);
+	}
+	@Test
+	@Transactional
+	void verificationTestWithChangeCertificationStatus() throws JsonProcessingException {
+		Certification certification = certificationGetService.getCertificationById(1);
+		GoalState beforeGoalState =  certification.getGoal().getGoalState();
+		CertificationState before = certification.getState();
+		String request = "{\n" +
+				"  \"certificationId\": 1,\n" +
+				"  \"userId\": 2,\n" +
+				"  \"state\": false\n" +
+				"}";
+		VerificationRequest verificationRequest = objectMapper.readValue(request,VerificationRequest.class);
+		int beforePoint = credentialService.getUserById(2).getPoint();
+		verificationService.createVerification(verificationRequest,2);
+		int afterPoint = credentialService.getUserById(2).getPoint();
+
+		GoalState afterGoalState =  certification.getGoal().getGoalState();
+		CertificationState after = certification.getState();
+		assertThat(beforePoint).isEqualTo(afterPoint-100);
+		assertThat(before).isEqualTo(CertificationState.ONGOING);
+		assertThat(after).isEqualTo(CertificationState.FAIL);
+		assertThat(beforeGoalState).isEqualTo(GoalState.ONGOING);
+		assertThat(afterGoalState).isEqualTo(GoalState.HOLD);
 	}
 }
