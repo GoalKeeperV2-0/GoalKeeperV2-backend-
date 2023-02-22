@@ -14,16 +14,16 @@ import java.util.Collections;
 @Getter
 public class OneTimeGoalResponse extends GoalResponse {
     public OneTimeGoalResponse(OneTimeGoal entity){
-        this.id =entity.getId();
-        this.startDate = entity.getStartDate();
-        this.endDate = entity.getEndDate();
-        this.categoryType = entity.getCategory().getCategoryType();
-        this.content = entity.getContent();
-        this.point = entity.getPoint();
-        this.reward = entity.getReward();
-        this.title = entity.getTitle();
-        this.goalState = entity.getGoalState();
-        this.holdable = entity.isHoldRequestAble();
+        id =entity.getId();
+        startDate = entity.getStartDate();
+        endDate = entity.getEndDate();
+        categoryType = entity.getCategory().getCategoryType();
+        content = entity.getContent();
+        point = entity.getPoint();
+        reward = entity.getReward();
+        title = entity.getTitle();
+        goalState = entity.getGoalState();
+        holdable = entity.isHoldRequestAble();
         certifications = new ArrayList<>();
         try {
             for (Certification certification : entity.getCertificationList()) {
