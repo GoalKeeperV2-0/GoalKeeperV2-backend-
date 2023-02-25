@@ -12,7 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -341,7 +345,7 @@ class GoalkeeperApplicationTests {
 				"  \"goalId\": goalID\n" +
 				"}";
 		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = objectMapper.readValue(certAddRequestString,ManyTimeCertificationRequest.class);
+		ManyTimeCertificationRequest certificationRequest = new ManyTimeCertificationRequest("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		manyTimeCertificationService.createCertification(certification,1);
 
@@ -381,7 +385,7 @@ class GoalkeeperApplicationTests {
 				"  \"goalId\": goalID\n" +
 				"}";
 		onetimecertString = onetimecertString.replace("goalID",oneTimeGoal.getId()+"");
-		OnetimeCertificationRequest onetimeCertificationRequest = objectMapper.readValue(onetimecertString,OnetimeCertificationRequest.class);
+		OnetimeCertificationRequest onetimeCertificationRequest = new OnetimeCertificationRequest("ttt",new MockMultiPartFile(),oneTimeGoal.getId());
 		OneTimeCertification oneTimeCertification = new OneTimeCertification(onetimeCertificationRequest,oneTimeGoal);
 		oneTimeCertificationService.createCertification(oneTimeCertification,user1.getId());
 		// 예외 발생할 요청 - 이미 인증이 등록된 경우
@@ -391,6 +395,47 @@ class GoalkeeperApplicationTests {
 			assertThat(e).hasMessage("이미 인증이 등록된 목표입니다.");
 		}
 		// Todo 예외 발생한 경우 - 진행중이 아닌 목표에 인증을 등록할 경우
+	}
+	class MockMultiPartFile implements MultipartFile{
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public String getOriginalFilename() {
+			return "test.jpg";
+		}
+
+		@Override
+		public String getContentType() {
+			return null;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+
+		@Override
+		public long getSize() {
+			return 0;
+		}
+
+		@Override
+		public byte[] getBytes() throws IOException {
+			return new byte[0];
+		}
+
+		@Override
+		public InputStream getInputStream() throws IOException {
+			return null;
+		}
+
+		@Override
+		public void transferTo(File dest) throws IOException, IllegalStateException {
+		}
 	}
 	/**
 	 * 자기 정보 조회 테스트
@@ -451,7 +496,7 @@ class GoalkeeperApplicationTests {
 				"  \"goalId\": goalID\n" +
 				"}";
 		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = objectMapper.readValue(certAddRequestString,ManyTimeCertificationRequest.class);
+		ManyTimeCertificationRequest certificationRequest = new ManyTimeCertificationRequest("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		certification = manyTimeCertificationService.createCertification(certification,1);
 		//감증 등록

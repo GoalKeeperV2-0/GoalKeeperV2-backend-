@@ -11,7 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -41,6 +44,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(400,"이미 인증이 등록된 인증날 입니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        saveCertificationPicture(certification);
         return certificationRepository.save(certification);
     }
     private boolean validatePermission(Certification certification, long userId){
@@ -54,6 +58,17 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     private boolean validateAlreadyCert(ManyTimeCertification certification){
         boolean b = certificationRepository.existsByDateAndGoal_Id(certification.getDate(), certification.getGoal().getId());
         return b;
+    }
+    private void saveCertificationPicture(Certification certification){
+        try {
+            String filePath = certification.getPicture();
+            MultipartFile pictureFile = certification.getPictureFile();
+            File file = new File(filePath);
+            pictureFile.transferTo(file);
+        }catch (IOException e){
+            ErrorMessage errorMessage = new ErrorMessage(500,"인증 이미지 저장에 실패했습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
     }
     @Override
     public Page<Certification> getCertificationsByGoalId(long goalId,int page) {
@@ -92,6 +107,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(409,"현재 진행중인 목표만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        saveCertificationPicture(certification);
         return certificationRepository.save(certification);
     }
     private boolean validateCertificationState(OneTimeCertification certification){

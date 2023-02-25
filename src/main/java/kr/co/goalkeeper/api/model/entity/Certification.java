@@ -1,6 +1,9 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +16,10 @@ import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
 @DiscriminatorColumn
 @Getter
 public abstract class Certification {
+    @Transient
+    @Value("${file-save-location}")
+    @Getter(value = AccessLevel.PRIVATE)
+    protected String pictureRootPath;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
@@ -20,6 +27,8 @@ public abstract class Certification {
     protected String content;
     @NotNull
     protected String picture;
+    @Transient
+    protected MultipartFile pictureFile;
     @Enumerated(EnumType.STRING)
     @NotNull
     protected CertificationState state = ONGOING;
