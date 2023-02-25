@@ -79,7 +79,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
             throw new GoalkeeperException(errorMessage);
         }
         if(!validateEndDate(oneTimeGoal)){
-            ErrorMessage errorMessage = new ErrorMessage(400,"목표 종료날짜는 오늘보다 전날이나 오늘로 설정할 수 없습니다.");
+            ErrorMessage errorMessage = new ErrorMessage(400,"목표 종료날짜는 오늘보다 전날로 설정할 수 없습니다.");
             throw new GoalkeeperException(errorMessage);
         }
         return goalRepository.save(oneTimeGoal);
@@ -88,7 +88,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         LocalDate endDate = oneTimeGoal.getEndDate();
         LocalDate now = LocalDate.now();
         Period period = Period.between(now,endDate);
-        return period.getYears()>=1||period.getMonths()>=1||period.getDays()>0;
+        return period.getYears()>=1||period.getMonths()>=1||period.getDays()>=0;
     }
 
     @Override
