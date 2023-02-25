@@ -5,3 +5,6 @@ insert into goal (dtype, id, content, goal_state, point, reward, title, category
 insert into one_time_goal ( id) values  (1);
 insert into many_time_goal (success_count,fail_count, id) values  (0, 0, 2);
 insert into many_time_goal_cert_date (id, cert_date, goal_id) values  (1, '2023-03-09', 2),(2, '2023-03-11', 2),(3, '2023-03-12', 2),(4, '2023-03-13', 2);
+insert into certification (dtype, id, content, date, fail_count, picture, state, success_count, goal_id)values  ('OneTimeCertification', 1, 'ddd', '2023-03-11', 3, 'dddddd', 'ONGOING', 0, 1),('ManyTimeCertification', 2, 'ddd', '2023-03-09', 0, 'dddddd', 'ONGOING', 0, 2);
+insert into one_time_certification (id) values  (1);
+insert into many_time_certification (id) values  (2);
