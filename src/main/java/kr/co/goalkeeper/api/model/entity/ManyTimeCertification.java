@@ -24,21 +24,8 @@ public class ManyTimeCertification extends Certification {
         state = CertificationState.ONGOING;
         date = LocalDate.now();
         this.goal = goal;
-        picture = makePicturePath(dto.getPicture(),goal.getId());
         pictureFile = dto.getPicture();
     }
-    private String makePicturePath(MultipartFile multipartFile,long goalId){
-        return pictureRootPath + File.pathSeparator+goalId+File.pathSeparator+date.toString() + getFileExtension(multipartFile);
-    }
-    private String getFileExtension(MultipartFile multipartFile){
-        String fileName = multipartFile.getOriginalFilename();
-        if(!fileName.contains(".")){
-            ErrorMessage errorMessage = new ErrorMessage(400,"이미지 파일이 아닙니다.");
-            throw new GoalkeeperException(errorMessage);
-        }
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
-    }
-
     @Override
     public void verificationSuccess() {
         int requiredSuccessCount = goal.requiredSuccessCount();

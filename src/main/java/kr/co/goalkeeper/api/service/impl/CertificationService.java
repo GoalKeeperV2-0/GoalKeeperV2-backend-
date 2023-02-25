@@ -7,6 +7,7 @@ import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.service.port.CertificationGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
 import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Transactional
 class CertificationService implements OneTimeCertificationService, ManyTimeCertificationService , CertificationGetService {
-
+    @Value("${file-save-location}")
+    private String pictureRootPath;
     private final CertificationRepository certificationRepository;
     private PageRequest makePageRequest(int page){
         int PAGE_SIZE = 9;
@@ -61,6 +64,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
     private void saveCertificationPicture(Certification certification){
         try {
+            certification.setPicture(makePicturePath(certification));
             String filePath = certification.getPicture();
             MultipartFile pictureFile = certification.getPictureFile();
             File file = new File(filePath);
@@ -69,6 +73,24 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(500,"인증 이미지 저장에 실패했습니다.");
             throw new GoalkeeperException(errorMessage);
         }
+    }
+    private String makePicturePath(Certification certification){
+        MultipartFile multipartFile = certification.getPictureFile();
+        long goalId = certification.getGoal().getId();
+        String directoryPath = pictureRootPath + File.separator+goalId;
+        File directory = new File(directoryPath);
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+        return pictureRootPath + File.separator+goalId+File.separator+ LocalDate.now() +"."+ getFileExtension(multipartFile);
+    }
+    private String getFileExtension(MultipartFile multipartFile){
+        String fileName = multipartFile.getOriginalFilename();
+        if(!fileName.contains(".")){
+            ErrorMessage errorMessage = new ErrorMessage(400,"이미지 파일이 아닙니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
     @Override
     public Page<Certification> getCertificationsByGoalId(long goalId,int page) {

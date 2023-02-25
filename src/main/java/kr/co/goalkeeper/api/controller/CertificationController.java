@@ -10,6 +10,7 @@ import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.port.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +55,8 @@ public class CertificationController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/oneTime/{goalId:[0-9]+}")
-    public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestPart OnetimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
+    @PostMapping(value = "/oneTime/{goalId:[0-9]+}")
+    public ResponseEntity<Response<?>> createOneTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @ModelAttribute OnetimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
         dto.fixGoalId(goalId);
         Goal goal = goalGetService.getGoalById(goalId);
         OneTimeCertification oneTimeCertification = new OneTimeCertification(dto,goal);

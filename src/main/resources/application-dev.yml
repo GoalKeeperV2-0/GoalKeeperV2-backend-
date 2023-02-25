@@ -1,3 +1,3 @@
 server:
   port: 8080
-file-save-location: ~/Document/goalKeeperV2/picture
+file-save-location: /Users/imsubin/Documents/goalKeeperV2/picture
