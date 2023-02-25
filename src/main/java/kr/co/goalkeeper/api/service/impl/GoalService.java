@@ -54,7 +54,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         LocalDate end = manyTimeGoal.getEndDate();
         if(start.isBefore(now)|| end.isBefore(now) || end.isBefore(start)) return false;
         Period period = Period.between(start,end);
-        return period.getDays()>=4;
+        return period.getYears()>=1||period.getMonths()>=1||period.getDays()>=4;
     }
     private boolean validatePoint(Goal goal){
         User user = goal.getUser();
@@ -88,7 +88,7 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         LocalDate endDate = oneTimeGoal.getEndDate();
         LocalDate now = LocalDate.now();
         Period period = Period.between(now,endDate);
-        return period.getDays()>0;
+        return period.getYears()>=1||period.getMonths()>=1||period.getDays()>0;
     }
 
     @Override
