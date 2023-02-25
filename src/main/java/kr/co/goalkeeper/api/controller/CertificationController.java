@@ -10,7 +10,6 @@ import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.service.port.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +66,7 @@ public class CertificationController {
     }
 
     @PostMapping("/manyTime/{goalId:[0-9]+}")
-    public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @RequestPart ManyTimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
+    public ResponseEntity<Response<?>> createManyTimeCertificationByGoalId(@PathVariable("goalId")long goalId, @ModelAttribute ManyTimeCertificationRequest dto, @RequestHeader("Authorization") String accessToken){
         dto.fixGoalId(goalId);
         Goal goal = goalGetService.getGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto,goal);
