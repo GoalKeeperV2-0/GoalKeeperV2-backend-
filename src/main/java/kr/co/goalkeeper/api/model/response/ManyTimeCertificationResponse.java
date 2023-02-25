@@ -11,7 +11,7 @@ public class ManyTimeCertificationResponse extends CertificationResponse {
     public ManyTimeCertificationResponse(ManyTimeCertification entity){
         id = entity.getId();
         content = entity.getContent();
-        picture = entity.getPicture();
+        picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
         this.manyTimeGoal = ManyTimeGoalResponse.makeInstanceWithOutCertifications((ManyTimeGoal) entity.getGoal());
@@ -24,7 +24,7 @@ public class ManyTimeCertificationResponse extends CertificationResponse {
     private ManyTimeCertificationResponse(ManyTimeCertification entity,boolean ignore){
         id = entity.getId();
         content = entity.getContent();
-        picture = entity.getPicture();
+        picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
         this.manyTimeGoal = null;

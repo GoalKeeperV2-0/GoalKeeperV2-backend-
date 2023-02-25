@@ -12,7 +12,7 @@ public class OneTimeCertificationResponse extends CertificationResponse{
     public OneTimeCertificationResponse(OneTimeCertification entity){
         id = entity.getId();
         content = entity.getContent();
-        picture = entity.getPicture();
+        picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
         this.oneTimeGoal = OneTimeGoalResponse.makeInstanceWithOutCertifications((OneTimeGoal) entity.getGoal());
@@ -25,7 +25,7 @@ public class OneTimeCertificationResponse extends CertificationResponse{
     private OneTimeCertificationResponse(OneTimeCertification entity,boolean ignore){
         id = entity.getId();
         content = entity.getContent();
-        picture = entity.getPicture();
+        picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
         this.oneTimeGoal = null;

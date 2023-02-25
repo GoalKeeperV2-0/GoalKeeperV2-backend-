@@ -35,7 +35,11 @@ public class ResponseLoggerFilter extends OncePerRequestFilter {
             log.info("{}{} {}: {}",type,uuid,headerName,header);
         }
         log.info("{}{} {}",type,uuid,"headers end");
-        log.info("{}{}, Response Body : {}",type, uuid, objectMapper.readTree(wrappingResponse.getContentAsByteArray()));
+        try {
+            log.info("{}{}, Response Body : {}",type, uuid, objectMapper.readTree(wrappingResponse.getContentAsByteArray()));
+        }catch (Exception e){
+            log.info("{}{}, Response Body : {}",type, uuid,"이미지");
+        }
         wrappingResponse.copyBodyToResponse();
     }
 }
