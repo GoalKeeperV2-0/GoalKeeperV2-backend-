@@ -49,6 +49,7 @@ jobs:
         run: |
               echo -e "${{ secrets.APPLICATION_OAUTH}}" >> ./src/main/resources/application-oauth.yml
               echo -e "${{ secrets.APPLICATION_PROD}}" >> ./src/main/resources/application-prod.yml
+              sed -i '0,/dev/s//prod/' ./src/main/resources/applications.yml
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
       - name: Copy keystore
