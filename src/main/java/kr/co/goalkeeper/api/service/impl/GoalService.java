@@ -5,6 +5,7 @@ import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.GoalRepository;
 import kr.co.goalkeeper.api.service.port.GoalGetService;
+import kr.co.goalkeeper.api.service.port.HoldGoalService;
 import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
 import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Service
 @Transactional
-class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService {
+class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService, HoldGoalService {
 
     private final GoalRepository goalRepository;
     private static final int PAGE_SIZE = 9;
@@ -107,5 +108,23 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
     @Override
     public Page<Goal> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
         return goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
+    }
+
+    @Override
+    public void holdGoal(User user,long goalId) {
+        Goal goal = goalRepository.findById(goalId).orElseThrow(() -> {
+            ErrorMessage errorMessage = new ErrorMessage(404,"없는 목표입니다.");
+            return new GoalkeeperException(errorMessage);
+        });
+        if(!user.equals(goal.getUser())){
+            ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표만 검토요청할 수 있습니다.");
+            throw  new GoalkeeperException(errorMessage);
+        }
+        if(!goal.isHoldRequestAble()){
+            ErrorMessage errorMessage = new ErrorMessage(400,"검토 요청할 수 없는 목표입니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        goal.hold();
+        goalRepository.save(goal);
     }
 }

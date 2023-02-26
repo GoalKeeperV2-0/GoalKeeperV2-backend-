@@ -41,6 +41,8 @@ class GoalkeeperApplicationTests {
 	@Autowired
 	ManyTimeGoalService manyTimeGoalService;
 	@Autowired
+	HoldGoalService holdGoalService;
+	@Autowired
 	VerificationService verificationService;
 
 	ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -540,5 +542,22 @@ class GoalkeeperApplicationTests {
 		assertThat(after).isEqualTo(CertificationState.FAIL);
 		assertThat(beforeGoalState).isEqualTo(GoalState.ONGOING);
 		assertThat(afterGoalState).isEqualTo(GoalState.FAIL);
+	}
+	@Test
+	@Transactional
+	void goalHoldTest() throws JsonProcessingException {
+		Goal goal = goalGetService.getGoalById(1);
+		User user1 = credentialService.getUserById(1);
+		User user2 = credentialService.getUserById(2);
+		String req = "{\n" +
+				"  \"certificationId\": {certId},\n" +
+				"  \"userId\": {userId},\n" +
+				"  \"state\": false\n" +
+				"}";
+		req = req.replace("{certId}","1").replace("{userId}","2");
+		VerificationRequest verificationRequest = objectMapper.readValue(req, VerificationRequest.class);
+		Verification verification = verificationService.createVerification(verificationRequest,user2.getId());
+		holdGoalService.holdGoal(user1,goal.getId());
+		assertThat(goal.getGoalState()).isEqualTo(GoalState.HOLD);
 	}
 }

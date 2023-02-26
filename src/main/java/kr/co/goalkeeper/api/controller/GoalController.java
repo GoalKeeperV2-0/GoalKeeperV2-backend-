@@ -20,6 +20,7 @@ public class GoalController {
     private final OneTimeGoalService oneTimeGoalService;
     private final GoalGetService goalGetService;
     private final CredentialService credentialService;
+    private final HoldGoalService holdGoalService;
 
     private final Function<? super Goal, ? extends GoalResponse> mapper = goal -> {
         if(goal instanceof ManyTimeGoal){
@@ -64,6 +65,14 @@ public class GoalController {
         oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
         OneTimeGoalResponse result = new OneTimeGoalResponse(oneTimeGoal);
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @PatchMapping("/hold/{goalId:[0-9]+}")
+    public ResponseEntity<Response<String>> holdGoal(@PathVariable long goalId, @RequestHeader("Authorization") String accessToken){
+        long userId = credentialService.getUserId(accessToken);
+        User user = credentialService.getUserById(userId);
+        holdGoalService.holdGoal(user,goalId);
+        Response<String> response = new Response<>("검토 요청에 성공했습니다.","");
         return ResponseEntity.ok(response);
     }
 }
