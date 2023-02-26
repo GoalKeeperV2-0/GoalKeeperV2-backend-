@@ -3,9 +3,7 @@ package kr.co.goalkeeper.api.model.entity;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
-import kr.co.goalkeeper.api.model.request.JoinRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
-import kr.co.goalkeeper.api.util.PasswordManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +38,6 @@ public class User {
     @NotNull
     @Email
     private String email;
-    @NotNull
-    private String password;
 
     @Column
     private String picture;
@@ -72,8 +68,6 @@ public class User {
                 picture = credential.get("picture");
                 point = INIT_POINT;
                 joinComplete = false;
-                password = PasswordManager.randomPassword(14);
-                password = PasswordManager.sha256(password);
                 userCategoryPointSet = new HashSet<>();
                 for (Category category: categoryList) {
                     UserCategoryPoint usp = new UserCategoryPoint(this,category);
@@ -88,21 +82,6 @@ public class User {
                 errorMessage = new ErrorMessage(400, "지원하지 않는 타입입니다.");
                 throw new GoalkeeperException(errorMessage);
         }
-    }
-    public User(JoinRequest joinRequest, List<Category> categoryList){
-        email = joinRequest.getEmail();
-        password = PasswordManager.sha256(joinRequest.getPassword());
-        name = joinRequest.getName();
-        sex = joinRequest.getSex();
-        joinComplete = true;
-        age = joinRequest.getAge();
-        userCategoryPointSet = new HashSet<>();
-        for (Category category: categoryList) {
-            UserCategoryPoint usp = new UserCategoryPoint(this,category);
-            userCategoryPointSet.add(usp);
-        }
-        point = INIT_POINT;
-        picture = joinRequest.getPicture();
     }
     public User(long id){
         this.id = id;

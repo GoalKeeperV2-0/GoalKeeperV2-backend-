@@ -4,10 +4,8 @@ import io.jsonwebtoken.*;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
-import kr.co.goalkeeper.api.model.response.BasicGoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
-import kr.co.goalkeeper.api.model.response.OAuthGoalKeeperToken;
 import kr.co.goalkeeper.api.repository.RedisRefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -60,11 +58,7 @@ class GoalKeeperTokenService {
                 .signWith(SignatureAlgorithm.HS256,Base64.getEncoder().encodeToString(secretKey.getBytes()))
                 .compact();
         refreshTokenRepository.addRefreshToken(refreshTokenString,userId);
-        if(oAuthType==OAuthType.NONE){
-            return new BasicGoalKeeperToken(accessTokenString,refreshTokenString);
-        }else{
-            return new OAuthGoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete(), user.getName());
-        }
+        return new GoalKeeperToken(accessTokenString,refreshTokenString,user.isJoinComplete(), user.getName());
     }
     GoalKeeperToken reCreateToken(String refreshToken,OAuthType oAuthType){
         try {

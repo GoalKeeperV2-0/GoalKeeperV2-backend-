@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
-import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,22 +63,6 @@ class GoalkeeperApplicationTests {
 			"  \"sex\": \"MAN\"\n" +
 			"}";
 
-	/**
-	 * 회원가입 로그인 테스트
-	 * @throws JsonProcessingException
-	 */
-	@Test
-	@Transactional
-	void join_loginTest() throws JsonProcessingException {
-		JoinRequest user3joinRequest = objectMapper.readValue(user3JoinRequest,JoinRequest.class);
-		GoalKeeperToken goalKeeperToken3 = credentialService.join(user3joinRequest);
-		long user3Id = credentialService.getUserId(goalKeeperToken3.getAccessToken());
-		User user3 = credentialService.getUserById(user3Id);
-		LoginRequest user3LoginRequest = objectMapper.readValue(user3LoginString, LoginRequest.class);
-		GoalKeeperToken goalKeeperToken3_1 = credentialService.loginByEmailPassword(user3LoginRequest);
-		User user3_login = credentialService.getUserById(credentialService.getUserId(goalKeeperToken3_1.getAccessToken()));
-		assertThat(user3_login).isEqualTo(user3);
-	}
 
 	/**
 	 * sns 회원가입 후 추가정보 입력 테스트
