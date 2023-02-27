@@ -13,7 +13,10 @@ public class UserResponse {
     private final Integer age;
     public UserResponse(User entity){
         email = entity.getEmail();
-        picture = entity.getPicture();
+        if(entity.getPicture()!=null&&!entity.getPicture().isBlank())
+            picture = "/api/image/user/"+entity.getId();
+        else
+            picture = null;
         name = entity.getName();
         sex = entity.getSex();
         age = entity.getAge();
