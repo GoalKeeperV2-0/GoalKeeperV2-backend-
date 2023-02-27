@@ -7,6 +7,7 @@ import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
+import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.repository.CategoryRepository;
@@ -133,5 +134,15 @@ class SimpleCredentialService implements CredentialService {
     @Override
     public long getUserId(String accessToken) {
         return goalKeeperTokenService.getUserId(accessToken);
+    }
+
+    @Override
+    public User updateUser(long userId,UpdateUserRequest updateUserRequest) {
+        User user = userRepository.findById(userId).orElseThrow(()->{
+            ErrorMessage errorMessage = new ErrorMessage(404,"없는 유저입니다.");
+            return new GoalkeeperException(errorMessage);
+        });
+        user.updateUser(updateUserRequest);
+        return user;
     }
 }

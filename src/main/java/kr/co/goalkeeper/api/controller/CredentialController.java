@@ -1,10 +1,13 @@
 package kr.co.goalkeeper.api.controller;
 
+import kr.co.goalkeeper.api.model.entity.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
+import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
+import kr.co.goalkeeper.api.model.response.UserResponse;
 import kr.co.goalkeeper.api.service.port.CredentialService;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +60,22 @@ public class CredentialController {
         response.addHeader("Set-Cookie",cookie.toString());
         Response<GoalKeeperToken> result = new Response<>("토큰 재발급 성공",goalKeeperToken);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Response<UserResponse>> getMyInfo(@RequestHeader("Authorization") String accessToken){
+        long userId = credentialService.getUserId(accessToken);
+        User user = credentialService.getUserById(userId);
+        UserResponse userResponse = new UserResponse(user);
+        Response<UserResponse> response = new Response<>("자기 정보 조회에 성공했습니다.",userResponse);
+        return ResponseEntity.ok(response);
+    }
+    @PatchMapping("")
+    public ResponseEntity<Response<UserResponse>> editMyInfo(@RequestHeader("Authorization") String accessToken, @ModelAttribute UpdateUserRequest updateUserRequest){
+        long userId = credentialService.getUserId(accessToken);
+        User user = credentialService.updateUser(userId,updateUserRequest);
+        UserResponse userResponse = new UserResponse(user);
+        Response<UserResponse> response = new Response<>("자기 정보 수정에 성공했습니다.",userResponse);
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,0 +1,21 @@
+package kr.co.goalkeeper.api.model.response;
+
+import kr.co.goalkeeper.api.model.entity.Sex;
+import kr.co.goalkeeper.api.model.entity.User;
+import lombok.Getter;
+
+@Getter
+public class UserResponse {
+    private final String email;
+    private final String picture;
+    private final String name;
+    private final Sex sex;
+    private final Integer age;
+    public UserResponse(User entity){
+        email = entity.getEmail();
+        picture = entity.getPicture();
+        name = entity.getName();
+        sex = entity.getSex();
+        age = entity.getAge();
+    }
+}

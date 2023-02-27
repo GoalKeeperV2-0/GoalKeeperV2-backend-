@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.model.entity;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
+import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -114,5 +115,20 @@ public class User {
     }
     public void giveVerificationReward(){
         point+=100;
+    }
+
+    public void updateUser(UpdateUserRequest updateUserRequest){
+        if(updateUserRequest.getName()!=null){
+            name = updateUserRequest.getName();
+        }
+        if(updateUserRequest.getPicture()!=null){
+            //Todo 프로필사진 업로드 구현 필요
+        }
+        if(updateUserRequest.getSex()!=null){
+            sex = updateUserRequest.getSex();
+        }
+        if(updateUserRequest.getAge()!=null && updateUserRequest.getAge()>0){
+            age = updateUserRequest.getAge();
+        }
     }
 }
