@@ -13,6 +13,7 @@ import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.repository.CategoryRepository;
 import kr.co.goalkeeper.api.repository.UserRepository;
 import kr.co.goalkeeper.api.service.port.CredentialService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ class SimpleCredentialService implements CredentialService {
     private final GoogleOAuth2Service googleOAuth2Service;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    @Value("${file-save-location}")
+    private String pictureRootPath;
 
     public SimpleCredentialService(GoalKeeperTokenService goalKeeperTokenService, GoogleOAuth2Service googleOAuth2Service, UserRepository userRepository, CategoryRepository categoryRepository) {
         this.goalKeeperTokenService = goalKeeperTokenService;
@@ -142,7 +145,7 @@ class SimpleCredentialService implements CredentialService {
             ErrorMessage errorMessage = new ErrorMessage(404,"없는 유저입니다.");
             return new GoalkeeperException(errorMessage);
         });
-        user.updateUser(updateUserRequest);
+        user.updateUser(updateUserRequest,pictureRootPath);
         return user;
     }
 }

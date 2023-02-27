@@ -5,6 +5,7 @@ import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.util.ImageSaver;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -117,12 +118,12 @@ public class User {
         point+=100;
     }
 
-    public void updateUser(UpdateUserRequest updateUserRequest){
+    public void updateUser(UpdateUserRequest updateUserRequest,String profileImageRootPath){
         if(updateUserRequest.getName()!=null){
             name = updateUserRequest.getName();
         }
         if(updateUserRequest.getPicture()!=null){
-            //Todo 프로필사진 업로드 구현 필요
+            picture = ImageSaver.saveProfileImage(profileImageRootPath,updateUserRequest.getPicture(),id);
         }
         if(updateUserRequest.getSex()!=null){
             sex = updateUserRequest.getSex();
