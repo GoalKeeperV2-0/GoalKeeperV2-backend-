@@ -101,6 +101,16 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
     }
 
     @Override
+    public Goal getMyGoalById(long userId, long goalId) {
+        Goal goal = getGoalById(goalId);
+        if(goal.getUser().getId() != userId){
+            ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표만 조회할 수 있습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
+        return goal;
+    }
+
+    @Override
     public Page<Goal> getGoalsByUserId(long userId, int page) {
         return goalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
     }
