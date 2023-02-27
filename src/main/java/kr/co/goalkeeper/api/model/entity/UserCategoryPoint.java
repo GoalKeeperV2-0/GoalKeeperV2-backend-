@@ -22,6 +22,9 @@ public class UserCategoryPoint {
     @MapsId("categoryType")
     private Category category;
 
+    @Column
+    private int point;
+
     public UserCategoryPoint(User user, Category category) {
         id = new UserCategoryPointId();
         id.setCategoryType(category.getCategoryType());
@@ -30,8 +33,6 @@ public class UserCategoryPoint {
         this.point = 10000000;
     }
 
-    @Column
-    private int point;
     public void addPoint(@Positive int point){
         this.point+=point;
     }
