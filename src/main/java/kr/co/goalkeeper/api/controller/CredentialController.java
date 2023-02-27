@@ -70,7 +70,7 @@ public class CredentialController {
         Response<UserResponse> response = new Response<>("자기 정보 조회에 성공했습니다.",userResponse);
         return ResponseEntity.ok(response);
     }
-    @PatchMapping("")
+    @PostMapping("")
     public ResponseEntity<Response<UserResponse>> editMyInfo(@RequestHeader("Authorization") String accessToken, @ModelAttribute UpdateUserRequest updateUserRequest){
         long userId = credentialService.getUserId(accessToken);
         User user = credentialService.updateUser(userId,updateUserRequest);
