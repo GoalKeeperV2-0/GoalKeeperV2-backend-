@@ -36,10 +36,13 @@ public class BusinessLogicLogger {
         } else {
             type = "";
         }
-
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String uuid = (String)request.getAttribute("uuid");
-        log.info("{} {} {} ===> {}.{}()","Request ===> uuid = ",uuid,type,className,methodName);
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            String uuid = (String) request.getAttribute("uuid");
+            log.info("{} {} {} ===> {}.{}()", "Request ===> uuid = ", uuid, type, className, methodName);
+        }catch (IllegalStateException e){
+            log.info("{} {} {} ===> {}.{}()", "Scheduler ===> className = ",className,type,className,methodName );
+        }
         return joinPoint.proceed();
     }
     private void printRequest() throws IOException {
