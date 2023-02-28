@@ -5,5 +5,6 @@ package kr.co.goalkeeper.api.scheduler;
  */
 public interface ChangeGoalScheduler {
     void checkTimeOutGoal();
+    void checkTimeOutGoalButCertRemain();
     void checkNoCertificationAtCertDay();
 }
