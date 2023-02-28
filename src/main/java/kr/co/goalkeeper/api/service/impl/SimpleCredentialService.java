@@ -146,6 +146,7 @@ class SimpleCredentialService implements CredentialService {
             return new GoalkeeperException(errorMessage);
         });
         user.updateUser(updateUserRequest,pictureRootPath);
+        userRepository.save(user);
         return user;
     }
 }
