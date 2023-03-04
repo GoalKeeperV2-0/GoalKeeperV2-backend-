@@ -1,15 +1,15 @@
 package kr.co.goalkeeper.api.util;
 
-import kr.co.goalkeeper.api.model.entity.Goal;
-import kr.co.goalkeeper.api.model.entity.Notification;
-import kr.co.goalkeeper.api.model.entity.NotificationType;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.GoalRequest;
+import kr.co.goalkeeper.api.model.request.VerificationRequest;
 import kr.co.goalkeeper.api.model.response.CertificationResponse;
 import kr.co.goalkeeper.api.model.response.Response;
+import kr.co.goalkeeper.api.service.port.CertificationGetService;
 import kr.co.goalkeeper.api.service.port.CredentialService;
 import kr.co.goalkeeper.api.service.port.GoalGetService;
 import kr.co.goalkeeper.api.service.port.NotificationService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -27,21 +27,17 @@ import static kr.co.goalkeeper.api.model.entity.NotificationType.*;
 @Component
 @Slf4j
 @Order(2)
+@AllArgsConstructor
 public class NotificationAspect {
     private final NotificationService notificationService;
     private final CredentialService credentialService;
     private final GoalGetService goalGetService;
-
-    public NotificationAspect(NotificationService notificationService, CredentialService credentialService, GoalGetService goalGetService) {
-        this.notificationService = notificationService;
-        this.credentialService = credentialService;
-        this.goalGetService = goalGetService;
-    }
+    private final CertificationGetService certificationGetService;
 
     @AfterReturning(value = "execution(* kr.co.goalkeeper.api.controller.GoalController.addManyTimeGoal(..)) " +
             "|| execution(* kr.co.goalkeeper.api.controller.GoalController.addOneTimeGoal(..))")
     public void sendAddGoalNotification(JoinPoint joinPoint){
-        log.info("목표 등록 알림 생성");
+        log.info("목표 등록 알림 생성 시작");
         Object[] args = joinPoint.getArgs();
         String content = "'{title}' 목표등록이 완료되었어요! 지금 확인해보세요.";
         GoalRequest goalRequest = (GoalRequest)args[0];
@@ -49,6 +45,7 @@ public class NotificationAspect {
         String accessToken = (String)args[1];
         Notification notification = makeNotification(GOAL_ADD,content,accessToken);
         notificationService.sendNotification(notification);
+        log.info("목표 등록 알림 생성 완료");
     }
     private Notification makeNotification(NotificationType notificationType,String content,String accessToken){
         long userId = credentialService.getUserId(accessToken);
@@ -61,10 +58,11 @@ public class NotificationAspect {
                 .receiver(user)
                 .build();
     }
+
     @AfterReturning(value = "execution(* kr.co.goalkeeper.api.controller.CertificationController.createManyTimeCertificationByGoalId(..))"+
     "|| execution(* kr.co.goalkeeper.api.controller.CertificationController.createOneTimeCertificationByGoalId(..))",returning = "returnValue")
     public void sendAddCertificationNotification(JoinPoint joinPoint,ResponseEntity<Response<CertificationResponse>> returnValue){
-        log.info("인증 등록 알림 생성");
+        log.info("인증 등록 알림 생성 시작");
         Object[] args = joinPoint.getArgs();
         long goalId = (long)args[0];
         String accessToken = (String)args[2];
@@ -76,5 +74,21 @@ public class NotificationAspect {
         content = content.replace("{title}",goal.getTitle()).replace("{date}",certDate.toString());
         Notification notification = makeNotification(CERT_ADD,content,accessToken);
         notificationService.sendNotification(notification);
+        log.info("인증 등록 알림 생성 완료");
+    }
+
+    @AfterReturning(value = "execution(* kr.co.goalkeeper.api.controller.VerificationController.createVerification(..))")
+    public void sendHoldRequestNotification(JoinPoint joinPoint){
+        log.info("보류 요청 알림 생성 시작");
+        Object[] args = joinPoint.getArgs();
+        VerificationRequest verificationRequest = (VerificationRequest)args[0];
+        String accessToken = (String)args[1];
+        Certification certification = certificationGetService.getCertificationById(verificationRequest.getCertificationId());
+        String goalTitle = certification.getGoal().getTitle();
+        String content = "'{title}' 목표의 검토신청이 완료되었어요! 검토가 완료되면 알림으로 알려드릴게요!";
+        content = content.replace("{title}",goalTitle);
+        Notification notification = makeNotification(HOLD_REQUEST,content,accessToken);
+        notificationService.sendNotification(notification);
+        log.info("보류 요청 알림 생성 완료");
     }
 }
