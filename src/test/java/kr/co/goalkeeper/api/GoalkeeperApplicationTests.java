@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
 
 
 @SpringBootTest
@@ -43,6 +46,9 @@ class GoalkeeperApplicationTests {
 	HoldGoalService holdGoalService;
 	@Autowired
 	VerificationService verificationService;
+
+	@Autowired
+	NotificationService notificationService;
 
 	ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 	String user3JoinRequest = "{\n" +
@@ -542,5 +548,20 @@ class GoalkeeperApplicationTests {
 		Verification verification = verificationService.createVerification(verificationRequest,user2.getId());
 		holdGoalService.holdGoal(user1,goal.getId());
 		assertThat(goal.getGoalState()).isEqualTo(GoalState.HOLD);
+	}
+
+	@Test
+	@Transactional
+	void notificationTest(){
+		Notification notification = Notification.builder()
+				.notificationType(NotificationType.GOAL_ADD)
+				.content("test")
+				.isRead(false)
+				.createdDate(LocalDate.now())
+				.receiver(credentialService.getUserById(1))
+				.build();
+		notificationService.sendNotification(notification);
+		Slice<Notification> result = notificationService.getNotifications(1, Pageable.ofSize(10));
+		assertThat(result.getContent().get(0)).isEqualTo(notification);
 	}
 }
