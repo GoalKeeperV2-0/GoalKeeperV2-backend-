@@ -1,17 +1,13 @@
 package kr.co.goalkeeper.api.model.entity;
 
-import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.NotificationSender;
 import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
-import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.io.File;
 import java.time.LocalDate;
 
 @Entity
@@ -33,7 +29,17 @@ public class ManyTimeCertification extends Certification {
         if(successCount>=requiredSuccessCount){
             success();
             ((ManyTimeGoal)goal).successCertification();
+            Notification notification = makeSuccessNotification();
+            NotificationSender.send(notification);
         }
+    }
+    private Notification makeSuccessNotification(){
+        return Notification.builder()
+                .createdDate(LocalDate.now())
+                .isRead(false)
+                .receiver(goal.user)
+                .notificationType(NotificationType.CERT_RESULT)
+                .content("인증 성공").build();
     }
 
     @Override
@@ -43,6 +49,16 @@ public class ManyTimeCertification extends Certification {
         if(failCount>=Math.round(0.7 * requiredSuccessCount)){
             fail();
             ((ManyTimeGoal)goal).failCertification();
+            Notification notification = makeFailNotification();
+            NotificationSender.send(notification);
         }
+    }
+    private Notification makeFailNotification(){
+        return Notification.builder()
+                .createdDate(LocalDate.now())
+                .isRead(false)
+                .receiver(goal.user)
+                .notificationType(NotificationType.CERT_RESULT)
+                .content("인증 실패").build();
     }
 }

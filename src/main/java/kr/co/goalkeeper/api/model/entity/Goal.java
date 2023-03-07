@@ -1,5 +1,6 @@
 package kr.co.goalkeeper.api.model.entity;
 
+import kr.co.goalkeeper.api.NotificationSender;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -82,6 +83,16 @@ public abstract class Goal {
     public final void success(){
         goalState = SUCCESS;
         user.plusPoint(Math.round(point*reward.getRewardRate()),category.getCategoryType());
+        Notification notification = makesuccessNotification();
+        NotificationSender.send(notification);
+    }
+    private Notification makesuccessNotification(){
+        return Notification.builder()
+                .createdDate(LocalDate.now())
+                .isRead(false)
+                .receiver(user)
+                .notificationType(NotificationType.GOAL_RESULT)
+                .content("목표 성공").build();
     }
     public final void hold(){
         goalState = HOLD;
@@ -91,6 +102,16 @@ public abstract class Goal {
         goalState = FAIL;
         holdRequestAble = true;
         minusUserCategoryPoint();
+        Notification notification = makeFailNotification();
+        NotificationSender.send(notification);
+    }
+    private Notification makeFailNotification(){
+        return Notification.builder()
+                .createdDate(LocalDate.now())
+                .isRead(false)
+                .receiver(user)
+                .notificationType(NotificationType.GOAL_RESULT)
+                .content("목표 실패").build();
     }
     private void minusUserCategoryPoint(){
         if(user!=null){
