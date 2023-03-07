@@ -6,9 +6,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
 import kr.co.goalkeeper.api.service.port.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -27,6 +29,8 @@ import static org.assertj.core.api.Assertions.not;
 
 @SpringBootTest
 class GoalkeeperApplicationTests {
+	@Autowired
+	ApplicationContext applicationContext;
 	@Autowired
 	CredentialService credentialService;
 
@@ -68,7 +72,10 @@ class GoalkeeperApplicationTests {
 			"  \"age\": 26,\n" +
 			"  \"sex\": \"MAN\"\n" +
 			"}";
-
+	@BeforeEach
+	void init(){
+		NotificationSender.init(applicationContext);
+	}
 
 	/**
 	 * sns 회원가입 후 추가정보 입력 테스트
