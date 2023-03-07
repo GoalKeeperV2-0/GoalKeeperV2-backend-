@@ -41,7 +41,7 @@ public class ImageSaver {
             MultipartFile pictureFile = certification.getPictureFile();
             File file = new File(filePath);
             pictureFile.transferTo(file);
-        }catch (IOException e){
+        }catch (Exception e){
             ErrorMessage errorMessage = new ErrorMessage(500,"인증 이미지 저장에 실패했습니다.");
             throw new GoalkeeperException(errorMessage);
         }
