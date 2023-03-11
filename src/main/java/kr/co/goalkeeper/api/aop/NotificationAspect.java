@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.util;
+package kr.co.goalkeeper.api.aop;
 
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.GoalRequest;
