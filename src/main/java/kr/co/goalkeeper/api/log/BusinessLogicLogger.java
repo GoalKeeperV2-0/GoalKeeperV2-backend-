@@ -22,9 +22,7 @@ public class BusinessLogicLogger {
 
     @Around("execution(* kr.co.goalkeeper.api..*Controller.*(..)) " +
             "|| execution(* kr.co.goalkeeper.api..*Service.*(..)) " +
-            "|| execution(* kr.co.goalkeeper.api..*Repository.*(..)) " +
-            "|| execution(* kr.co.goalkeeper.api.util..*(..)) " +
-            "|| execution(* kr.co.goalkeeper.api.aop..*(..))")
+            "|| execution(* kr.co.goalkeeper.api..*Repository.*(..))")
     public Object printLog(ProceedingJoinPoint joinPoint) throws Throwable {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
@@ -50,12 +48,6 @@ public class BusinessLogicLogger {
         }
         if(className.contains("Repository")){
             return "<<Repository>>";
-        }
-        if(className.contains("util")){
-            return "<<Util>>";
-        }
-        if(className.contains("aop")){
-            return "<<AOP>>";
         }
         return "";
     }
