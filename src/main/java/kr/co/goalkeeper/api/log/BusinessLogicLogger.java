@@ -13,7 +13,6 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Enumeration;
 
 @Slf4j
 @Aspect
@@ -22,45 +21,50 @@ import java.util.Enumeration;
 public class BusinessLogicLogger {
 
     @Around("execution(* kr.co.goalkeeper.api..*Controller.*(..)) " +
-            "|| execution(* kr.co.goalkeeper.api..*Service.*(..)) || execution(* kr.co.goalkeeper.api..*Repository.*(..))")
+            "|| execution(* kr.co.goalkeeper.api..*Service.*(..)) " +
+            "|| execution(* kr.co.goalkeeper.api..*Repository.*(..)) " +
+            "|| execution(* kr.co.goalkeeper.api.util..*(..)) " +
+            "|| execution(* kr.co.goalkeeper.api.aop..*(..))")
     public Object printLog(ProceedingJoinPoint joinPoint) throws Throwable {
-
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
-        String type;
+        String type = getBusinessType(className);
         if (className.contains("Controller")) {
-            printRequest();
-            type = "Controller ";
-        } else if (className.contains("Service")) {
-            type = "Service";
-        } else if (className.contains("Repository")) {
-            type = "Repository";
-        } else {
-            type = "";
+            printRequestBody();
         }
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            String uuid = (String) request.getAttribute("uuid");
-            log.info("{} {} {} ===> {}.{}()", "Request ===> uuid = ", uuid, type, className, methodName);
+            String requestId = (String) request.getAttribute("requestId");
+            log.info("{} = {} {} {}.{}()","RequestId",requestId,type,className,methodName);
         }catch (IllegalStateException e){
-            log.info("{} {} {} ===> {}.{}()", "Scheduler ===> className = ",className,type,className,methodName );
+            log.info("{} = {} {} {}.{}()","Scheduler",className,type,className,methodName);
         }
         return joinPoint.proceed();
     }
-    private void printRequest() throws IOException {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        String uuid = (String)request.getAttribute("uuid");
-        log.info("Request ===> uuid = " + uuid + " uri = "+request.getRequestURI());
-        final ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
-        log.info("Request ===> uuid = " + uuid + " headers");
-        ObjectMapper objectMapper = new ObjectMapper();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()){
-            String headerName = headerNames.nextElement();
-            String header = request.getHeader(headerName);
-            log.info("Request ===> uuid = " + uuid +" "+ headerName+": "+header);
+    private String getBusinessType(String className){
+        if(className.contains("Controller")){
+            return "<<Controller>>";
         }
-        log.info("Request ===> uuid = " + uuid + " body = " + objectMapper.readTree(cachingRequest.getContentAsByteArray()));
+        if(className.contains("Service")){
+            return "<<Service>>";
+        }
+        if(className.contains("Repository")){
+            return "<<Repository>>";
+        }
+        if(className.contains("util")){
+            return "<<Util>>";
+        }
+        if(className.contains("aop")){
+            return "<<AOP>>";
+        }
+        return "";
     }
-
+    private void printRequestBody() throws IOException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        final ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
+        String requestId = (String) cachingRequest.getAttribute("requestId");
+        String logType = "<<Request>>";
+        ObjectMapper objectMapper = new ObjectMapper();
+        log.info("{} = {} {} {} = \n{}","RequestId",requestId,logType,"Body",objectMapper.readTree(cachingRequest.getContentAsByteArray()).toPrettyString());
+    }
 }
