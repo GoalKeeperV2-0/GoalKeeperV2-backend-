@@ -7,7 +7,7 @@ spring:
       matching-strategy: ant_path_matcher
   jpa: #jpa 종류
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true #이쁘게 해줌
