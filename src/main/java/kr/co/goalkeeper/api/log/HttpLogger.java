@@ -43,9 +43,13 @@ public class HttpLogger extends OncePerRequestFilter {
             log.info("{} = {} {} {} = {}","RequestId",requestId,logType,headerName,header);
         }
     }
-    private String makeResponseBodyLog(ContentCachingResponseWrapper responseWrapper) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+    private String makeResponseBodyLog(ContentCachingResponseWrapper responseWrapper)  {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+        }catch (IOException e){
+            return responseWrapper.getContentType()+" body json 아니라 파싱 불가";
+        }
     }
     private List<String> makeResponseHeaderLogs(String requestId, HttpServletResponse response){
         List<String> responseHeaderLogs = new ArrayList<>();
