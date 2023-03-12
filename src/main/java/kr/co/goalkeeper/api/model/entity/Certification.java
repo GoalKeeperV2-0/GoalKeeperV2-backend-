@@ -1,9 +1,7 @@
 package kr.co.goalkeeper.api.model.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -49,5 +47,5 @@ public abstract class Certification {
     protected void fail(){
         state = FAIL;
     }
-
+    public abstract void changeGoalStateToWait();
 }

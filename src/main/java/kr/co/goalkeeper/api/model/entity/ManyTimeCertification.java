@@ -53,6 +53,16 @@ public class ManyTimeCertification extends Certification {
             NotificationSender.send(notification);
         }
     }
+
+    @Override
+    public void changeGoalStateToWait() {
+        var certDates = ((ManyTimeGoal)goal).getCertDates();
+        LocalDate lastCertDate = certDates.get(certDates.size()-1).getCertDate();
+        if(this.date.equals(lastCertDate)){
+            goal.certCreated();
+        }
+    }
+
     private Notification makeFailNotification(){
         return Notification.builder()
                 .createdDate(LocalDate.now())
