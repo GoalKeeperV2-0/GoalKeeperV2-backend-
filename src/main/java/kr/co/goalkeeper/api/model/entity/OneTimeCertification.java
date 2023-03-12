@@ -1,16 +1,11 @@
 package kr.co.goalkeeper.api.model.entity;
 
-import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
-import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.io.File;
 import java.time.LocalDate;
 
 @Entity
@@ -25,7 +20,6 @@ public class OneTimeCertification extends Certification {
         this.goal = goal;
         pictureFile = dto.getPicture();
     }
-
     @Override
     public void verificationSuccess() {
         int requiredSuccessCount = goal.requiredSuccessCount();
@@ -53,5 +47,9 @@ public class OneTimeCertification extends Certification {
     protected void fail() {
         super.fail();
         goal.failFromOngoing();
+    }
+    @Override
+    public void changeGoalStateToWait(){
+        goal.certCreated();
     }
 }
