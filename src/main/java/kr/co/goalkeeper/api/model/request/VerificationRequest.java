@@ -5,6 +5,5 @@ import lombok.Getter;
 @Getter
 public class VerificationRequest {
     private long certificationId;
-    private long userId;
     private boolean state;
 }
