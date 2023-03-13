@@ -47,6 +47,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             throw new GoalkeeperException(errorMessage);
         }
         ImageSaver.saveCertificationPicture(certification,pictureRootPath);
+        certification.changeGoalStateToWait();
         return certificationRepository.save(certification);
     }
     private boolean validatePermission(Certification certification, long userId){
