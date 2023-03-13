@@ -98,6 +98,11 @@ public abstract class Goal {
         goalState = HOLD;
         holdRequestAble = false;
     }
+
+    public void certCreated(){
+        goalState = WAITING_CERT_COMPLETE;
+    }
+
     public final void failFromOngoing(){
         goalState = FAIL;
         holdRequestAble = true;

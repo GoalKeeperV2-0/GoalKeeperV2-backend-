@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
+import kr.co.goalkeeper.api.repository.VerificationRepository;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,6 +74,9 @@ class GoalkeeperApplicationTests {
 			"  \"age\": 26,\n" +
 			"  \"sex\": \"MAN\"\n" +
 			"}";
+	@Autowired
+	private VerificationRepository verificationRepository;
+
 	@BeforeEach
 	void init(){
 		NotificationSender.init(applicationContext);
@@ -345,7 +350,7 @@ class GoalkeeperApplicationTests {
 		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
 		ManyTimeCertificationRequest certificationRequest = new ManyTimeCertificationRequest("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
-		manyTimeCertificationService.createCertification(certification,1);
+		certification = manyTimeCertificationService.createCertification(certification,1);
 
 		// 예외 발생할 요청 - 이미 등록된 날짜에 인증 등록
 		try {
@@ -363,6 +368,7 @@ class GoalkeeperApplicationTests {
 		Page<Certification> page = certificationGetService.getCertifications(0);
 		assertThat(page.getTotalElements()).isEqualTo(3);
 		assertThat(page.getContent().get(2).getGoal().getId()).isEqualTo(certificationRequest.getGoalId());
+		assertThat(certification.getGoal().getGoalState()).isEqualTo(GoalState.ONGOING);
 
 		// 일반 목표 등록
 		String onetimegoalString = "{\n" +
@@ -386,6 +392,7 @@ class GoalkeeperApplicationTests {
 		OnetimeCertificationRequest onetimeCertificationRequest = new OnetimeCertificationRequest("ttt",new MockMultiPartFile(),oneTimeGoal.getId());
 		OneTimeCertification oneTimeCertification = new OneTimeCertification(onetimeCertificationRequest,oneTimeGoal);
 		oneTimeCertificationService.createCertification(oneTimeCertification,user1.getId());
+		assertThat(oneTimeGoal.getGoalState()).isEqualTo(GoalState.WAITING_CERT_COMPLETE);
 		// 예외 발생할 요청 - 이미 인증이 등록된 경우
 		try{
 			oneTimeCertificationService.createCertification(oneTimeCertification,user1.getId());
@@ -534,7 +541,7 @@ class GoalkeeperApplicationTests {
 		assertThat(beforePoint).isEqualTo(afterPoint-100);
 		assertThat(before).isEqualTo(CertificationState.ONGOING);
 		assertThat(after).isEqualTo(CertificationState.FAIL);
-		assertThat(beforeGoalState).isEqualTo(GoalState.ONGOING);
+		assertThat(beforeGoalState).isEqualTo(GoalState.WAITING_CERT_COMPLETE);
 		assertThat(afterGoalState).isEqualTo(GoalState.FAIL);
 	}
 	@Test
@@ -567,5 +574,75 @@ class GoalkeeperApplicationTests {
 		notificationService.sendNotification(notification);
 		Slice<Notification> result = notificationService.getNotifications(1, Pageable.ofSize(10));
 		assertThat(result.getContent().get(0)).isEqualTo(notification);
+	}
+
+	@Test
+	@Transactional
+	void manyTimeGoalStateTest() throws JsonProcessingException {
+		String manyTimeGoalString = "{\n" +
+				"  \"endDate\": \"End\",\n" +
+				"  \"certDates\": [\n" +
+				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
+				"  ],\n" +
+				"  \"title\": \"목표제목\",\n" +
+				"  \"categoryType\": \"STUDY\",\n" +
+				"  \"content\": \"목표본문\",\n" +
+				"  \"point\": 200,\n" +
+				"  \"reward\": \"HIGH_RETURN\"\n" +
+				"}";
+		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
+				.replace("one",LocalDate.now().toString())
+				.replace("two",LocalDate.now().plusDays(1).toString())
+				.replace("three",LocalDate.now().plusDays(2).toString())
+				.replace("four",LocalDate.now().plusDays(3).toString())
+				.replace("five",LocalDate.now().plusDays(4).toString())
+				.replace("six",LocalDate.now().plusDays(5).toString());
+		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+		User user1 = credentialService.getUserById(1);
+		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
+		manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+		var manyTimeCertifications = new ArrayList<ManyTimeCertification>();
+		User user2 = credentialService.getUserById(2);
+
+		/* 	지속목표의 각 날짜별 인증 생성 단, 마지막날 인증은 제외.
+			이 때 각 인증은 한번만 더 검증 받으면 성공으로 바뀌는 상태
+		 */
+
+		for (int i = 0; i < 5; i++) {
+			GoalState before = manyTimeGoal.getGoalState();
+			manyTimeCertifications.add(manyTimeCertificationService.createCertification(ManyTimeCertification.getTestInstance(4,0,manyTimeGoal,new MockMultiPartFile(),LocalDate.now().plusDays(i)),1));
+			GoalState after = manyTimeGoal.getGoalState();
+			assertThat(before).isEqualTo(GoalState.ONGOING);
+			assertThat(after).isEqualTo(GoalState.ONGOING);
+		}
+
+		//
+		GoalState before = manyTimeGoal.getGoalState();
+		ManyTimeCertification last = ManyTimeCertification.getTestInstance(4,0,manyTimeGoal,new MockMultiPartFile(),LocalDate.now().plusDays(5));
+		last = manyTimeCertificationService.createCertification(last,1);
+		manyTimeCertifications.add(last);
+		GoalState after = manyTimeGoal.getGoalState();
+		assertThat(before).isEqualTo(GoalState.ONGOING);
+		assertThat(after).isEqualTo(GoalState.WAITING_CERT_COMPLETE);
+		long user1BeforePoint = user1.getPoint();
+		for (int i = 0; i < manyTimeCertifications.size(); i++) {
+			ManyTimeCertification manyTimeCertification = manyTimeCertifications.get(i);
+			CertificationState beforeState = manyTimeCertification.getState();
+			VerificationRequest verificationRequest = VerificationRequest.getTestInstance(manyTimeCertification.getId(), true);
+			verificationService.createVerification(verificationRequest, user2.getId());
+			CertificationState afterState = manyTimeCertification.getState();
+			assertThat(beforeState).isEqualTo(CertificationState.ONGOING);
+			assertThat(afterState).isEqualTo(CertificationState.SUCCESS);
+			if(i==4){
+				assertThat(manyTimeGoal.getGoalState()).isEqualTo(GoalState.SUCCESS);
+				long user1AfterPoint = user1.getPoint();
+				assertThat(user1AfterPoint - user1BeforePoint).isEqualTo(300);
+			}
+			if(i==5){
+				long user1AfterPoint = user1.getPoint();
+				assertThat(user1AfterPoint - user1BeforePoint).isEqualTo(380);
+			}
+		}
+
 	}
 }

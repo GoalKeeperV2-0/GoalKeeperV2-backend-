@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
+
 
 @Service
 @Transactional
@@ -45,6 +47,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             throw new GoalkeeperException(errorMessage);
         }
         ImageSaver.saveCertificationPicture(certification,pictureRootPath);
+        certification.changeGoalStateToWait();
         return certificationRepository.save(certification);
     }
     private boolean validatePermission(Certification certification, long userId){
@@ -67,12 +70,12 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
 
     @Override
     public Page<Certification> getCertificationsByCategory(CategoryType categoryType,int page) {
-        return certificationRepository.findByGoal_Category_CategoryTypeAndGoal_GoalState(categoryType,GoalState.ONGOING,makePageRequest(page));
+        return certificationRepository.findByGoal_Category_CategoryTypeAndState(categoryType, ONGOING,makePageRequest(page));
     }
 
     @Override
     public Page<Certification> getCertifications(int page) {
-        return certificationRepository.findByGoal_GoalState(GoalState.ONGOING,makePageRequest(page));
+        return certificationRepository.findByState(ONGOING,makePageRequest(page));
     }
 
     @Override
@@ -97,6 +100,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(409,"현재 진행중인 목표만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        certification.changeGoalStateToWait();
         ImageSaver.saveCertificationPicture(certification,pictureRootPath);
         return certificationRepository.save(certification);
     }
