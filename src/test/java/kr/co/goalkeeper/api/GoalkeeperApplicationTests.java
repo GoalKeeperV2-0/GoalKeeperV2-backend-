@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
-import kr.co.goalkeeper.api.repository.VerificationRepository;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,14 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
 
 
 @SpringBootTest
@@ -52,31 +49,8 @@ class GoalkeeperApplicationTests {
 	HoldGoalService holdGoalService;
 	@Autowired
 	VerificationService verificationService;
-
 	@Autowired
 	NotificationService notificationService;
-
-	ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-	String user3JoinRequest = "{\n" +
-			"  \"email\": \"test@test.com\",\n" +
-			"  \"name\": \"tester\",\n" +
-			"  \"password\": \"test1234!\",\n" +
-			"  \"sex\": \"MAN\",\n" +
-			"  \"age\": 20,\n" +
-			"  \"picture\": \"null\"\n" +
-			"}";
-	String user3LoginString = "{\n" +
-			"  \"email\": \"test@test.com\",\n" +
-			"  \"password\": \"test1234!\"\n" +
-			"}";
-	String adduserInfo = "{\n" +
-			"  \"nickName\": \"robin\",\n" +
-			"  \"age\": 26,\n" +
-			"  \"sex\": \"MAN\"\n" +
-			"}";
-	@Autowired
-	private VerificationRepository verificationRepository;
-
 	@BeforeEach
 	void init(){
 		NotificationSender.init(applicationContext);
@@ -84,11 +58,16 @@ class GoalkeeperApplicationTests {
 
 	/**
 	 * sns 회원가입 후 추가정보 입력 테스트
-	 * @throws JsonProcessingException
 	 */
 	@Test
 	@Transactional
 	void joinCompleteTest() throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+		String adduserInfo = "{\n" +
+				"  \"nickName\": \"robin\",\n" +
+				"  \"age\": 26,\n" +
+				"  \"sex\": \"MAN\"\n" +
+				"}";
 		AdditionalUserInfo additionalUserInfo = objectMapper.readValue(adduserInfo, AdditionalUserInfo.class);
 		credentialService.joinCompleteAfterOAuthJoin(2,additionalUserInfo);
 		User user2 = credentialService.getUserById(2);
@@ -113,16 +92,8 @@ class GoalkeeperApplicationTests {
 	 */
 	@Test
 	@Transactional
-	void goalAddTest() throws JsonProcessingException {
-		String goalRequestString = "{\n" +
-				"  \"title\": \"test_900fb545d661\",\n" +
-				"  \"categoryType\": \"ETC\",\n" +
-				"  \"content\": \"test_1f226eb6762c\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\",\n" +
-				"  \"endDate\": \"2029-04-26\"\n" +
-				"}";
-		OneTimeGoalRequest goalRequest = objectMapper.readValue(goalRequestString,OneTimeGoalRequest.class);
+	void goalAddTest(){
+		OneTimeGoalRequest goalRequest = OneTimeGoalRequest.getTestInstance(CategoryType.STUDY, 100,Reward.HIGH_RETURN,LocalDate.of(2026,8,4));
 		User user = credentialService.getUserById(1);
 		OneTimeGoal oneTimeGoal = new OneTimeGoal(goalRequest,user);
 		OneTimeGoal added = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
@@ -131,25 +102,12 @@ class GoalkeeperApplicationTests {
 		assertThat(goalPage.stream().anyMatch(goal -> goal.equals(added))).isEqualTo(true);
 
 		//지속 목표 등록
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
@@ -167,133 +125,78 @@ class GoalkeeperApplicationTests {
 		// 지속 목표 등록 실패 - 인증 날은 마지막 날을 포함해 최소 4일 이상이어야 합니다.
 		addManyGoalFail4();
 	}
-	private void addManyGoalFail1() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(3).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	private void addManyGoalFail1(){
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().minusDays(1),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		try {
-			ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+			manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		}catch (Exception e){
 			assertThat(e).hasMessage("목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다.\n목표 시작날짜와 목표 종료날짜는 오늘보다 빠르면 안됩니다.");
 		}
 	}
-	private void addManyGoalFail1_1() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().minusDays(3).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	private void addManyGoalFail1_1(){
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(3),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		try {
-			ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+			manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		}catch (Exception e){
 			assertThat(e).hasMessage("목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다.\n목표 시작날짜와 목표 종료날짜는 오늘보다 빠르면 안됩니다.");
 		}
 	}
-	private void addManyGoalFail2() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 10000,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	private void addManyGoalFail2(){
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200000,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user2 = credentialService.getUserById(2);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user2);
 		try {
-			ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+			manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		}catch (Exception e){
 			assertThat(e).hasMessage("포인트가 부족 합니다.");
 		}
 	}
-	private void addManyGoalFail3() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(6).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	private void addManyGoalFail3(){
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		certDates.add(LocalDate.now().plusDays(6));
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		try {
-			ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+			manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		}catch (Exception e){
 			assertThat(e).hasMessage("인증날은 [시작날,마지막날] 구간에 있어야 합니다.");
 		}
 	}
-	private void addManyGoalFail4() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	private void addManyGoalFail4(){
+		List<LocalDate> certDates = new ArrayList<>();
+		certDates.add(LocalDate.now());
+		certDates.add(LocalDate.now().plusDays(1));
+		certDates.add(LocalDate.now().plusDays(5));
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		try {
-			ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
+			manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		}catch (Exception e){
 			assertThat(e).hasMessage("인증 날은 마지막 날을 포함해 최소 4일 이상이어야 합니다.");
 		}
@@ -317,38 +220,19 @@ class GoalkeeperApplicationTests {
 	 */
 	@Test
 	@Transactional
-	void certAddTest() throws JsonProcessingException {
+	void certAddTest(){
 		// 지속목표 등록
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest goalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
-		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(goalRequest,user1);
+		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		//인증 등록
-		String certAddRequestString = "{\n" +
-				"  \"content\": \"test_2ddc8dc64f59\",\n" +
-				"  \"picture\": \"test_0bd2f129d410\",\n" +
-				"  \"goalId\": goalID\n" +
-				"}";
-		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
+		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd", new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		certification = manyTimeCertificationService.createCertification(certification,1);
 
@@ -371,25 +255,11 @@ class GoalkeeperApplicationTests {
 		assertThat(certification.getGoal().getGoalState()).isEqualTo(GoalState.ONGOING);
 
 		// 일반 목표 등록
-		String onetimegoalString = "{\n" +
-				"  \"title\": \"test_055863b0e77b\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"test_b54748291e78\",\n" +
-				"  \"point\": 2000,\n" +
-				"  \"reward\": \"HIGH_RETURN\",\n" +
-				"  \"endDate\": \"2026-08-04\"\n" +
-				"}";
-		OneTimeGoalRequest oneTimeGoalRequest = objectMapper.readValue(onetimegoalString,OneTimeGoalRequest.class);
+		OneTimeGoalRequest oneTimeGoalRequest = OneTimeGoalRequest.getTestInstance(CategoryType.STUDY, 2000,Reward.HIGH_RETURN,LocalDate.of(2026,8,4));
 		OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user1);
 		oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
 		// 일반 목표 인증 등록
-		String onetimecertString = "{\n" +
-				"  \"content\": \"test_33056dd5a082\",\n" +
-				"  \"picture\": \"test_c2c175d7c346\",\n" +
-				"  \"goalId\": goalID\n" +
-				"}";
-		onetimecertString = onetimecertString.replace("goalID",oneTimeGoal.getId()+"");
-		OnetimeCertificationRequest onetimeCertificationRequest = new OnetimeCertificationRequest("ttt",new MockMultiPartFile(),oneTimeGoal.getId());
+		OnetimeCertificationRequest onetimeCertificationRequest = OnetimeCertificationRequest.getTestInstance("ttt", new MockMultiPartFile(),oneTimeGoal.getId());
 		OneTimeCertification oneTimeCertification = new OneTimeCertification(onetimeCertificationRequest,oneTimeGoal);
 		oneTimeCertificationService.createCertification(oneTimeCertification,user1.getId());
 		assertThat(oneTimeGoal.getGoalState()).isEqualTo(GoalState.WAITING_CERT_COMPLETE);
@@ -401,7 +271,7 @@ class GoalkeeperApplicationTests {
 		}
 		// Todo 예외 발생한 경우 - 진행중이 아닌 목표에 인증을 등록할 경우
 	}
-	class MockMultiPartFile implements MultipartFile{
+	static class MockMultiPartFile implements MultipartFile{
 
 		@Override
 		public String getName() {
@@ -429,17 +299,17 @@ class GoalkeeperApplicationTests {
 		}
 
 		@Override
-		public byte[] getBytes() throws IOException {
+		public byte[] getBytes(){
 			return new byte[0];
 		}
 
 		@Override
-		public InputStream getInputStream() throws IOException {
+		public InputStream getInputStream(){
 			return null;
 		}
 
 		@Override
-		public void transferTo(File dest) throws IOException, IllegalStateException {
+		public void transferTo(File dest){
 		}
 	}
 	/**
@@ -470,49 +340,24 @@ class GoalkeeperApplicationTests {
 	}
 	@Test
 	@Transactional
-	void VerificationTest() throws JsonProcessingException {
+	void VerificationTest(){
 		// 지속목표 등록
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest goalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest goalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(goalRequest,user1);
 		manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		//인증 등록
-		String certAddRequestString = "{\n" +
-				"  \"content\": \"test_2ddc8dc64f59\",\n" +
-				"  \"picture\": \"test_0bd2f129d410\",\n" +
-				"  \"goalId\": goalID\n" +
-				"}";
-		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
+		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd", new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		certification = manyTimeCertificationService.createCertification(certification,1);
 		//감증 등록
 		User user = credentialService.getUserById(2);
-		Page<Certification> page = certificationGetService.getCertifications(0);
-		String req = "{\n" +
-				"  \"certificationId\": {certId},\n" +
-				"  \"state\": true\n" +
-				"}";
-		req = req.replace("{certId}",certification.getId()+"").replace("{userId}",user.getId()+"");
-		VerificationRequest verificationRequest = objectMapper.readValue(req, VerificationRequest.class);
+		VerificationRequest verificationRequest = VerificationRequest.getTestInstance(certification.getId(),true);
 		int beforePoint = user.getPoint();
 		int beforeCertSuccessCount = certification.getSuccessCount();
 		verificationService.createVerification(verificationRequest,user.getId());
@@ -523,15 +368,11 @@ class GoalkeeperApplicationTests {
 	}
 	@Test
 	@Transactional
-	void verificationTestWithChangeCertificationStatus() throws JsonProcessingException {
+	void verificationTestWithChangeCertificationStatus(){
 		Certification certification = certificationGetService.getCertificationById(1);
 		GoalState beforeGoalState =  certification.getGoal().getGoalState();
 		CertificationState before = certification.getState();
-		String request = "{\n" +
-				"  \"certificationId\": 1,\n" +
-				"  \"state\": false\n" +
-				"}";
-		VerificationRequest verificationRequest = objectMapper.readValue(request,VerificationRequest.class);
+		VerificationRequest verificationRequest = VerificationRequest.getTestInstance(1,false);
 		int beforePoint = credentialService.getUserById(2).getPoint();
 		verificationService.createVerification(verificationRequest,2);
 		int afterPoint = credentialService.getUserById(2).getPoint();
@@ -546,17 +387,12 @@ class GoalkeeperApplicationTests {
 	}
 	@Test
 	@Transactional
-	void goalHoldTest() throws JsonProcessingException {
+	void goalHoldTest(){
 		Goal goal = goalGetService.getGoalById(1);
 		User user1 = credentialService.getUserById(1);
 		User user2 = credentialService.getUserById(2);
-		String req = "{\n" +
-				"  \"certificationId\": {certId},\n" +
-				"  \"state\": false\n" +
-				"}";
-		req = req.replace("{certId}","1").replace("{userId}","2");
-		VerificationRequest verificationRequest = objectMapper.readValue(req, VerificationRequest.class);
-		Verification verification = verificationService.createVerification(verificationRequest,user2.getId());
+		VerificationRequest verificationRequest = VerificationRequest.getTestInstance(1,false);
+		verificationService.createVerification(verificationRequest,user2.getId());
 		holdGoalService.holdGoal(user1,goal.getId());
 		assertThat(goal.getGoalState()).isEqualTo(GoalState.HOLD);
 	}
@@ -578,26 +414,13 @@ class GoalkeeperApplicationTests {
 
 	@Test
 	@Transactional
-	void manyTimeGoalStateTest() throws JsonProcessingException {
-		String manyTimeGoalString = "{\n" +
-				"  \"endDate\": \"End\",\n" +
-				"  \"certDates\": [\n" +
-				"    \"one\",\"two\",\"three\",\"four\",\"five\",\"six\"\n" +
-				"  ],\n" +
-				"  \"title\": \"목표제목\",\n" +
-				"  \"categoryType\": \"STUDY\",\n" +
-				"  \"content\": \"목표본문\",\n" +
-				"  \"point\": 200,\n" +
-				"  \"reward\": \"HIGH_RETURN\"\n" +
-				"}";
-		manyTimeGoalString = manyTimeGoalString.replace("End", LocalDate.now().plusDays(5).toString())
-				.replace("one",LocalDate.now().toString())
-				.replace("two",LocalDate.now().plusDays(1).toString())
-				.replace("three",LocalDate.now().plusDays(2).toString())
-				.replace("four",LocalDate.now().plusDays(3).toString())
-				.replace("five",LocalDate.now().plusDays(4).toString())
-				.replace("six",LocalDate.now().plusDays(5).toString());
-		ManyTimeGoalRequest manyTimeGoalRequest = objectMapper.readValue(manyTimeGoalString,ManyTimeGoalRequest.class);
+	void manyTimeGoalStateTest(){
+		List<LocalDate> certDates = new ArrayList<>();
+		for (int i = 0; i < 6; i++) {
+			certDates.add(LocalDate.now().plusDays(i));
+		}
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);
 		manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
@@ -605,25 +428,27 @@ class GoalkeeperApplicationTests {
 		User user2 = credentialService.getUserById(2);
 
 		/* 	지속목표의 각 날짜별 인증 생성 단, 마지막날 인증은 제외.
-			이 때 각 인증은 한번만 더 검증 받으면 성공으로 바뀌는 상태
+			이 때 각 인증은 한번만 더 성공 검증 받으면 성공으로 바뀌는 상태
 		 */
 
 		for (int i = 0; i < 5; i++) {
 			GoalState before = manyTimeGoal.getGoalState();
-			manyTimeCertifications.add(manyTimeCertificationService.createCertification(ManyTimeCertification.getTestInstance(4,0,manyTimeGoal,new MockMultiPartFile(),LocalDate.now().plusDays(i)),1));
+			manyTimeCertifications.add(manyTimeCertificationService.createCertification(ManyTimeCertification.getTestInstance(4,0,manyTimeGoal, new MockMultiPartFile(),LocalDate.now().plusDays(i)),1));
 			GoalState after = manyTimeGoal.getGoalState();
 			assertThat(before).isEqualTo(GoalState.ONGOING);
 			assertThat(after).isEqualTo(GoalState.ONGOING);
 		}
 
-		//
+		// 지속목표의 마지막 인증 등록. 이 인증은 한번만 더 성공 검증 받으면 성공으로 바뀌는 상태
 		GoalState before = manyTimeGoal.getGoalState();
-		ManyTimeCertification last = ManyTimeCertification.getTestInstance(4,0,manyTimeGoal,new MockMultiPartFile(),LocalDate.now().plusDays(5));
+		ManyTimeCertification last = ManyTimeCertification.getTestInstance(4,0,manyTimeGoal, new MockMultiPartFile(),LocalDate.now().plusDays(5));
 		last = manyTimeCertificationService.createCertification(last,1);
 		manyTimeCertifications.add(last);
 		GoalState after = manyTimeGoal.getGoalState();
 		assertThat(before).isEqualTo(GoalState.ONGOING);
 		assertThat(after).isEqualTo(GoalState.WAITING_CERT_COMPLETE);
+
+		// 각 인증이 성공판정을 받았을 때 인증이 성공이 되는지, 연관된 목표의 상태가 바뀌는지, 포인트 지급이 제대로 이뤄지는지 테스트
 		long user1BeforePoint = user1.getPoint();
 		for (int i = 0; i < manyTimeCertifications.size(); i++) {
 			ManyTimeCertification manyTimeCertification = manyTimeCertifications.get(i);
