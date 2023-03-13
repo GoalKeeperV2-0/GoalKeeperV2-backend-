@@ -56,12 +56,18 @@ public class ManyTimeGoal extends Goal {
     public void successCertification(){
         successCount++;
         int maxSuccessCount = certDates.size();
-        if(successCount == maxSuccessCount){
-            success100();
+        if(successCount>Math.round(maxSuccessCount*0.7f) && goalState!=GoalState.SUCCESS){
+            success();
+            if(successCount>Math.round(maxSuccessCount*0.8f)){ // 70% 달성이랑 80% 달성이 동시에 만족하는 경우
+                success80();
+            }
         }else if(successCount>Math.round(maxSuccessCount*0.8f)){
             success80();
-        }else if(successCount>Math.round(maxSuccessCount*0.7f)){
-            success();
+            if(successCount == maxSuccessCount){ //  80% 달성이 동시에 100% 달성인 경우
+                success100();
+            }
+        }else if(successCount == maxSuccessCount){
+            success100();
         }
     }
     private void success80(){
