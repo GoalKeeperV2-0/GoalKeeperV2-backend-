@@ -39,6 +39,10 @@ public class SimpleVerificationService implements VerificationService {
             ErrorMessage errorMessage = new ErrorMessage(401,"자신의 인증은 검증할 수 없습니다.");
             throw new GoalkeeperException(errorMessage);
         }
+        if(validateUniqueVerification(certification.getId(),userId)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"인증당 검증은 한번만 할 수 있습니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         if(!validateVerifiableCertification(certification)){
             ErrorMessage errorMessage = new ErrorMessage(409,"검증 기간이 지난 인증입니다.");
             throw new GoalkeeperException(errorMessage);
@@ -65,5 +69,8 @@ public class SimpleVerificationService implements VerificationService {
     }
     private boolean validateCertificationState(Certification certification){
         return certification.getState() == CertificationState.ONGOING;
+    }
+    private boolean validateUniqueVerification(long certId, long userId){
+        return verificationRepository.existsByCertification_IdAndUser_Id(certId,userId);
     }
 }
