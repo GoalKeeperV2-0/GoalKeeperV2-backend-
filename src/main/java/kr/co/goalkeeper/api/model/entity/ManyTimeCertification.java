@@ -5,6 +5,7 @@ import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -15,6 +16,18 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManyTimeCertification extends Certification {
+    public static ManyTimeCertification getTestInstance(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file,LocalDate date){
+        return new ManyTimeCertification(successCount,failCount,goal,file,date);
+    }
+    private ManyTimeCertification(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file,LocalDate date){
+        this.successCount = successCount;
+        this.failCount = failCount;
+        this.goal = goal;
+        content="test";
+        pictureFile = file;
+        picture="";
+        this.date = date;
+    }
     public ManyTimeCertification(ManyTimeCertificationRequest dto,Goal goal){
         content = dto.getContent();
         state = CertificationState.ONGOING;
