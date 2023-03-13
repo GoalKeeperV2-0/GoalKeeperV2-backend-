@@ -502,7 +502,6 @@ class GoalkeeperApplicationTests {
 		Page<Certification> page = certificationGetService.getCertifications(0);
 		String req = "{\n" +
 				"  \"certificationId\": {certId},\n" +
-				"  \"userId\": {userId},\n" +
 				"  \"state\": true\n" +
 				"}";
 		req = req.replace("{certId}",certification.getId()+"").replace("{userId}",user.getId()+"");
@@ -523,7 +522,6 @@ class GoalkeeperApplicationTests {
 		CertificationState before = certification.getState();
 		String request = "{\n" +
 				"  \"certificationId\": 1,\n" +
-				"  \"userId\": 2,\n" +
 				"  \"state\": false\n" +
 				"}";
 		VerificationRequest verificationRequest = objectMapper.readValue(request,VerificationRequest.class);
@@ -547,7 +545,6 @@ class GoalkeeperApplicationTests {
 		User user2 = credentialService.getUserById(2);
 		String req = "{\n" +
 				"  \"certificationId\": {certId},\n" +
-				"  \"userId\": {userId},\n" +
 				"  \"state\": false\n" +
 				"}";
 		req = req.replace("{certId}","1").replace("{userId}","2");
