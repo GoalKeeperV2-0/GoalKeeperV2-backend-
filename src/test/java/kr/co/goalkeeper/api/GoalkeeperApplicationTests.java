@@ -348,7 +348,7 @@ class GoalkeeperApplicationTests {
 				"  \"goalId\": goalID\n" +
 				"}";
 		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = new ManyTimeCertificationRequest("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
+		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		certification = manyTimeCertificationService.createCertification(certification,1);
 
@@ -501,7 +501,7 @@ class GoalkeeperApplicationTests {
 				"  \"goalId\": goalID\n" +
 				"}";
 		certAddRequestString = certAddRequestString.replace("goalID",manyTimeGoal.getId()+"");
-		ManyTimeCertificationRequest certificationRequest = new ManyTimeCertificationRequest("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
+		ManyTimeCertificationRequest certificationRequest = ManyTimeCertificationRequest.getTestInstance("ddd",new MockMultiPartFile(),manyTimeGoal.getId());
 		ManyTimeCertification certification = new ManyTimeCertification(certificationRequest,manyTimeGoal);
 		certification = manyTimeCertificationService.createCertification(certification,1);
 		//감증 등록

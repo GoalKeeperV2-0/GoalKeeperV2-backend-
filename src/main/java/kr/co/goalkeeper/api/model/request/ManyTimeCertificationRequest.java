@@ -9,7 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class ManyTimeCertificationRequest extends CertificationRequest {
 
-    public ManyTimeCertificationRequest(String content, MultipartFile picture, long goalId) {
+    public static ManyTimeCertificationRequest getTestInstance(String content, MultipartFile picture, long goalId){
+        return new ManyTimeCertificationRequest(content,picture,goalId);
+    }
+    private ManyTimeCertificationRequest(String content, MultipartFile picture, long goalId) {
         super(content, picture, goalId);
     }
 }
