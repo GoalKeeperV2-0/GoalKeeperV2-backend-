@@ -39,6 +39,9 @@ public class ImageSaver {
             certification.setPicture(makePicturePath(certification,pictureRootPath));
             String filePath = certification.getPicture();
             MultipartFile pictureFile = certification.getPictureFile();
+            if(pictureFile == null) {
+                return;
+            }
             File file = new File(filePath);
             pictureFile.transferTo(file);
         }catch (Exception e){
