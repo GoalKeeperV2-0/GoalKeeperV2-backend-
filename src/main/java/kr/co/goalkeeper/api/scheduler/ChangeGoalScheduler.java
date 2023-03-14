@@ -10,11 +10,6 @@ public interface ChangeGoalScheduler {
     void checkTimeOutGoal();
 
     /**
-     * 마감기한이 지났지만, 마지막 인증이 올라오지 않아 정산중이 아닌 지속목표 처리
-     */
-    void checkTimeOutGoalButCertRemain();
-
-    /**
      * 인증날에 인증이 올라오지 않은 지속 목표 처리
      */
     void checkNoCertificationAtCertDay();

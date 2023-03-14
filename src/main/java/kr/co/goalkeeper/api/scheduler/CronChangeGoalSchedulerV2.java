@@ -67,10 +67,6 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
         }
     }
 
-    @Override
-    public void checkTimeOutGoalButCertRemain() {
-
-    }
     @Transactional
     @Scheduled(cron="0 0 0 * * *")
     @Async
