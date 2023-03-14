@@ -48,6 +48,9 @@ public class ImageSaver {
     }
     private static String makePicturePath(Certification certification,String pictureRootPath){
         MultipartFile multipartFile = certification.getPictureFile();
+        if(multipartFile == null){
+            return pictureRootPath+File.separator+"err.png";
+        }
         long goalId = certification.getGoal().getId();
         String directoryPath = pictureRootPath + File.separator+goalId;
         File directory = new File(directoryPath);
