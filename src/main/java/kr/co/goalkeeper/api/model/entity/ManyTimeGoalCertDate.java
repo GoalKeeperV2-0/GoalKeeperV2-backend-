@@ -8,24 +8,23 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ManyTimeGoalCertDate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @EmbeddedId
+    private ManyTimeGoalCertDateId id;
     @ManyToOne
     @JoinColumn(name = "goal_id")
+    @MapsId("goalId")
     private ManyTimeGoal manyTimeGoal;
-    @Column
-    @NotNull
-    private LocalDate certDate;
     @Builder
-    private ManyTimeGoalCertDate(long id, ManyTimeGoal manyTimeGoal, LocalDate certDate) {
-        this.id = id;
+    private ManyTimeGoalCertDate(ManyTimeGoal manyTimeGoal, LocalDate certDate) {
+        id = new ManyTimeGoalCertDateId();
         this.manyTimeGoal = manyTimeGoal;
-        this.certDate = certDate;
+        id.setCertDate(certDate);
+    }
+    public LocalDate getCertDate(){
+        return id.getCertDate();
     }
 }
