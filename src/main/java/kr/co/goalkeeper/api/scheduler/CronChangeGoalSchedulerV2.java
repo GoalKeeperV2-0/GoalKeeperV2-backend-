@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @EnableScheduling
 @EnableAsync
@@ -36,31 +35,35 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     @Override
     public void checkTimeOutGoal() {
         LocalDate endDate = LocalDate.now().minusDays(1);
-        addFailCertToOneTimeGoals(endDate,0);
-        addFailCertToManyTimeGoals(endDate,0);
+        checkOneTimeGoal(endDate,0);
+        checkManyTimeGoal(endDate,0);
     }
-    private void addFailCertToOneTimeGoals(LocalDate endDate,int page){
+    private void checkOneTimeGoal(LocalDate endDate, int page){
         Slice<OneTimeGoal> oneTimeGoals = goalBatchRepository.findAllByGoalStateAndEndDate(GoalState.ONGOING,endDate,PageRequest.of(page,100));
-        List<OneTimeGoal> oneTimeGoalList = oneTimeGoals.getContent();
-        for (OneTimeGoal oneTimeGoal:oneTimeGoalList) {
+        addFailCertToOneTimeGoal(oneTimeGoals,endDate);
+        if(oneTimeGoals.hasNext()){
+            checkOneTimeGoal(endDate,page+1);
+        }
+    }
+    private void addFailCertToOneTimeGoal(Slice<OneTimeGoal> oneTimeGoals,LocalDate endDate){
+        for (OneTimeGoal oneTimeGoal:oneTimeGoals) {
             OneTimeCertification oneTimeCertification = OneTimeCertification.getFailInstance(oneTimeGoal,endDate);
             oneTimeCertificationService.createCertification(oneTimeCertification,oneTimeGoal.getUser().getId());
             oneTimeCertification.verificationFail();
         }
-        if(oneTimeGoals.hasNext()){
-            addFailCertToOneTimeGoals(endDate,page+1);
+    }
+    private void checkManyTimeGoal(LocalDate endDate, int page){
+        Slice<ManyTimeGoal> manyTimeGoals = manyTimeGoalBatchRepository.findAllByGoalStateAndEndDate(GoalState.ONGOING,endDate,PageRequest.of(page,100));
+        addFailCertToManyTimeGoal(manyTimeGoals,endDate);
+        if(manyTimeGoals.hasNext()){
+            checkManyTimeGoal(endDate,page+1);
         }
     }
-    private void addFailCertToManyTimeGoals(LocalDate endDate,int page){
-        Slice<ManyTimeGoal> manyTimeGoals = manyTimeGoalBatchRepository.findAllByGoalStateAndEndDate(GoalState.ONGOING,endDate,PageRequest.of(page,100));
-        List<ManyTimeGoal> manyTimeGoalList = manyTimeGoals.getContent();
-        for (ManyTimeGoal manyTimeGoal:manyTimeGoalList) {
+    private void addFailCertToManyTimeGoal(Slice<ManyTimeGoal> manyTimeGoals, LocalDate endDate){
+        for (ManyTimeGoal manyTimeGoal:manyTimeGoals) {
             ManyTimeCertification manyTimeCertification = ManyTimeCertification.getFailInstance(manyTimeGoal,endDate);
             manyTimeCertificationService.createCertification(manyTimeCertification,manyTimeGoal.getUser().getId());
             manyTimeCertification.verificationFail();
-        }
-        if(manyTimeGoals.hasNext()){
-            addFailCertToOneTimeGoals(endDate,page+1);
         }
     }
 
@@ -68,9 +71,19 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     public void checkTimeOutGoalButCertRemain() {
 
     }
-
+    @Transactional
+    @Scheduled(cron="0 0 0 * * *")
+    @Async
     @Override
     public void checkNoCertificationAtCertDay() {
-
+        LocalDate certDate = LocalDate.now().minusDays(1);
+        checkNoCert(certDate,0);
+    }
+    private void checkNoCert(LocalDate certDate, int page){
+        Slice<ManyTimeGoal> noCertAtCertDate = manyTimeGoalBatchRepository.findAllByCertDatesContainingAndGoalState(certDate, PageRequest.of(0,100));
+        addFailCertToManyTimeGoal(noCertAtCertDate,certDate);
+        if(noCertAtCertDate.hasNext()){
+            checkNoCert(certDate,page+1);
+        }
     }
 }
