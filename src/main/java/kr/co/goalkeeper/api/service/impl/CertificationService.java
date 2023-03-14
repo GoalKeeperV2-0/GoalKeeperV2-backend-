@@ -46,8 +46,8 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
             ErrorMessage errorMessage = new ErrorMessage(400,"이미 인증이 등록된 인증날 입니다.");
             throw new GoalkeeperException(errorMessage);
         }
-        ImageSaver.saveCertificationPicture(certification,pictureRootPath);
         certification.changeGoalStateToWait();
+        ImageSaver.saveCertificationPicture(certification,pictureRootPath);
         return certificationRepository.save(certification);
     }
     private boolean validatePermission(Certification certification, long userId){
