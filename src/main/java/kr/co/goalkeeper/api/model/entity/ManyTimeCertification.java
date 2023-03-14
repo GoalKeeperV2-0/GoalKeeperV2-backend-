@@ -17,16 +17,21 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManyTimeCertification extends Certification {
     public static ManyTimeCertification getFailInstance(ManyTimeGoal goal,LocalDate date){
-        return new ManyTimeCertification(0,10000,goal,null,date);
+        return new ManyTimeCertification("","",null,CertificationState.FAIL,date,0,goal,10000);
     }
-    public static ManyTimeCertification getTestInstance(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file,LocalDate date){
+
+    private ManyTimeCertification(String content, String picture, MultipartFile pictureFile, CertificationState state, LocalDate date, int successCount, Goal goal, int failCount) {
+        super(content, picture, pictureFile, state, date, successCount, goal, failCount);
+    }
+
+    public static ManyTimeCertification getTestInstance(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file, LocalDate date){
         return new ManyTimeCertification(successCount,failCount,goal,file,date);
     }
     private ManyTimeCertification(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file,LocalDate date){
         this.successCount = successCount;
         this.failCount = failCount;
         this.goal = goal;
-        content="";
+        content="test";
         pictureFile = file;
         picture="";
         this.date = date;
@@ -62,7 +67,7 @@ public class ManyTimeCertification extends Certification {
     public void verificationFail() {
         int requiredSuccessCount = goal.requiredSuccessCount();
         failCount++;
-        if(failCount>=Math.round(0.7 * requiredSuccessCount)){
+        if(failCount>=Math.round(0.7 * requiredSuccessCount)){ // 현재 인증이 실패할 조건
             fail();
             ((ManyTimeGoal)goal).failCertification();
             Notification notification = makeFailNotification();
