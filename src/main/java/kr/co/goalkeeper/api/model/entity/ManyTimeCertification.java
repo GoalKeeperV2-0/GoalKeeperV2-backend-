@@ -16,6 +16,9 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManyTimeCertification extends Certification {
+    public static ManyTimeCertification getFailInstance(ManyTimeGoal goal,LocalDate date){
+        return new ManyTimeCertification(0,10000,goal,null,date);
+    }
     public static ManyTimeCertification getTestInstance(int successCount, int failCount, ManyTimeGoal goal, MultipartFile file,LocalDate date){
         return new ManyTimeCertification(successCount,failCount,goal,file,date);
     }
@@ -23,7 +26,7 @@ public class ManyTimeCertification extends Certification {
         this.successCount = successCount;
         this.failCount = failCount;
         this.goal = goal;
-        content="test";
+        content="";
         pictureFile = file;
         picture="";
         this.date = date;

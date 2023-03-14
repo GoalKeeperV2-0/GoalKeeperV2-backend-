@@ -4,6 +4,8 @@ import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.time.LocalDate;
@@ -13,7 +15,14 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneTimeCertification extends Certification {
-    public OneTimeCertification(OnetimeCertificationRequest dto,Goal goal){
+    public static OneTimeCertification getFailInstance(OneTimeGoal goal,LocalDate date){
+        return new OneTimeCertification("","",null,CertificationState.FAIL,date,0,goal,10000);
+    }
+    private OneTimeCertification(String content, String picture, MultipartFile pictureFile, CertificationState state, LocalDate date, int successCount, Goal goal, int failCount) {
+        super(content, picture, pictureFile, state, date, successCount, goal, failCount);
+    }
+
+    public OneTimeCertification(OnetimeCertificationRequest dto, Goal goal){
         content = dto.getContent();
         state = CertificationState.ONGOING;
         date = LocalDate.now();

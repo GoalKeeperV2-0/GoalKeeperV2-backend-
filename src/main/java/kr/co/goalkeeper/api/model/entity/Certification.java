@@ -1,6 +1,7 @@
 package kr.co.goalkeeper.api.model.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +15,19 @@ import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @Getter
+@NoArgsConstructor
 public abstract class Certification {
+    protected Certification(String content, String picture, MultipartFile pictureFile, CertificationState state, LocalDate date, int successCount, Goal goal, int failCount) {
+        this.content = content;
+        this.picture = picture;
+        this.pictureFile = pictureFile;
+        this.state = state;
+        this.date = date;
+        this.successCount = successCount;
+        this.goal = goal;
+        this.failCount = failCount;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
