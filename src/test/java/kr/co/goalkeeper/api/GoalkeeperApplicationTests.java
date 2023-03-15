@@ -83,8 +83,8 @@ class GoalkeeperApplicationTests {
 		Page<Goal> goals = goalGetService.getGoalsByUserId(1,0);
 		List<Goal> goalList = goals.getContent();
 		assertThat(goalList.size()).isEqualTo(2);
-		assertThat(goalList.get(0).getClass()).isEqualTo(OneTimeGoal.class);
-		assertThat(goalList.get(1).getClass()).isEqualTo(ManyTimeGoal.class);
+		assertThat(goalList.get(0).getClass()).isEqualTo(ManyTimeGoal.class);
+		assertThat(goalList.get(1).getClass()).isEqualTo(OneTimeGoal.class);
 	}
 
 	/**
@@ -211,8 +211,8 @@ class GoalkeeperApplicationTests {
 	void certGetTest(){
 		Page<Certification> page = certificationGetService.getCertifications(0);
 		assertThat(page.getTotalElements()).isEqualTo(2);
-		assertThat(page.getContent().get(0).getClass()).isEqualTo(OneTimeCertification.class);
-		assertThat(page.getContent().get(1).getClass()).isEqualTo(ManyTimeCertification.class);
+		assertThat(page.getContent().get(0).getClass()).isEqualTo(ManyTimeCertification.class);
+		assertThat(page.getContent().get(1).getClass()).isEqualTo(OneTimeCertification.class);
 	}
 
 	/**
@@ -251,7 +251,7 @@ class GoalkeeperApplicationTests {
 		}
 		Page<Certification> page = certificationGetService.getCertifications(0);
 		assertThat(page.getTotalElements()).isEqualTo(3);
-		assertThat(page.getContent().get(2).getGoal().getId()).isEqualTo(certificationRequest.getGoalId());
+		assertThat(page.getContent().get(0).getGoal().getId()).isEqualTo(certificationRequest.getGoalId());
 		assertThat(certification.getGoal().getGoalState()).isEqualTo(GoalState.ONGOING);
 
 		// 일반 목표 등록
