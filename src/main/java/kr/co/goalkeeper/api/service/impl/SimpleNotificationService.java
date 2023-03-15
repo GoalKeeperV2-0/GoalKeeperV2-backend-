@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SimpleNotificationService implements NotificationService {
     private final NotificationRepository notificationRepository;
@@ -18,6 +20,11 @@ public class SimpleNotificationService implements NotificationService {
     @Override
     public void sendNotification(Notification notification) {
         notificationRepository.save(notification);
+    }
+
+    @Override
+    public void sendNotification(List<Notification> notifications) {
+        notificationRepository.saveAll(notifications);
     }
 
     @Override
