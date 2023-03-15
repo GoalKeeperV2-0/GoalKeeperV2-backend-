@@ -76,7 +76,7 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
         checkNoCert(certDate,0);
     }
     private void checkNoCert(LocalDate certDate, int page){
-        Slice<ManyTimeGoal> noCertAtCertDate = manyTimeGoalBatchRepository.findAllByCertDatesContainingAndGoalState(certDate, PageRequest.of(0,100));
+        Slice<ManyTimeGoal> noCertAtCertDate = manyTimeGoalBatchRepository.findAllByCertDatesContaining(certDate.toString(),PageRequest.of(0,100));
         addFailCertToManyTimeGoal(noCertAtCertDate,certDate);
         if(noCertAtCertDate.hasNext()){
             checkNoCert(certDate,page+1);
