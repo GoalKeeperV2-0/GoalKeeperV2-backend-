@@ -22,7 +22,7 @@ import java.util.List;
 class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService, HoldGoalService {
 
     private final GoalRepository goalRepository;
-    private static final int PAGE_SIZE = 9;
+    private static final int PAGE_SIZE = 8;
 
     public GoalService(GoalRepository goalRepository) {
         this.goalRepository = goalRepository;
