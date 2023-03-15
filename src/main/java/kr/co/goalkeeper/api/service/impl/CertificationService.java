@@ -11,6 +11,7 @@ import kr.co.goalkeeper.api.util.ImageSaver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -26,7 +27,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     private final CertificationRepository certificationRepository;
     private PageRequest makePageRequest(int page){
         int PAGE_SIZE = 9;
-        return PageRequest.of(page, PAGE_SIZE);
+        return PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
     }
 
     public CertificationService(CertificationRepository certificationRepository) {

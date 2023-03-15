@@ -10,6 +10,7 @@ import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
 import kr.co.goalkeeper.api.service.port.OneTimeGoalService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,10 @@ import java.util.List;
 class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService, HoldGoalService {
 
     private final GoalRepository goalRepository;
-    private static final int PAGE_SIZE = 8;
+    private PageRequest makePageRequest(int page){
+        int PAGE_SIZE = 8;
+        return PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
+    }
 
     public GoalService(GoalRepository goalRepository) {
         this.goalRepository = goalRepository;
@@ -112,12 +116,12 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
 
     @Override
     public Page<Goal> getGoalsByUserId(long userId, int page) {
-        return goalRepository.findAllByUser_Id(userId,PageRequest.of(page,PAGE_SIZE));
+        return goalRepository.findAllByUser_Id(userId,makePageRequest(page));
     }
 
     @Override
     public Page<Goal> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
-        return goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, PageRequest.of(page,PAGE_SIZE));
+        return goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, makePageRequest(page));
     }
 
     @Override
