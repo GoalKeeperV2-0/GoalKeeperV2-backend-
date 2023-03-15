@@ -25,7 +25,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     private String pictureRootPath;
     private final CertificationRepository certificationRepository;
     private PageRequest makePageRequest(int page){
-        int PAGE_SIZE = 8;
+        int PAGE_SIZE = 9;
         return PageRequest.of(page, PAGE_SIZE);
     }
 
