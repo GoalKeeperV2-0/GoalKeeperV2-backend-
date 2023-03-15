@@ -123,4 +123,13 @@ public abstract class Goal {
             user.minusCategoryPoint(point,category.getCategoryType());
         }
     }
+    public Notification makeDDayNotification(String content){
+        return Notification.builder()
+                .createdDate(endDate)
+                .isRead(false)
+                .receiver(user)
+                .notificationType(NotificationType.D_DAY)
+                .content(content)
+                .build();
+    }
 }
