@@ -43,3 +43,6 @@ out/
 *.properties
 application-oauth.yml
 application-prod.yml
+
+### logs ###
+/application_log
