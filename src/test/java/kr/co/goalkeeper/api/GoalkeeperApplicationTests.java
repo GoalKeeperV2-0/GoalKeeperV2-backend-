@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
+import kr.co.goalkeeper.api.model.response.CertificationResponse;
+import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
+import kr.co.goalkeeper.api.model.response.OneTimeCertificationResponse;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -209,10 +212,10 @@ class GoalkeeperApplicationTests {
 	@Test
 	@Transactional
 	void certGetTest(){
-		Page<Certification> page = certificationGetService.getCertifications(0,0);
+		Page<CertificationResponse> page = certificationGetService.getCertifications(0,0).getCertificationResponses();
 		assertThat(page.getTotalElements()).isEqualTo(2);
-		assertThat(page.getContent().get(0).getClass()).isEqualTo(ManyTimeCertification.class);
-		assertThat(page.getContent().get(1).getClass()).isEqualTo(OneTimeCertification.class);
+		assertThat(page.getContent().get(0).getClass()).isEqualTo(ManyTimeCertificationResponse.class);
+		assertThat(page.getContent().get(1).getClass()).isEqualTo(OneTimeCertificationResponse.class);
 	}
 
 	/**
@@ -249,9 +252,8 @@ class GoalkeeperApplicationTests {
 		}catch (Exception e){
 			assertThat(e).hasMessage("자신이 작성한 목표의 인증만 등록할 수 있습니다.");
 		}
-		Page<Certification> page = certificationGetService.getCertifications(0,0);
+		Page<CertificationResponse> page = certificationGetService.getCertifications(0,0).getCertificationResponses();
 		assertThat(page.getTotalElements()).isEqualTo(3);
-		assertThat(page.getContent().get(0).getGoal().getId()).isEqualTo(certificationRequest.getGoalId());
 		assertThat(certification.getGoal().getGoalState()).isEqualTo(GoalState.ONGOING);
 
 		// 일반 목표 등록

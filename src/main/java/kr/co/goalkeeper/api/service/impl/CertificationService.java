@@ -2,8 +2,10 @@ package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.response.CertificationPageResponse;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
+import kr.co.goalkeeper.api.repository.VerificationRepository;
 import kr.co.goalkeeper.api.service.port.CertificationGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
 import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
@@ -14,6 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
@@ -25,15 +30,17 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     @Value("${file-save-location}")
     private String pictureRootPath;
     private final CertificationRepository certificationRepository;
+    private final VerificationRepository verificationRepository;
+
+    public CertificationService(CertificationRepository certificationRepository, VerificationRepository verificationRepository) {
+        this.certificationRepository = certificationRepository;
+        this.verificationRepository = verificationRepository;
+    }
+
     private PageRequest makePageRequest(int page){
         int PAGE_SIZE = 9;
         return PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
     }
-
-    public CertificationService(CertificationRepository certificationRepository) {
-        this.certificationRepository = certificationRepository;
-    }
-
     public ManyTimeCertification createCertification(ManyTimeCertification certification, long userId) {
         if(validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
@@ -64,18 +71,30 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
 
     @Override
-    public Page<Certification> getCertificationsByGoalId(long goalId,int page) {
-        return certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
+    public CertificationPageResponse getCertificationsByGoalId(long goalId, long userId, int page) {
+        Page<Certification> certs = certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
+        return getCertificationPageResponse(userId, certs);
+    }
+    private CertificationPageResponse getCertificationPageResponse(long userId, Page<Certification> certs) {
+        if(certs.isEmpty()){
+            return new CertificationPageResponse(certs, Collections.emptyList());
+        }
+        List<Long> certIds = new ArrayList<>();
+        certs.getContent().forEach(certification -> certIds.add(certification.getId()));
+        List<Verification> verifies = verificationRepository.findAllByCertification_IdInAndUser_Id(certIds,userId);
+        return new CertificationPageResponse(certs,verifies);
     }
 
     @Override
-    public Page<Certification> getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
-        return certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
+    public CertificationPageResponse getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
+        Page<Certification> certs = certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
+        return getCertificationPageResponse(userId, certs);
     }
 
     @Override
-    public Page<Certification> getCertifications(long userId,int page) {
-        return certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
+    public CertificationPageResponse getCertifications(long userId,int page) {
+        Page<Certification> certs = certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
+        return getCertificationPageResponse(userId, certs);
     }
 
     @Override
