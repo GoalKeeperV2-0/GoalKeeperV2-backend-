@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 public class ManyTimeGoalCertDate {
     @EmbeddedId
     private ManyTimeGoalCertDateId id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id")
     @MapsId("goalId")
     private ManyTimeGoal manyTimeGoal;

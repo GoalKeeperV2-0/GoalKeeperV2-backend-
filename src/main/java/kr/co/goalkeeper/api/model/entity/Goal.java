@@ -23,7 +23,7 @@ public abstract class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     protected User user;
     @NotNull
@@ -50,7 +50,7 @@ public abstract class Goal {
     @Column
     @NotNull
     protected LocalDate endDate;
-    @OneToMany(mappedBy = "goal",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "goal",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     protected List<Certification> certificationList;
     private boolean holdRequestAble = true;
 

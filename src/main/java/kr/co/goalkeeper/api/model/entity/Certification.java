@@ -46,7 +46,7 @@ public abstract class Certification {
     @Column
     protected int successCount;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id",nullable = false)
     @NotNull
     protected Goal goal;
