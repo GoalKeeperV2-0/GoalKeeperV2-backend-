@@ -34,15 +34,17 @@ public class CertificationController {
     };
 
     @GetMapping("/{category:[A-Z]+}")
-    public ResponseEntity<Response<Page<CertificationResponse>>> getCertificationByCategory(@PathVariable("category") CategoryType categoryType, @RequestParam int page){
-        Page<CertificationResponse> result = certificationGetService.getCertificationsByCategory(categoryType,page).map(mapper);
+    public ResponseEntity<Response<Page<CertificationResponse>>> getCertificationByCategory(@RequestHeader("Authorization") String accessToken,@PathVariable("category") CategoryType categoryType, @RequestParam int page){
+        long userId = credentialService.getUserId(accessToken);
+        Page<CertificationResponse> result = certificationGetService.getCertificationsByCategory(categoryType,userId,page).map(mapper);
         Response<Page<CertificationResponse>> response = new Response<>("카테고리별 목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("")
-    public ResponseEntity<Response<Page<CertificationResponse>>> getCertification(@RequestParam int page){
-        Page<CertificationResponse> result = certificationGetService.getCertifications(page).map(mapper);
+    public ResponseEntity<Response<Page<CertificationResponse>>> getCertification(@RequestHeader("Authorization") String accessToken,@RequestParam int page){
+        long userId = credentialService.getUserId(accessToken);
+        Page<CertificationResponse> result = certificationGetService.getCertifications(userId,page).map(mapper);
         Response<Page<CertificationResponse>> response = new Response<>("전체 목표 인증 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

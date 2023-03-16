@@ -209,7 +209,7 @@ class GoalkeeperApplicationTests {
 	@Test
 	@Transactional
 	void certGetTest(){
-		Page<Certification> page = certificationGetService.getCertifications(0);
+		Page<Certification> page = certificationGetService.getCertifications(0,0);
 		assertThat(page.getTotalElements()).isEqualTo(2);
 		assertThat(page.getContent().get(0).getClass()).isEqualTo(ManyTimeCertification.class);
 		assertThat(page.getContent().get(1).getClass()).isEqualTo(OneTimeCertification.class);
@@ -249,7 +249,7 @@ class GoalkeeperApplicationTests {
 		}catch (Exception e){
 			assertThat(e).hasMessage("자신이 작성한 목표의 인증만 등록할 수 있습니다.");
 		}
-		Page<Certification> page = certificationGetService.getCertifications(0);
+		Page<Certification> page = certificationGetService.getCertifications(0,0);
 		assertThat(page.getTotalElements()).isEqualTo(3);
 		assertThat(page.getContent().get(0).getGoal().getId()).isEqualTo(certificationRequest.getGoalId());
 		assertThat(certification.getGoal().getGoalState()).isEqualTo(GoalState.ONGOING);

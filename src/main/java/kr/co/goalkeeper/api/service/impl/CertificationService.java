@@ -35,7 +35,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
 
     public ManyTimeCertification createCertification(ManyTimeCertification certification, long userId) {
-        if(!validatePermission(certification,userId)){
+        if(validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
         }
@@ -53,30 +53,29 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
     private boolean validatePermission(Certification certification, long userId){
         User user = certification.getGoal().getUser();
-        return userId == user.getId();
+        return userId != user.getId();
     }
     private boolean validateCertDate(ManyTimeCertification certification){
         List<ManyTimeGoalCertDate> certDateList = ((ManyTimeGoal)certification.getGoal()).getCertDates();
         return certDateList.stream().anyMatch((cert)-> cert.getCertDate().equals(certification.getDate()));
     }
     private boolean validateAlreadyCert(ManyTimeCertification certification){
-        boolean b = certificationRepository.existsByDateAndGoal_Id(certification.getDate(), certification.getGoal().getId());
-        return b;
+        return certificationRepository.existsByDateAndGoal_Id(certification.getDate(), certification.getGoal().getId());
     }
 
     @Override
     public Page<Certification> getCertificationsByGoalId(long goalId,int page) {
-        return certificationRepository.findAllByGoal_Id(goalId, makePageRequest(page));
+        return certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
     }
 
     @Override
-    public Page<Certification> getCertificationsByCategory(CategoryType categoryType,int page) {
-        return certificationRepository.findByGoal_Category_CategoryTypeAndState(categoryType, ONGOING,makePageRequest(page));
+    public Page<Certification> getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
+        return certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
     }
 
     @Override
-    public Page<Certification> getCertifications(int page) {
-        return certificationRepository.findByState(ONGOING,makePageRequest(page));
+    public Page<Certification> getCertifications(long userId,int page) {
+        return certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
     }
 
     @Override
@@ -89,7 +88,7 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
 
     @Override
     public OneTimeCertification createCertification(OneTimeCertification certification,long userId) {
-        if(!validatePermission(certification,userId)){
+        if(validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
         }
