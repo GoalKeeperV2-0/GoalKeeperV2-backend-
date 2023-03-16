@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public interface CertificationRepository extends JpaRepository<Certification,Long> {
+    @EntityGraph(attributePaths = {"goal","goal.user"})
     Page<Certification> findAllByGoal_Id(long goalId,Pageable pageable);
     boolean existsByDateAndGoal_Id(LocalDate date,long goalId);
     @EntityGraph(attributePaths = {"goal","goal.user"})
