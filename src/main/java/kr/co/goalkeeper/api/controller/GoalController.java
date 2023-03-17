@@ -56,15 +56,6 @@ public class GoalController {
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/{goalId:[0-9]+}")
-    public ResponseEntity<Response<GoalResponse>> getGoalByGoalId(@PathVariable long goalId, @RequestHeader("Authorization") String accessToken){
-        long userId = credentialService.getUserId(accessToken);
-        Goal goal = goalGetService.getMyGoalById(userId,goalId);
-        GoalResponse goalResponse = mapper.apply(goal);
-        Response<GoalResponse> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",goalResponse);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/oneTime")
     public ResponseEntity<Response<?>> addOneTimeGoal(@RequestBody OneTimeGoalRequest oneTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
         long userId = credentialService.getUserId(accessToken);
