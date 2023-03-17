@@ -1,0 +1,10 @@
+<configuration>
+    <appender name="all_log" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%F]%M\(%L\) : %m%n</pattern>
+        </layout>
+    </appender>
+    <root level="info">
+        <appender-ref ref="all_log" />
+    </root>
+</configuration>

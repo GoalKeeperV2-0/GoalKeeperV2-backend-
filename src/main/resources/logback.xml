@@ -26,9 +26,14 @@
             <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
     </appender>
-
+    <appender name="std_out" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%F]%M\(%L\) : %m%n</pattern>
+        </layout>
+    </appender>
     <root level="info">
         <appender-ref ref="all_log" />
+        <appender-ref ref="std_out"/>
         <appender-ref ref="only_info_log"/>
     </root>
 </configuration>
