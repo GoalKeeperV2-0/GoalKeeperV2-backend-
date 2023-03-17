@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -27,7 +28,17 @@ public class CertificationPageResponse {
         this.certificationResponses = certificationResponses.map(mapper);
         this.certificationResponses = this.certificationResponses.map(certificationResponse -> {
             if(certificationResponse instanceof ManyTimeCertificationResponse){
-                return new ManyTimeCertificationResponse((ManyTimeCertificationResponse) certificationResponse,certificationsInGoalIds);
+                Set<Certification> sameGoalCerts = new HashSet<>();
+                certificationsInGoalIds.forEach(c -> {
+                    if(c.getId() == certificationResponse.id){
+                        return;
+                    }
+                    if(c.getGoal().getId() != ((ManyTimeCertificationResponse) certificationResponse).getManyTimeGoal().getId()){
+                        return;
+                    }
+                    sameGoalCerts.add(c);
+                });
+                return new ManyTimeCertificationResponse((ManyTimeCertificationResponse) certificationResponse,sameGoalCerts);
             }
             return certificationResponse;
         });
