@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Function;
 
 @RestController
 @RequestMapping("api/goal")
@@ -22,21 +21,13 @@ public class GoalController {
     private final CredentialService credentialService;
     private final HoldGoalService holdGoalService;
 
-    private final Function<? super Goal, ? extends GoalResponse> mapper = goal -> {
-        if(goal instanceof ManyTimeGoal){
-            return new ManyTimeGoalResponse((ManyTimeGoal) goal);
-        }else{
-            return new OneTimeGoalResponse((OneTimeGoal) goal);
-        }
-    };
-
     @PostMapping("/manyTime")
     public ResponseEntity<Response<?>> addManyTimeGoal(@RequestBody ManyTimeGoalRequest manyTimeGoalRequest, @RequestHeader("Authorization") String accessToken){
         long userId = credentialService.getUserId(accessToken);
         User user = credentialService.getUserById(userId);
         ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user);
         manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
-        ManyTimeGoalResponse result = new ManyTimeGoalResponse(manyTimeGoal);
+        ManyTimeGoalResponse result = ManyTimeGoalResponse.getCreateGoalResponse(manyTimeGoal);
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
@@ -62,7 +53,7 @@ public class GoalController {
         User user = credentialService.getUserById(userId);
         OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user);
         oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
-        OneTimeGoalResponse result = new OneTimeGoalResponse(oneTimeGoal);
+        OneTimeGoalResponse result = OneTimeGoalResponse.getCreateGoalResponse(oneTimeGoal);
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

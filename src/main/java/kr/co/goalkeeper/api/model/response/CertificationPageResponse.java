@@ -26,7 +26,7 @@ public class CertificationPageResponse {
                     }
                     sameGoalCerts.add(c);
                 });
-                return new ManyTimeCertificationResponse((ManyTimeCertification) certification,sameGoalCerts,certDates);
+                return ManyTimeCertificationResponse.getSelectCertificationResponse((ManyTimeCertification) certification,sameGoalCerts,certDates);
             }else {
                 return new OneTimeCertificationResponse((OneTimeCertification) certification);
             }

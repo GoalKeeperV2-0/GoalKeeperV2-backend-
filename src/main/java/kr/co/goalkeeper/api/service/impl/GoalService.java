@@ -137,9 +137,9 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         Set<ManyTimeGoalCertDate> manyTimeGoalCertDates = certDateRepository.findAllByManyTimeGoal_IdIn(goalIds);
         return result.map(goal -> {
             if(goal instanceof ManyTimeGoal){
-                return new ManyTimeGoalResponse((ManyTimeGoal) goal,certificationsInResult,manyTimeGoalCertDates);
+                return ManyTimeGoalResponse.getSelectGoalResponse((ManyTimeGoal) goal,certificationsInResult,manyTimeGoalCertDates);
             }else{
-                return new OneTimeGoalResponse((OneTimeGoal) goal,certificationsInResult);
+                return OneTimeGoalResponse.getSelectGoalResponse((OneTimeGoal) goal,certificationsInResult);
             }
         });
     }

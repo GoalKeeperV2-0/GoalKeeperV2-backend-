@@ -16,7 +16,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class ManyTimeGoalResponse extends GoalResponse {
     private List<LocalDate> certDates;
-    public ManyTimeGoalResponse(ManyTimeGoal entity){
+
+    public static ManyTimeGoalResponse getCreateGoalResponse(ManyTimeGoal entity){
+        return new ManyTimeGoalResponse(entity);
+    }
+    private ManyTimeGoalResponse(ManyTimeGoal entity){
         id = entity.getId();
         title = entity.getTitle();
         content = entity.getContent();
@@ -33,13 +37,16 @@ public class ManyTimeGoalResponse extends GoalResponse {
         certifications = new ArrayList<>();
         try {
             for (Certification manyTimeCertification: entity.getCertificationList()) {
-                certifications.add(ManyTimeCertificationResponse.makeInstanceWithOutGoal((ManyTimeCertification) manyTimeCertification));
+                certifications.add(ManyTimeCertificationResponse.getInnerCertificationResponse((ManyTimeCertification) manyTimeCertification));
             }
         }catch (NullPointerException e){
             certifications = Collections.emptyList();
         }
     }
-    public ManyTimeGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
+    public static ManyTimeGoalResponse getSelectGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
+        return new ManyTimeGoalResponse(entity,relatedCertifications,certDates);
+    }
+    private ManyTimeGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
         id = entity.getId();
         title = entity.getTitle();
         content = entity.getContent();
@@ -55,7 +62,7 @@ public class ManyTimeGoalResponse extends GoalResponse {
             if(certification.getGoal().getId() != id){
                 return;
             }
-            certifications.add(ManyTimeCertificationResponse.makeInstanceWithOutGoal((ManyTimeCertification) certification,relatedCertifications));
+            certifications.add(ManyTimeCertificationResponse.getInnerCertificationResponse((ManyTimeCertification) certification,relatedCertifications));
         });
         this.certDates = new ArrayList<>();
         certDates.forEach(certDate -> {
@@ -66,25 +73,14 @@ public class ManyTimeGoalResponse extends GoalResponse {
         });
         Collections.sort(this.certDates);
     }
-    public static ManyTimeGoalResponse makeInstanceWithOutCertifications(ManyTimeGoal entity){
-        ManyTimeGoalResponse manyTimeGoalResponse = new ManyTimeGoalResponse();
-        manyTimeGoalResponse.id = entity.getId();
-        manyTimeGoalResponse.title = entity.getTitle();
-        manyTimeGoalResponse.content = entity.getContent();
-        manyTimeGoalResponse.categoryType = entity.getCategory().getCategoryType();
-        manyTimeGoalResponse.point = entity.getPoint();
-        manyTimeGoalResponse.reward = entity.getReward();
-        manyTimeGoalResponse.startDate = entity.getStartDate();
-        manyTimeGoalResponse.endDate = entity.getEndDate();
-        manyTimeGoalResponse.goalState = entity.getGoalState();
-        manyTimeGoalResponse.holdable = entity.isHoldRequestAble();
-        manyTimeGoalResponse.certDates = new ArrayList<>();
+    public static ManyTimeGoalResponse getInnerGoalResponse(ManyTimeGoal entity){
+        ManyTimeGoalResponse manyTimeGoalResponse = createdByEntity(entity);
         entity.getCertDates().forEach((c)-> manyTimeGoalResponse.certDates.add(c.getCertDate()));
         Collections.sort(manyTimeGoalResponse.certDates);
         manyTimeGoalResponse.certifications = null;
         return manyTimeGoalResponse;
     }
-    public static ManyTimeGoalResponse makeInstanceWithOutCertifications(ManyTimeGoal entity,Set<ManyTimeGoalCertDate> certDates){
+    private static ManyTimeGoalResponse createdByEntity(ManyTimeGoal entity){
         ManyTimeGoalResponse manyTimeGoalResponse = new ManyTimeGoalResponse();
         manyTimeGoalResponse.id = entity.getId();
         manyTimeGoalResponse.title = entity.getTitle();
@@ -97,6 +93,10 @@ public class ManyTimeGoalResponse extends GoalResponse {
         manyTimeGoalResponse.goalState = entity.getGoalState();
         manyTimeGoalResponse.holdable = entity.isHoldRequestAble();
         manyTimeGoalResponse.certDates = new ArrayList<>();
+        return manyTimeGoalResponse;
+    }
+    public static ManyTimeGoalResponse getInnerGoalResponse(ManyTimeGoal entity, Set<ManyTimeGoalCertDate> certDates){
+        ManyTimeGoalResponse manyTimeGoalResponse = createdByEntity(entity);
         certDates.forEach((c)-> {
             if(c.getManyTimeGoal().getId()!=manyTimeGoalResponse.id){
                 return;

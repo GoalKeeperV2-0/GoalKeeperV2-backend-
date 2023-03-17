@@ -15,11 +15,11 @@ public class OneTimeCertificationResponse extends CertificationResponse{
         picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
-        this.oneTimeGoal = OneTimeGoalResponse.makeInstanceWithOutCertifications((OneTimeGoal) entity.getGoal());
+        this.oneTimeGoal = OneTimeGoalResponse.getInnerGoalResponse((OneTimeGoal) entity.getGoal());
         failCount = entity.getFailCount();
         successCount = entity.getSuccessCount();
     }
-    public static OneTimeCertificationResponse makeInstanceWithOutGoal(OneTimeCertification entity){
+    public static OneTimeCertificationResponse getInnerCertificationResponse(OneTimeCertification entity){
         return new OneTimeCertificationResponse(entity,false);
     }
     private OneTimeCertificationResponse(OneTimeCertification entity,boolean ignore){

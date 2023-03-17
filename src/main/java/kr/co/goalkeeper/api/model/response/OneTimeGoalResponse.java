@@ -16,7 +16,10 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class OneTimeGoalResponse extends GoalResponse {
-    public OneTimeGoalResponse(OneTimeGoal entity){
+    public static OneTimeGoalResponse getCreateGoalResponse(OneTimeGoal entity){
+        return new OneTimeGoalResponse(entity);
+    }
+    private OneTimeGoalResponse(OneTimeGoal entity){
         id =entity.getId();
         startDate = entity.getStartDate();
         endDate = entity.getEndDate();
@@ -30,13 +33,16 @@ public class OneTimeGoalResponse extends GoalResponse {
         certifications = new ArrayList<>();
         try {
             for (Certification certification : entity.getCertificationList()) {
-                certifications.add(OneTimeCertificationResponse.makeInstanceWithOutGoal((OneTimeCertification) certification));
+                certifications.add(OneTimeCertificationResponse.getInnerCertificationResponse((OneTimeCertification) certification));
             }
         }catch (NullPointerException e){
             certifications = Collections.emptyList();
         }
     }
-    public OneTimeGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
+    public static OneTimeGoalResponse getSelectGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
+        return new OneTimeGoalResponse(entity,certifications);
+    }
+    private OneTimeGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
         id =entity.getId();
         startDate = entity.getStartDate();
         endDate = entity.getEndDate();
@@ -52,10 +58,10 @@ public class OneTimeGoalResponse extends GoalResponse {
             if(certification.getGoal().getId() != id){
                 return;
             }
-            this.certifications.add(OneTimeCertificationResponse.makeInstanceWithOutGoal((OneTimeCertification) certification));
+            this.certifications.add(OneTimeCertificationResponse.getInnerCertificationResponse((OneTimeCertification) certification));
         });
     }
-    public static OneTimeGoalResponse makeInstanceWithOutCertifications(OneTimeGoal entity){
+    public static OneTimeGoalResponse getInnerGoalResponse(OneTimeGoal entity){
         OneTimeGoalResponse oneTimeGoalResponse = new OneTimeGoalResponse();
         oneTimeGoalResponse.id =entity.getId();
         oneTimeGoalResponse.startDate = entity.getStartDate();

@@ -60,7 +60,7 @@ public class CertificationController {
         Goal goal = goalGetService.getGoalById(goalId);
         ManyTimeCertification manyTimeCertification = new ManyTimeCertification(dto,goal);
         long userId = credentialService.getUserId(accessToken);
-        ManyTimeCertificationResponse result = new ManyTimeCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
+        ManyTimeCertificationResponse result = ManyTimeCertificationResponse.getCreateCertificationResponse(manyTimeCertificationService.createCertification(manyTimeCertification,userId));
         Response<ManyTimeCertificationResponse> response = new Response<>("인증 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
