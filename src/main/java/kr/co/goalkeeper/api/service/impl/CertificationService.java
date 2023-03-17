@@ -5,6 +5,7 @@ import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.CertificationPageResponse;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
+import kr.co.goalkeeper.api.repository.ManyTimeGoalCertDateRepository;
 import kr.co.goalkeeper.api.repository.VerificationRepository;
 import kr.co.goalkeeper.api.service.port.CertificationGetService;
 import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
@@ -29,10 +30,12 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     private String pictureRootPath;
     private final CertificationRepository certificationRepository;
     private final VerificationRepository verificationRepository;
+    private final ManyTimeGoalCertDateRepository certDateRepository;
 
-    public CertificationService(CertificationRepository certificationRepository, VerificationRepository verificationRepository) {
+    public CertificationService(CertificationRepository certificationRepository, VerificationRepository verificationRepository, ManyTimeGoalCertDateRepository certDateRepository) {
         this.certificationRepository = certificationRepository;
         this.verificationRepository = verificationRepository;
+        this.certDateRepository = certDateRepository;
     }
 
     private PageRequest makePageRequest(int page){
@@ -71,37 +74,31 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     @Override
     public CertificationPageResponse getCertificationsByGoalId(long goalId, long userId, int page) {
         Page<Certification> certs = certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
+        return makeCertificationPageResponse(userId,certs);
+    }
+    private CertificationPageResponse makeCertificationPageResponse(long userId,Page<Certification> certs){
         Set<Long> goalIds = new HashSet<>();
         certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
         Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
-        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
-    }
-    private CertificationPageResponse makeCertificationPageResponse(long userId, Page<Certification> certs,Set<Certification> certificationsInGoalIds) {
         if(certs.isEmpty()){
-            return new CertificationPageResponse(certs, Collections.emptyList(),Collections.emptySet());
+            return new CertificationPageResponse(certs, Collections.emptyList(),Collections.emptySet(),Collections.emptySet());
         }
         List<Long> certIds = new ArrayList<>();
         certs.getContent().forEach(certification -> certIds.add(certification.getId()));
         List<Verification> verifies = verificationRepository.findAllByCertification_IdInAndUser_Id(certIds,userId);
-        return new CertificationPageResponse(certs,verifies,certificationsInGoalIds);
+        Set<ManyTimeGoalCertDate> certDates = certDateRepository.findAllByManyTimeGoal_IdIn(goalIds);
+        return new CertificationPageResponse(certs,verifies,certificationsInGoalIds,certDates);
     }
-
     @Override
     public CertificationPageResponse getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
         Page<Certification> certs = certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
-        Set<Long> goalIds = new HashSet<>();
-        certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
-        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
-        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
+        return makeCertificationPageResponse(userId, certs);
     }
 
     @Override
     public CertificationPageResponse getCertifications(long userId,int page) {
         Page<Certification> certs = certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
-        Set<Long> goalIds = new HashSet<>();
-        certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
-        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
-        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
+        return makeCertificationPageResponse(userId, certs);
     }
 
     @Override

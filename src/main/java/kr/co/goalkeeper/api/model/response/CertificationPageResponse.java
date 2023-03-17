@@ -1,9 +1,6 @@
 package kr.co.goalkeeper.api.model.response;
 
-import kr.co.goalkeeper.api.model.entity.Certification;
-import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
-import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
-import kr.co.goalkeeper.api.model.entity.Verification;
+import kr.co.goalkeeper.api.model.entity.*;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
@@ -11,36 +8,28 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 @Getter
 public class CertificationPageResponse {
-    private final Function<? super Certification, ? extends CertificationResponse> mapper = certification -> {
-        if(certification instanceof ManyTimeCertification){
-            return new ManyTimeCertificationResponse((ManyTimeCertification) certification);
-        }else{
-            return new OneTimeCertificationResponse((OneTimeCertification) certification);
-        }
-    };
-    private Page<CertificationResponse> certificationResponses;
+    private final Page<CertificationResponse> certificationResponses;
     private final List<Long> alreadyVerification;
-    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications, Set<Certification> certificationsInGoalIds){
-        this.certificationResponses = certificationResponses.map(mapper);
-        this.certificationResponses = this.certificationResponses.map(certificationResponse -> {
-            if(certificationResponse instanceof ManyTimeCertificationResponse){
+    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications, Set<Certification> certificationsInGoalIds,Set<ManyTimeGoalCertDate> certDates){
+        this.certificationResponses = certificationResponses.map(certification -> {
+            if(certification instanceof ManyTimeCertification){
                 Set<Certification> sameGoalCerts = new HashSet<>();
                 certificationsInGoalIds.forEach(c -> {
-                    if(c.getId() == certificationResponse.id){
+                    if(c.getId() == certification.getId()){
                         return;
                     }
-                    if(c.getGoal().getId() != ((ManyTimeCertificationResponse) certificationResponse).getManyTimeGoal().getId()){
+                    if(c.getGoal().getId() != certification.getGoal().getId()){
                         return;
                     }
                     sameGoalCerts.add(c);
                 });
-                return new ManyTimeCertificationResponse((ManyTimeCertificationResponse) certificationResponse,sameGoalCerts);
+                return new ManyTimeCertificationResponse((ManyTimeCertification) certification,sameGoalCerts,certDates);
+            }else {
+                return new OneTimeCertificationResponse((OneTimeCertification) certification);
             }
-            return certificationResponse;
         });
         alreadyVerification = new ArrayList<>();
         verifications.forEach(verification -> alreadyVerification.add(verification.getCertification().getId()));

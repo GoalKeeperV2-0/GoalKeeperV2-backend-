@@ -3,6 +3,7 @@ package kr.co.goalkeeper.api.model.response;
 import kr.co.goalkeeper.api.model.entity.Certification;
 import kr.co.goalkeeper.api.model.entity.ManyTimeCertification;
 import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.ManyTimeGoalCertDate;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -18,20 +19,20 @@ public class ManyTimeCertificationResponse extends CertificationResponse {
         picture = "/api/image/certification/"+entity.getId();
         state = entity.getState();
         date = entity.getDate();
-        this.manyTimeGoal = ManyTimeGoalResponse.makeInstanceWithOutCertifications((ManyTimeGoal) entity.getGoal());
+        manyTimeGoal = ManyTimeGoalResponse.makeInstanceWithOutCertifications((ManyTimeGoal) entity.getGoal());
         failCount = entity.getFailCount();
         successCount = entity.getSuccessCount();
         relatedCertifications = new ArrayList<>();
     }
-    public ManyTimeCertificationResponse(ManyTimeCertificationResponse withOutRelated, Set<Certification> relatedEntities){
-        id = withOutRelated.id;
-        content = withOutRelated.content;
-        picture = withOutRelated.picture;
-        state = withOutRelated.state;
-        date = withOutRelated.date;
-        manyTimeGoal = withOutRelated.manyTimeGoal;
-        failCount = withOutRelated.failCount;
-        successCount = withOutRelated.successCount;
+    public ManyTimeCertificationResponse(ManyTimeCertification entity, Set<Certification> relatedEntities,Set<ManyTimeGoalCertDate> certDates){
+        id = entity.getId();
+        content = entity.getContent();
+        picture = "/api/image/certification/"+entity.getId();
+        state = entity.getState();
+        date = entity.getDate();
+        manyTimeGoal = ManyTimeGoalResponse.makeInstanceWithOutCertifications((ManyTimeGoal) entity.getGoal(),certDates);
+        failCount = entity.getFailCount();
+        successCount = entity.getSuccessCount();
         relatedCertifications = new ArrayList<>();
         relatedEntities.forEach(c -> relatedCertifications.add(new RelatedCertificationResponse(c.getId(),c.getDate(),c.getState())));
     }

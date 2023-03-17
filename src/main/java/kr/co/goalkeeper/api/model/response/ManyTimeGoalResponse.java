@@ -39,7 +39,7 @@ public class ManyTimeGoalResponse extends GoalResponse {
             certifications = Collections.emptyList();
         }
     }
-    public ManyTimeGoalResponse(ManyTimeGoal entity, Set<Certification> certifications, Set<ManyTimeGoalCertDate> certDates){
+    public ManyTimeGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
         id = entity.getId();
         title = entity.getTitle();
         content = entity.getContent();
@@ -50,12 +50,12 @@ public class ManyTimeGoalResponse extends GoalResponse {
         endDate = entity.getEndDate();
         goalState = entity.getGoalState();
         holdable = entity.isHoldRequestAble();
-        this.certifications = new ArrayList<>();
-        certifications.forEach(certification -> {
+        certifications = new ArrayList<>();
+        relatedCertifications.forEach(certification -> {
             if(certification.getGoal().getId() != id){
                 return;
             }
-            this.certifications.add(ManyTimeCertificationResponse.makeInstanceWithOutGoal((ManyTimeCertification) certification,certifications));
+            certifications.add(ManyTimeCertificationResponse.makeInstanceWithOutGoal((ManyTimeCertification) certification,relatedCertifications));
         });
         this.certDates = new ArrayList<>();
         certDates.forEach(certDate -> {
@@ -80,6 +80,29 @@ public class ManyTimeGoalResponse extends GoalResponse {
         manyTimeGoalResponse.holdable = entity.isHoldRequestAble();
         manyTimeGoalResponse.certDates = new ArrayList<>();
         entity.getCertDates().forEach((c)-> manyTimeGoalResponse.certDates.add(c.getCertDate()));
+        Collections.sort(manyTimeGoalResponse.certDates);
+        manyTimeGoalResponse.certifications = null;
+        return manyTimeGoalResponse;
+    }
+    public static ManyTimeGoalResponse makeInstanceWithOutCertifications(ManyTimeGoal entity,Set<ManyTimeGoalCertDate> certDates){
+        ManyTimeGoalResponse manyTimeGoalResponse = new ManyTimeGoalResponse();
+        manyTimeGoalResponse.id = entity.getId();
+        manyTimeGoalResponse.title = entity.getTitle();
+        manyTimeGoalResponse.content = entity.getContent();
+        manyTimeGoalResponse.categoryType = entity.getCategory().getCategoryType();
+        manyTimeGoalResponse.point = entity.getPoint();
+        manyTimeGoalResponse.reward = entity.getReward();
+        manyTimeGoalResponse.startDate = entity.getStartDate();
+        manyTimeGoalResponse.endDate = entity.getEndDate();
+        manyTimeGoalResponse.goalState = entity.getGoalState();
+        manyTimeGoalResponse.holdable = entity.isHoldRequestAble();
+        manyTimeGoalResponse.certDates = new ArrayList<>();
+        certDates.forEach((c)-> {
+            if(c.getManyTimeGoal().getId()!=manyTimeGoalResponse.id){
+                return;
+            }
+            manyTimeGoalResponse.certDates.add(c.getCertDate());
+        });
         Collections.sort(manyTimeGoalResponse.certDates);
         manyTimeGoalResponse.certifications = null;
         return manyTimeGoalResponse;
