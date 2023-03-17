@@ -3,9 +3,11 @@ package kr.co.goalkeeper.api.model.response;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import kr.co.goalkeeper.api.model.entity.CertificationState;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
@@ -24,4 +26,12 @@ public abstract class CertificationResponse {
     protected LocalDate date;
     protected int successCount;
     protected int failCount;
+    protected List<RelatedCertificationResponse> relatedCertifications;
+    @Getter
+    @AllArgsConstructor
+    static class RelatedCertificationResponse {
+        private long id;
+        private LocalDate certDate;
+        private CertificationState certificationState;
+    }
 }

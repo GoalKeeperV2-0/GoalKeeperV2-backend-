@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 @Getter
@@ -20,10 +21,16 @@ public class CertificationPageResponse {
             return new OneTimeCertificationResponse((OneTimeCertification) certification);
         }
     };
-    private final Page<CertificationResponse> certificationResponses;
+    private Page<CertificationResponse> certificationResponses;
     private final List<Long> alreadyVerification;
-    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications){
+    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications, Set<Certification> certificationsInGoalIds){
         this.certificationResponses = certificationResponses.map(mapper);
+        this.certificationResponses = this.certificationResponses.map(certificationResponse -> {
+            if(certificationResponse instanceof ManyTimeCertificationResponse){
+                return new ManyTimeCertificationResponse((ManyTimeCertificationResponse) certificationResponse,certificationsInGoalIds);
+            }
+            return certificationResponse;
+        });
         alreadyVerification = new ArrayList<>();
         verifications.forEach(verification -> alreadyVerification.add(verification.getCertification().getId()));
     }

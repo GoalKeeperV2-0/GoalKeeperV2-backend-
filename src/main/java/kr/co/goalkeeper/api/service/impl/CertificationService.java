@@ -17,9 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
 
@@ -73,28 +71,37 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     @Override
     public CertificationPageResponse getCertificationsByGoalId(long goalId, long userId, int page) {
         Page<Certification> certs = certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
-        return getCertificationPageResponse(userId, certs);
+        Set<Long> goalIds = new HashSet<>();
+        certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
+        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
+        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
     }
-    private CertificationPageResponse getCertificationPageResponse(long userId, Page<Certification> certs) {
+    private CertificationPageResponse makeCertificationPageResponse(long userId, Page<Certification> certs,Set<Certification> certificationsInGoalIds) {
         if(certs.isEmpty()){
-            return new CertificationPageResponse(certs, Collections.emptyList());
+            return new CertificationPageResponse(certs, Collections.emptyList(),Collections.emptySet());
         }
         List<Long> certIds = new ArrayList<>();
         certs.getContent().forEach(certification -> certIds.add(certification.getId()));
         List<Verification> verifies = verificationRepository.findAllByCertification_IdInAndUser_Id(certIds,userId);
-        return new CertificationPageResponse(certs,verifies);
+        return new CertificationPageResponse(certs,verifies,certificationsInGoalIds);
     }
 
     @Override
     public CertificationPageResponse getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
         Page<Certification> certs = certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
-        return getCertificationPageResponse(userId, certs);
+        Set<Long> goalIds = new HashSet<>();
+        certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
+        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
+        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
     }
 
     @Override
     public CertificationPageResponse getCertifications(long userId,int page) {
         Page<Certification> certs = certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
-        return getCertificationPageResponse(userId, certs);
+        Set<Long> goalIds = new HashSet<>();
+        certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
+        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
+        return makeCertificationPageResponse(userId, certs,certificationsInGoalIds);
     }
 
     @Override
