@@ -3,7 +3,12 @@ package kr.co.goalkeeper.api.service.impl;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
+import kr.co.goalkeeper.api.model.response.GoalResponse;
+import kr.co.goalkeeper.api.model.response.ManyTimeGoalResponse;
+import kr.co.goalkeeper.api.model.response.OneTimeGoalResponse;
+import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.repository.GoalRepository;
+import kr.co.goalkeeper.api.repository.ManyTimeGoalCertDateRepository;
 import kr.co.goalkeeper.api.service.port.GoalGetService;
 import kr.co.goalkeeper.api.service.port.HoldGoalService;
 import kr.co.goalkeeper.api.service.port.ManyTimeGoalService;
@@ -16,20 +21,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetService, HoldGoalService {
 
     private final GoalRepository goalRepository;
+    private final CertificationRepository certificationRepository;
+    private final ManyTimeGoalCertDateRepository certDateRepository;
     private PageRequest makePageRequest(int page){
         int PAGE_SIZE = 8;
         return PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
     }
 
-    public GoalService(GoalRepository goalRepository) {
+    public GoalService(GoalRepository goalRepository, CertificationRepository certificationRepository, ManyTimeGoalCertDateRepository certDateRepository) {
         this.goalRepository = goalRepository;
+        this.certificationRepository = certificationRepository;
+        this.certDateRepository = certDateRepository;
     }
 
     @Override
@@ -115,15 +126,28 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
     }
 
     @Override
-    public Page<Goal> getGoalsByUserId(long userId, int page) {
-        return goalRepository.findAllByUser_Id(userId,makePageRequest(page));
+    public Page<GoalResponse> getGoalsByUserId(long userId, int page) {
+        Page<Goal> result = goalRepository.findAllByUser_Id(userId,makePageRequest(page));
+        return makeGoalResponses(result);
     }
-
+    private Page<GoalResponse> makeGoalResponses(Page<Goal> result) {
+        Set<Long> goalIds = new HashSet<>();
+        result.forEach(goal -> goalIds.add(goal.getId()));
+        Set<Certification> certificationsInResult = certificationRepository.findAllByGoal_IdIn(goalIds);
+        Set<ManyTimeGoalCertDate> manyTimeGoalCertDates = certDateRepository.findAllByManyTimeGoal_IdIn(goalIds);
+        return result.map(goal -> {
+            if(goal instanceof ManyTimeGoal){
+                return new ManyTimeGoalResponse((ManyTimeGoal) goal,certificationsInResult,manyTimeGoalCertDates);
+            }else{
+                return new OneTimeGoalResponse((OneTimeGoal) goal,certificationsInResult);
+            }
+        });
+    }
     @Override
-    public Page<Goal> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
-        return goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, makePageRequest(page));
+    public Page<GoalResponse> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
+        Page<Goal> result = goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, makePageRequest(page));
+        return makeGoalResponses(result);
     }
-
     @Override
     public void holdGoal(User user,long goalId) {
         Goal goal = goalRepository.findById(goalId).orElseThrow(() -> {

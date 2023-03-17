@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
 import kr.co.goalkeeper.api.model.request.*;
-import kr.co.goalkeeper.api.model.response.CertificationResponse;
-import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
-import kr.co.goalkeeper.api.model.response.OneTimeCertificationResponse;
+import kr.co.goalkeeper.api.model.response.*;
 import kr.co.goalkeeper.api.service.port.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,11 +81,11 @@ class GoalkeeperApplicationTests {
 	@Test
 	@Transactional
 	void goalGetTest(){
-		Page<Goal> goals = goalGetService.getGoalsByUserId(1,0);
-		List<Goal> goalList = goals.getContent();
+		Page<GoalResponse> goals = goalGetService.getGoalsByUserId(1,0);
+		List<GoalResponse> goalList = goals.getContent();
 		assertThat(goalList.size()).isEqualTo(2);
-		assertThat(goalList.get(0).getClass()).isEqualTo(ManyTimeGoal.class);
-		assertThat(goalList.get(1).getClass()).isEqualTo(OneTimeGoal.class);
+		assertThat(goalList.get(0).getClass()).isEqualTo(ManyTimeGoalResponse.class);
+		assertThat(goalList.get(1).getClass()).isEqualTo(OneTimeGoalResponse.class);
 	}
 
 	/**
@@ -101,8 +99,8 @@ class GoalkeeperApplicationTests {
 		OneTimeGoal oneTimeGoal = new OneTimeGoal(goalRequest,user);
 		OneTimeGoal added = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
 		assertThat(added).isEqualTo(oneTimeGoal);
-		Page<Goal> goalPage = goalGetService.getGoalsByUserId(1,0);
-		assertThat(goalPage.stream().anyMatch(goal -> goal.equals(added))).isEqualTo(true);
+		Page<GoalResponse> goalPage = goalGetService.getGoalsByUserId(1,0);
+		assertThat(goalPage.stream().anyMatch(goal -> goal.getId() == added.getId())).isEqualTo(true);
 
 		//지속 목표 등록
 		List<LocalDate> certDates = new ArrayList<>();
@@ -116,7 +114,7 @@ class GoalkeeperApplicationTests {
 		ManyTimeGoal addedMany = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
 		assertThat(addedMany).isEqualTo(manyTimeGoal);
 		goalPage = goalGetService.getGoalsByUserId(1,0);
-		assertThat(goalPage.stream().anyMatch(goal -> goal.equals(addedMany))).isEqualTo(true);
+		assertThat(goalPage.stream().anyMatch(goal -> goal.getId() == addedMany.getId())).isEqualTo(true);
 
 		// 지속 목표 등록 실패 - 목표 시작날짜는 목표 종료날짜보다 4일 이상 빨라야 합니다.
 		addManyGoalFail1();

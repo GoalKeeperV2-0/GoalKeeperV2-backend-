@@ -44,7 +44,7 @@ public class GoalController {
     @GetMapping("")
     public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByUser(@RequestHeader("Authorization") String accessToken,@RequestParam int page){
         long userId = credentialService.getUserId(accessToken);
-        Page<GoalResponse> result = goalGetService.getGoalsByUserId(userId,page).map(mapper);
+        Page<GoalResponse> result = goalGetService.getGoalsByUserId(userId,page);
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
@@ -52,7 +52,7 @@ public class GoalController {
     @GetMapping("/{category:[A-Z]+}")
     public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
         long userId = credentialService.getUserId(accessToken);
-        Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndCategory(userId,categoryType,page).map(mapper);
+        Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndCategory(userId,categoryType,page);
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }

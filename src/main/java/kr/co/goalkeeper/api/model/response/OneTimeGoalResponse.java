@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 @SuperBuilder
 @Getter
@@ -34,6 +35,25 @@ public class OneTimeGoalResponse extends GoalResponse {
         }catch (NullPointerException e){
             certifications = Collections.emptyList();
         }
+    }
+    public OneTimeGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
+        id =entity.getId();
+        startDate = entity.getStartDate();
+        endDate = entity.getEndDate();
+        categoryType = entity.getCategory().getCategoryType();
+        content = entity.getContent();
+        point = entity.getPoint();
+        reward = entity.getReward();
+        title = entity.getTitle();
+        goalState = entity.getGoalState();
+        holdable = entity.isHoldRequestAble();
+        this.certifications = new ArrayList<>();
+        certifications.forEach(certification -> {
+            if(certification.getGoal().getId() != id){
+                return;
+            }
+            this.certifications.add(OneTimeCertificationResponse.makeInstanceWithOutGoal((OneTimeCertification) certification));
+        });
     }
     public static OneTimeGoalResponse makeInstanceWithOutCertifications(OneTimeGoal entity){
         OneTimeGoalResponse oneTimeGoalResponse = new OneTimeGoalResponse();
