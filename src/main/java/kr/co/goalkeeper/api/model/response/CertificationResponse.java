@@ -1,5 +1,6 @@
 package kr.co.goalkeeper.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import kr.co.goalkeeper.api.model.entity.CertificationState;
@@ -31,7 +32,9 @@ public abstract class CertificationResponse {
     @AllArgsConstructor
     static class RelatedCertificationResponse {
         private long id;
+        @JsonProperty("date")
         private LocalDate certDate;
+        @JsonProperty("state")
         private CertificationState certificationState;
     }
 }
