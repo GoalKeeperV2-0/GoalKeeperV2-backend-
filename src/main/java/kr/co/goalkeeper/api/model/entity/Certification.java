@@ -25,6 +25,7 @@ public abstract class Certification {
         this.date = date;
         this.successCount = successCount;
         this.goal = goal;
+        goal.certificationList.add(this);
         this.failCount = failCount;
     }
 

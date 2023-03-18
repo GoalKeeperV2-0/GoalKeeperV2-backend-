@@ -10,6 +10,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static kr.co.goalkeeper.api.model.entity.GoalState.*;
@@ -51,7 +52,7 @@ public abstract class Goal {
     @NotNull
     protected LocalDate endDate;
     @OneToMany(mappedBy = "goal",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    protected List<Certification> certificationList;
+    protected List<Certification> certificationList = new ArrayList<>();
     private boolean holdRequestAble = true;
 
     protected Goal(long id, User user, String title, String content, int point, GoalState goalState, Reward reward, Category category) {
@@ -106,6 +107,11 @@ public abstract class Goal {
     public final void failFromOngoing(){
         goalState = FAIL;
         holdRequestAble = true;
+        certificationList.forEach(c->{
+            if(c.state==CertificationState.ONGOING){
+                c.state = CertificationState.FAIL;
+            }
+        });
         minusUserCategoryPoint();
         Notification notification = makeFailNotification();
         NotificationSender.send(notification);
