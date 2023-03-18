@@ -16,6 +16,9 @@ public class ManyTimeGoalRequest extends GoalRequest {
         String content = "content";
         return new ManyTimeGoalRequest(title,categoryType,content,point,reward,endDate,certDates);
     }
+    public static ManyTimeGoalRequest getTestInstance(String title,String content,CategoryType categoryType, int point, Reward reward, LocalDate endDate, List<LocalDate> certDates) {
+        return new ManyTimeGoalRequest(title,categoryType,content,point,reward,endDate,certDates);
+    }
     private ManyTimeGoalRequest(String title, CategoryType categoryType, String content, int point, Reward reward, LocalDate endDate, List<LocalDate> certDates) {
         super(title, categoryType, content, point, reward, endDate);
         this.certDates = certDates;

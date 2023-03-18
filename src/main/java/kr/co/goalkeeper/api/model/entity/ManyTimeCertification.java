@@ -36,6 +36,11 @@ public class ManyTimeCertification extends Certification {
         picture="";
         this.date = date;
     }
+    public static ManyTimeCertification getTestInstance(String content,ManyTimeGoal goal, MultipartFile file, LocalDate date){
+        ManyTimeCertification manyTimeCertification = new ManyTimeCertification(0,0,goal,file,date);
+        manyTimeCertification.content = content;
+        return manyTimeCertification;
+    }
     public ManyTimeCertification(ManyTimeCertificationRequest dto,Goal goal){
         content = dto.getContent();
         state = CertificationState.ONGOING;

@@ -15,10 +15,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Entity
@@ -61,6 +58,25 @@ public class User {
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private Set<UserCategoryPoint> userCategoryPointSet;
+
+    public static final List<User> getTestInstances(List<Category> categoryList,int count){
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            User user = new User();
+            user.name="test"+i;
+            user.email = user.name+"@test.com";
+            user.age = 20;
+            user.joinComplete = true;
+            user.point= user.INIT_POINT;
+            user.userCategoryPointSet = new HashSet<>();
+            for (Category category: categoryList) {
+                UserCategoryPoint usp = new UserCategoryPoint(user,category);
+                user.userCategoryPointSet.add(usp);
+            }
+            users.add(user);
+        }
+        return users;
+    }
 
     public User(Map<String,String> credential, OAuthType oAuthType, List<Category> categoryList){
         switch (oAuthType){

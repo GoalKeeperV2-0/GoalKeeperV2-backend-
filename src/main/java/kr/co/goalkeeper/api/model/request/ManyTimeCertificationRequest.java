@@ -12,6 +12,7 @@ public class ManyTimeCertificationRequest extends CertificationRequest {
     public static ManyTimeCertificationRequest getTestInstance(String content, MultipartFile picture, long goalId){
         return new ManyTimeCertificationRequest(content,picture,goalId);
     }
+
     private ManyTimeCertificationRequest(String content, MultipartFile picture, long goalId) {
         super(content, picture, goalId);
     }
