@@ -73,7 +73,11 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
 
     @Override
     public CertificationPageResponse getCertificationsByGoalId(long goalId, long userId, int page) {
-        Page<Certification> certs = certificationRepository.findAllByGoal_Id(goalId,makePageRequest(page));
+        Set<GoalState> goalStates = new HashSet<>();
+        goalStates.add(GoalState.ONGOING);
+        goalStates.add(GoalState.WAITING_CERT_COMPLETE);
+        goalStates.add(GoalState.SUCCESS);
+        Page<Certification> certs = certificationRepository.findAllByGoal_IdAndGoal_GoalStateIn(goalId,goalStates,makePageRequest(page));
         return makeCertificationPageResponse(userId,certs);
     }
     private CertificationPageResponse makeCertificationPageResponse(long userId,Page<Certification> certs){
@@ -91,13 +95,21 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     }
     @Override
     public CertificationPageResponse getCertificationsByCategory(CategoryType categoryType,long userId,int page) {
-        Page<Certification> certs = certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLike(categoryType,ONGOING,userId,makePageRequest(page));
+        Set<GoalState> goalStates = new HashSet<>();
+        goalStates.add(GoalState.ONGOING);
+        goalStates.add(GoalState.WAITING_CERT_COMPLETE);
+        goalStates.add(GoalState.SUCCESS);
+        Page<Certification> certs = certificationRepository.findByGoal_Category_CategoryTypeAndStateAndGoal_User_IdNotLikeAndGoal_GoalStateIn(categoryType,ONGOING,userId,goalStates,makePageRequest(page));
         return makeCertificationPageResponse(userId, certs);
     }
 
     @Override
     public CertificationPageResponse getCertifications(long userId,int page) {
-        Page<Certification> certs = certificationRepository.findByStateAndGoal_User_IdNotLike(ONGOING,userId,makePageRequest(page));
+        Set<GoalState> goalStates = new HashSet<>();
+        goalStates.add(GoalState.ONGOING);
+        goalStates.add(GoalState.WAITING_CERT_COMPLETE);
+        goalStates.add(GoalState.SUCCESS);
+        Page<Certification> certs = certificationRepository.findByStateAndGoal_User_IdNotLikeAndGoal_GoalStateIn(ONGOING,userId,goalStates,makePageRequest(page));
         return makeCertificationPageResponse(userId, certs);
     }
 
@@ -132,7 +144,11 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         return state==GoalState.ONGOING;
     }
     private boolean validateUniqueCertification(OneTimeCertification certification){
-        Page<Certification> searchResult = certificationRepository.findAllByGoal_Id(certification.getGoal().getId(),makePageRequest(0));
+        Set<GoalState> goalStates = new HashSet<>();
+        goalStates.add(GoalState.ONGOING);
+        goalStates.add(GoalState.WAITING_CERT_COMPLETE);
+        goalStates.add(GoalState.SUCCESS);
+        Page<Certification> searchResult = certificationRepository.findAllByGoal_IdAndGoal_GoalStateIn(certification.getGoal().getId(),goalStates,makePageRequest(0));
         return searchResult.getContent().isEmpty();
     }
 }
