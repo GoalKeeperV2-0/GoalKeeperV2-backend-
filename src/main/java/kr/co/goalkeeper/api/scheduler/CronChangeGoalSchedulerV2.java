@@ -1,12 +1,14 @@
 package kr.co.goalkeeper.api.scheduler;
 
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalBatchRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalBatchRepository;
 import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
 import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
-import lombok.AllArgsConstructor;
+import kr.co.goalkeeper.api.util.ImageSaver;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Async;
@@ -22,12 +24,23 @@ import java.time.LocalDate;
 @EnableAsync
 @Component
 @Slf4j
-@AllArgsConstructor
 public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
-    private OneTimeGoalBatchRepository goalBatchRepository;
-    private OneTimeCertificationService oneTimeCertificationService;
-    private ManyTimeCertificationService manyTimeCertificationService;
-    private ManyTimeGoalBatchRepository manyTimeGoalBatchRepository;
+    private final CertificationRepository certificationRepository;
+    @Value("${file-save-location}")
+    private String pictureRootPath;
+    private final OneTimeGoalBatchRepository goalBatchRepository;
+    private final OneTimeCertificationService oneTimeCertificationService;
+    private final ManyTimeCertificationService manyTimeCertificationService;
+    private final ManyTimeGoalBatchRepository manyTimeGoalBatchRepository;
+
+    public CronChangeGoalSchedulerV2(OneTimeGoalBatchRepository goalBatchRepository, OneTimeCertificationService oneTimeCertificationService, ManyTimeCertificationService manyTimeCertificationService, ManyTimeGoalBatchRepository manyTimeGoalBatchRepository,
+                                     CertificationRepository certificationRepository) {
+        this.goalBatchRepository = goalBatchRepository;
+        this.oneTimeCertificationService = oneTimeCertificationService;
+        this.manyTimeCertificationService = manyTimeCertificationService;
+        this.manyTimeGoalBatchRepository = manyTimeGoalBatchRepository;
+        this.certificationRepository = certificationRepository;
+    }
 
     @Transactional
     @Scheduled(cron="0 6 0 * * *")
@@ -48,8 +61,9 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     private void addFailCertToOneTimeGoal(Slice<OneTimeGoal> oneTimeGoals,LocalDate endDate){
         for (OneTimeGoal oneTimeGoal:oneTimeGoals) {
             OneTimeCertification oneTimeCertification = OneTimeCertification.getFailInstance(oneTimeGoal,endDate);
-            oneTimeCertificationService.createCertification(oneTimeCertification,oneTimeGoal.getUser().getId());
+            ImageSaver.saveCertificationPicture(oneTimeCertification,pictureRootPath);
             oneTimeCertification.verificationFail();
+            certificationRepository.save(oneTimeCertification);
         }
     }
     private void checkManyTimeGoal(LocalDate endDate, int page){
@@ -63,7 +77,9 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
         for (ManyTimeGoal manyTimeGoal:manyTimeGoals) {
             ManyTimeCertification manyTimeCertification = ManyTimeCertification.getFailInstance(manyTimeGoal,endDate);
             manyTimeCertificationService.createCertification(manyTimeCertification,manyTimeGoal.getUser().getId());
+            ImageSaver.saveCertificationPicture(manyTimeCertification,pictureRootPath);
             manyTimeCertification.verificationFail();
+            certificationRepository.save(manyTimeCertification);
         }
     }
 
