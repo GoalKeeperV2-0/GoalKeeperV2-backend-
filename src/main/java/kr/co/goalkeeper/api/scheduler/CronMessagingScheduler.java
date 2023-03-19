@@ -49,7 +49,7 @@ public class CronMessagingScheduler implements OnlyMessagingScheduler {
     }
 
     @Transactional
-    @Scheduled(cron="0 0 0 * * *")
+    @Scheduled(cron="0 3 0 * * *")
     @Async
     @Override
     public void sendGoalDDayMessage() {

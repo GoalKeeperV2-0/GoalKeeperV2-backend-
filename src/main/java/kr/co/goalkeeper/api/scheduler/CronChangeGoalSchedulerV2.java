@@ -30,7 +30,7 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     private ManyTimeGoalBatchRepository manyTimeGoalBatchRepository;
 
     @Transactional
-    @Scheduled(cron="0 0 0 * * *")
+    @Scheduled(cron="0 6 0 * * *")
     @Async
     @Override
     public void checkTimeOutGoal() {
@@ -68,7 +68,7 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     }
 
     @Transactional
-    @Scheduled(cron="0 0 0 * * *")
+    @Scheduled(cron="0 9 0 * * *")
     @Async
     @Override
     public void checkNoCertificationAtCertDay() {
