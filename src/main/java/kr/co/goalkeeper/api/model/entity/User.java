@@ -9,6 +9,7 @@ import kr.co.goalkeeper.api.util.ImageSaver;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -55,7 +56,7 @@ public class User {
     @ColumnDefault("0")
     @NotNull
     private Integer point = 0;
-
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private Set<UserCategoryPoint> userCategoryPointSet;
 
