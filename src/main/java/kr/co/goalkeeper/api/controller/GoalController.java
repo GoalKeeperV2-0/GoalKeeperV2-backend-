@@ -27,7 +27,7 @@ public class GoalController {
         User user = credentialService.getUserById(userId);
         ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user);
         manyTimeGoal = manyTimeGoalService.createManyTimeGoal(manyTimeGoal);
-        ManyTimeGoalResponse result = ManyTimeGoalResponse.getCreateGoalResponse(manyTimeGoal);
+        ManyTimeGoalResponse result = ManyTimeGoalResponse.createResponseFromEntity(manyTimeGoal);
         Response<ManyTimeGoalResponse> response = new Response<>("지속목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
@@ -53,7 +53,7 @@ public class GoalController {
         User user = credentialService.getUserById(userId);
         OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user);
         oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
-        OneTimeGoalResponse result = OneTimeGoalResponse.getCreateGoalResponse(oneTimeGoal);
+        OneTimeGoalResponse result = OneTimeGoalResponse.createResponseFromEntity(oneTimeGoal);
         Response<OneTimeGoalResponse> response = new Response<>("일반목표 등록에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
