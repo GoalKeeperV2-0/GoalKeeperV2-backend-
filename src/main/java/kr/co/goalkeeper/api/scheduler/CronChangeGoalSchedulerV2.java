@@ -76,7 +76,6 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     private void addFailCertToManyTimeGoal(Slice<ManyTimeGoal> manyTimeGoals, LocalDate endDate){
         for (ManyTimeGoal manyTimeGoal:manyTimeGoals) {
             ManyTimeCertification manyTimeCertification = ManyTimeCertification.getFailInstance(manyTimeGoal,endDate);
-            manyTimeCertificationService.createCertification(manyTimeCertification,manyTimeGoal.getUser().getId());
             ImageSaver.saveCertificationPicture(manyTimeCertification,pictureRootPath);
             manyTimeCertification.verificationFail();
             certificationRepository.save(manyTimeCertification);
