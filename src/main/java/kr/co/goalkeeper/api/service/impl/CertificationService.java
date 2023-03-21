@@ -83,9 +83,9 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
     private CertificationPageResponse makeCertificationPageResponse(long userId,Page<Certification> certs){
         Set<Long> goalIds = new HashSet<>();
         certs.getContent().forEach(certification -> goalIds.add(certification.getGoal().getId()));
-        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds);
+        Set<Certification> certificationsInGoalIds = certificationRepository.findAllByGoal_IdIn(goalIds); // 한 페이지에 포함된 인증에 대응되는 목표들에 대응되는 인증들
         if(certs.isEmpty()){
-            return new CertificationPageResponse(certs, Collections.emptyList(),Collections.emptySet(),Collections.emptySet());
+            return CertificationPageResponse.getEmptyResponse();
         }
         List<Long> certIds = new ArrayList<>();
         certs.getContent().forEach(certification -> certIds.add(certification.getId()));
