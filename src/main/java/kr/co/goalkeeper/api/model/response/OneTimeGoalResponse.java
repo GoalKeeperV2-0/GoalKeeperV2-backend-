@@ -10,13 +10,12 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 
 @SuperBuilder
 @Getter
 @NoArgsConstructor
 public class OneTimeGoalResponse extends GoalResponse {
-    public static OneTimeGoalResponse getCreateGoalResponse(OneTimeGoal entity){
+    public static OneTimeGoalResponse createResponseFromEntity(OneTimeGoal entity){
         return new OneTimeGoalResponse(entity);
     }
     private OneTimeGoalResponse(OneTimeGoal entity){
@@ -38,28 +37,6 @@ public class OneTimeGoalResponse extends GoalResponse {
         }catch (NullPointerException e){
             certifications = Collections.emptyList();
         }
-    }
-    public static OneTimeGoalResponse getSelectGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
-        return new OneTimeGoalResponse(entity,certifications);
-    }
-    private OneTimeGoalResponse(OneTimeGoal entity, Set<Certification> certifications){
-        id =entity.getId();
-        startDate = entity.getStartDate();
-        endDate = entity.getEndDate();
-        categoryType = entity.getCategory().getCategoryType();
-        content = entity.getContent();
-        point = entity.getPoint();
-        reward = entity.getReward();
-        title = entity.getTitle();
-        goalState = entity.getGoalState();
-        holdable = entity.isHoldRequestAble();
-        this.certifications = new ArrayList<>();
-        certifications.forEach(certification -> {
-            if(certification.getGoal().getId() != id){
-                return;
-            }
-            this.certifications.add(OneTimeCertificationResponse.getInnerCertificationResponse((OneTimeCertification) certification));
-        });
     }
     public static OneTimeGoalResponse getInnerGoalResponse(OneTimeGoal entity){
         OneTimeGoalResponse oneTimeGoalResponse = new OneTimeGoalResponse();

@@ -16,8 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class ManyTimeGoalResponse extends GoalResponse {
     private List<LocalDate> certDates;
-
-    public static ManyTimeGoalResponse getCreateGoalResponse(ManyTimeGoal entity){
+    public static ManyTimeGoalResponse createResponseFromEntity(ManyTimeGoal entity){
         return new ManyTimeGoalResponse(entity);
     }
     private ManyTimeGoalResponse(ManyTimeGoal entity){
@@ -42,36 +41,6 @@ public class ManyTimeGoalResponse extends GoalResponse {
         }catch (NullPointerException e){
             certifications = Collections.emptyList();
         }
-    }
-    public static ManyTimeGoalResponse getSelectGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
-        return new ManyTimeGoalResponse(entity,relatedCertifications,certDates);
-    }
-    private ManyTimeGoalResponse(ManyTimeGoal entity, Set<Certification> relatedCertifications, Set<ManyTimeGoalCertDate> certDates){
-        id = entity.getId();
-        title = entity.getTitle();
-        content = entity.getContent();
-        categoryType = entity.getCategory().getCategoryType();
-        point = entity.getPoint();
-        reward = entity.getReward();
-        startDate = entity.getStartDate();
-        endDate = entity.getEndDate();
-        goalState = entity.getGoalState();
-        holdable = entity.isHoldRequestAble();
-        certifications = new ArrayList<>();
-        relatedCertifications.forEach(certification -> {
-            if(certification.getGoal().getId() != id){
-                return;
-            }
-            certifications.add(ManyTimeCertificationResponse.getInnerCertificationResponse((ManyTimeCertification) certification,relatedCertifications));
-        });
-        this.certDates = new ArrayList<>();
-        certDates.forEach(certDate -> {
-            if(certDate.getManyTimeGoal().getId() != id){
-                return;
-            }
-            this.certDates.add(certDate.getCertDate());
-        });
-        Collections.sort(this.certDates);
     }
     public static ManyTimeGoalResponse getInnerGoalResponse(ManyTimeGoal entity){
         ManyTimeGoalResponse manyTimeGoalResponse = createdByEntity(entity);

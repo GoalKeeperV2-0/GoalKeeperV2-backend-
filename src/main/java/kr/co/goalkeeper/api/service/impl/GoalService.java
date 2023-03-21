@@ -22,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -132,15 +130,11 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         return makeGoalResponses(result);
     }
     private Page<GoalResponse> makeGoalResponses(Page<Goal> result) {
-        Set<Long> goalIds = new HashSet<>();
-        result.forEach(goal -> goalIds.add(goal.getId()));
-        Set<Certification> certificationsInResult = certificationRepository.findAllByGoal_IdIn(goalIds);
-        Set<ManyTimeGoalCertDate> manyTimeGoalCertDates = certDateRepository.findAllByManyTimeGoal_IdIn(goalIds);
         return result.map(goal -> {
             if(goal instanceof ManyTimeGoal){
-                return ManyTimeGoalResponse.getSelectGoalResponse((ManyTimeGoal) goal,certificationsInResult,manyTimeGoalCertDates);
+                return ManyTimeGoalResponse.createResponseFromEntity((ManyTimeGoal) goal);
             }else{
-                return OneTimeGoalResponse.getSelectGoalResponse((OneTimeGoal) goal,certificationsInResult);
+                return OneTimeGoalResponse.createResponseFromEntity((OneTimeGoal) goal);
             }
         });
     }
@@ -157,10 +151,10 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         List<GoalResponse> returnValue = new ArrayList<>();
         result.forEach(goal -> {
             if(goal instanceof ManyTimeGoal){
-                returnValue.add(ManyTimeGoalResponse.getCreateGoalResponse((ManyTimeGoal) goal));
+                returnValue.add(ManyTimeGoalResponse.createResponseFromEntity((ManyTimeGoal) goal));
             }
             if(goal instanceof OneTimeGoal){
-                returnValue.add(OneTimeGoalResponse.getCreateGoalResponse((OneTimeGoal) goal));
+                returnValue.add(OneTimeGoalResponse.createResponseFromEntity((OneTimeGoal) goal));
             }
         });
         return returnValue;

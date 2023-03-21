@@ -4,6 +4,7 @@ import kr.co.goalkeeper.api.NotificationSender;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -42,7 +43,7 @@ public abstract class Goal {
     @Enumerated(EnumType.STRING)
     @NotNull
     protected Reward reward;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category")
     protected Category category;
     @Column
@@ -51,6 +52,7 @@ public abstract class Goal {
     @Column
     @NotNull
     protected LocalDate endDate;
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "goal",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     protected List<Certification> certificationList = new ArrayList<>();
     private boolean holdRequestAble = true;
