@@ -1,7 +1,6 @@
 package kr.co.goalkeeper.api.model.entity;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +16,7 @@ public class ManyTimeGoalCertDate {
     @JoinColumn(name = "goal_id")
     @MapsId("goalId")
     private ManyTimeGoal manyTimeGoal;
-    @Builder
-    private ManyTimeGoalCertDate(ManyTimeGoal manyTimeGoal, LocalDate certDate) {
+    public ManyTimeGoalCertDate(ManyTimeGoal manyTimeGoal, LocalDate certDate) {
         id = new ManyTimeGoalCertDateId();
         this.manyTimeGoal = manyTimeGoal;
         id.setCertDate(certDate);

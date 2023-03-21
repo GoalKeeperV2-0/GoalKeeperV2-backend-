@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class ManyTimeGoal extends Goal {
     @Column
     @NotNull
     private int failCount;
-
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "manyTimeGoal",cascade = CascadeType.ALL)
     private List<ManyTimeGoalCertDate> certDates;
     @Builder
@@ -45,10 +46,7 @@ public class ManyTimeGoal extends Goal {
         this.certDates = new ArrayList<>();
         Collections.sort(request.getCertDates());
         for (LocalDate certDate: request.getCertDates()) {
-            certDates.add(ManyTimeGoalCertDate.builder()
-                    .manyTimeGoal(this)
-                    .certDate(certDate)
-                    .build());
+            certDates.add(new ManyTimeGoalCertDate(this,certDate));
         }
         this.user = user;
         minusUserPoint();
