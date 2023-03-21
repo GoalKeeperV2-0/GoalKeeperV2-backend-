@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,6 +149,23 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         Page<Goal> result = goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, makePageRequest(page));
         return makeGoalResponses(result);
     }
+
+    @Override
+    public List<GoalResponse> getGoalsByUSerIdAndNeedCertNow(long userId) {
+        List<Long> goalIds = goalRepository.findGoalIdsByUSerIdAndNeedCertNow(LocalDate.now(),userId);
+        List<Goal> result = goalRepository.findAllById(goalIds);
+        List<GoalResponse> returnValue = new ArrayList<>();
+        result.forEach(goal -> {
+            if(goal instanceof ManyTimeGoal){
+                returnValue.add(ManyTimeGoalResponse.getCreateGoalResponse((ManyTimeGoal) goal));
+            }
+            if(goal instanceof OneTimeGoal){
+                returnValue.add(OneTimeGoalResponse.getCreateGoalResponse((OneTimeGoal) goal));
+            }
+        });
+        return returnValue;
+    }
+
     @Override
     public void holdGoal(User user,long goalId) {
         Goal goal = goalRepository.findById(goalId).orElseThrow(() -> {
