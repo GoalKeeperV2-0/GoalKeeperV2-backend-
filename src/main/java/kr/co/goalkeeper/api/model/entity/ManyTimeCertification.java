@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ManyTimeCertification extends Certification {
     public static ManyTimeCertification getFailInstance(ManyTimeGoal goal,LocalDate date){
-        return new ManyTimeCertification("","",null,CertificationState.FAIL,date,0,goal,10000);
+        return new ManyTimeCertification("작성한 인증내용이 없어요","",null,CertificationState.FAIL,date,0,goal,10000);
     }
 
     private ManyTimeCertification(String content, String picture, MultipartFile pictureFile, CertificationState state, LocalDate date, int successCount, Goal goal, int failCount) {

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OneTimeCertification extends Certification {
     public static OneTimeCertification getFailInstance(OneTimeGoal goal,LocalDate date){
-        return new OneTimeCertification("","",null,CertificationState.FAIL,date,0,goal,10000);
+        return new OneTimeCertification("작성한 인증내용이 없어요","",null,CertificationState.FAIL,date,0,goal,10000);
     }
     private OneTimeCertification(String content, String picture, MultipartFile pictureFile, CertificationState state, LocalDate date, int successCount, Goal goal, int failCount) {
         super(content, picture, pictureFile, state, date, successCount, goal, failCount);
