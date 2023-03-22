@@ -11,9 +11,6 @@ public class GoalkeeperApplication {
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = SpringApplication.run(GoalkeeperApplication.class, args);
 		NotificationSender.init(applicationContext);
-		CronChangeGoalSchedulerV2 cronChangeGoalSchedulerV2 = applicationContext.getBean(CronChangeGoalSchedulerV2.class);
-		cronChangeGoalSchedulerV2.checkTimeOutGoal();
-		cronChangeGoalSchedulerV2.checkNoCertificationAtCertDay();
 	}
 
 }

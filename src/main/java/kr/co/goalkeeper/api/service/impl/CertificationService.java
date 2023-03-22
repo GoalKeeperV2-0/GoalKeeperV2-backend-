@@ -43,6 +43,10 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         return PageRequest.of(page, PAGE_SIZE, Sort.by("id").descending());
     }
     public ManyTimeCertification createCertification(ManyTimeCertification certification, long userId) {
+        if(validateGoalState(certification)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"이미 실패한 목표입니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         if(validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
@@ -58,6 +62,9 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
         certification.changeGoalStateToWait();
         ImageSaver.saveCertificationPicture(certification,pictureRootPath);
         return certificationRepository.save(certification);
+    }
+    private boolean validateGoalState(Certification certification){
+        return certification.getGoal().getGoalState() == GoalState.FAIL;
     }
     private boolean validatePermission(Certification certification, long userId){
         User user = certification.getGoal().getUser();
@@ -123,6 +130,10 @@ class CertificationService implements OneTimeCertificationService, ManyTimeCerti
 
     @Override
     public OneTimeCertification createCertification(OneTimeCertification certification,long userId) {
+        if(validateGoalState(certification)){
+            ErrorMessage errorMessage = new ErrorMessage(409,"이미 실패한 목표입니다.");
+            throw new GoalkeeperException(errorMessage);
+        }
         if(validatePermission(certification,userId)){
             ErrorMessage errorMessage = new ErrorMessage(401,"자신이 작성한 목표의 인증만 등록할 수 있습니다.");
             throw new GoalkeeperException(errorMessage);
