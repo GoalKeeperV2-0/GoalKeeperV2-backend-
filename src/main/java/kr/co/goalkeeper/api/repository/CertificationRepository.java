@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface CertificationRepository extends JpaRepository<Certification,Long> {
@@ -23,4 +23,7 @@ public interface CertificationRepository extends JpaRepository<Certification,Lon
     @EntityGraph(attributePaths = {"goal","goal.user"})
     Page<Certification> findByStateAndGoal_User_IdNotLikeAndGoal_GoalStateIn(CertificationState certificationState, long userId, Set<GoalState> goalStates, Pageable pageable);
     Set<Certification> findAllByGoal_IdIn(Set<Long> goalIds);
+    @EntityGraph(attributePaths = "goal")
+    @Override
+    Optional<Certification> findById(Long aLong);
 }
