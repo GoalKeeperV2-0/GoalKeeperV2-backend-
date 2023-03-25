@@ -14,7 +14,11 @@ public interface GoalRepository extends JpaRepository<Goal,Long> {
     @EntityGraph(attributePaths = "category")
     Page<Goal> findAllByUser_Id(long userId, Pageable pageable);
     @EntityGraph(attributePaths = "category")
+    Page<Goal> findAllByUser_IdAndGoalState(long userId,GoalState goalState, Pageable pageable);
+    @EntityGraph(attributePaths = "category")
     Page<Goal> findAllByUser_IdAndCategory_CategoryType(long userId, CategoryType categoryType, Pageable pageable);
+    @EntityGraph(attributePaths = "category")
+    Page<Goal> findAllByUser_IdAndCategory_CategoryTypeAndGoalState(long userId, CategoryType categoryType,GoalState goalState, Pageable pageable);
     long countAllByGoalState(GoalState goalState);
     long countAllByUser_Id(long user_id);
     long countAllByGoalStateAndUser_Id(GoalState goalState,long userId);

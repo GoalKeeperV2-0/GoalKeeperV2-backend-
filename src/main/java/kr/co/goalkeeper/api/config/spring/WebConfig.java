@@ -10,6 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new OAuthTypeConverter());
+        registry.addConverter(new GoalStateConverter());
     }
     @Override
     public void addCorsMappings(CorsRegistry registry) {

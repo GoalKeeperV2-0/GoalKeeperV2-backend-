@@ -139,8 +139,19 @@ class GoalService implements OneTimeGoalService, ManyTimeGoalService , GoalGetSe
         });
     }
     @Override
+    public Page<GoalResponse> getGoalsByUserIdAndState(long userId, GoalState goalState, int page) {
+        Page<Goal> result = goalRepository.findAllByUser_IdAndGoalState(userId,goalState,makePageRequest(page));
+        return makeGoalResponses(result);
+    }
+    @Override
     public Page<GoalResponse> getGoalsByUserIdAndCategory(long userId, CategoryType categoryType, int page) {
         Page<Goal> result = goalRepository.findAllByUser_IdAndCategory_CategoryType(userId,categoryType, makePageRequest(page));
+        return makeGoalResponses(result);
+    }
+
+    @Override
+    public Page<GoalResponse> getGoalsByUserIdAndCategoryAndState(long userId, CategoryType categoryType, GoalState goalState, int page) {
+        Page<Goal> result = goalRepository.findAllByUser_IdAndCategory_CategoryTypeAndGoalState(userId,categoryType,goalState,makePageRequest(page));
         return makeGoalResponses(result);
     }
 

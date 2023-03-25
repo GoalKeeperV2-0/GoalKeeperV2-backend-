@@ -39,11 +39,25 @@ public class GoalController {
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/{state:^(?:ONGOING|WAITING_CERT_COMPLETE|SUCCESS|FAIL|HOLD)$}")
+    public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByUserAndState(@PathVariable GoalState state,@RequestHeader("Authorization") String accessToken,@RequestParam int page){
+        long userId = credentialService.getUserId(accessToken);
+        Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndState(userId,state,page);
+        Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
 
-    @GetMapping("/{category:[A-Z]+}")
+    @GetMapping("/{category:^(?:STUDY|EXERCISE|HABIT|HOBBY|ETC)$}")
     public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByCategoryAndUser(@PathVariable("category")CategoryType categoryType, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
         long userId = credentialService.getUserId(accessToken);
         Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndCategory(userId,categoryType,page);
+        Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/{category:[A-Z]+}/{state}")
+    public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByCategoryAndUserAndState(@PathVariable("category")CategoryType categoryType,@PathVariable GoalState state, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
+        long userId = credentialService.getUserId(accessToken);
+        Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndCategoryAndState(userId,categoryType,state,page);
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);
         return ResponseEntity.ok(response);
     }
