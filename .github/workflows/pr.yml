@@ -8,8 +8,8 @@
 name: Gradle Package
 
 on:
-  push:
-    branches: [ main]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -50,16 +50,3 @@ jobs:
               sed -i '0,/dev/s//prod/' ./src/main/resources/application.yml
       - name: Build with Gradle
         run: ./gradlew clean build  --stacktrace
-      - name: Copy keystore
-        run: |
-              echo -e "${{ secrets.KEYSTORE}}" > ./key
-              base64 -d -i ./key >> ./build/libs/goalkeeper.p12
-      - name: deploy file
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          username: ${{ secrets.SSH_USERNAME }}
-          server: ${{ secrets.SSH_HOST }}
-          local_path: './build/libs/*'
-          remote_path: ${{ secrets.SSH_REMOTE_PATH }}
-          sftp_only: true
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
