@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.model.request;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.Reward;
+import kr.co.goalkeeper.api.model.entity.goal.Reward;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

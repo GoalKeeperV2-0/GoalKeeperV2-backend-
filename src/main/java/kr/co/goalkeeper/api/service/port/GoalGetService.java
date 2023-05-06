@@ -1,8 +1,8 @@
 package kr.co.goalkeeper.api.service.port;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.Goal;
-import kr.co.goalkeeper.api.model.entity.GoalState;
+import kr.co.goalkeeper.api.model.entity.goal.Goal;
+import kr.co.goalkeeper.api.model.entity.goal.GoalState;
 import kr.co.goalkeeper.api.model.response.GoalResponse;
 import org.springframework.data.domain.Page;
 

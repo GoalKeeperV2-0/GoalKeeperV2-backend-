@@ -1,5 +1,6 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.community;
 
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import lombok.Getter;
 
 import javax.persistence.*;

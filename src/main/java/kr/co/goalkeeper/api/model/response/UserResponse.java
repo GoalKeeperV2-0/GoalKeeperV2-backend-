@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.model.response;
 
-import kr.co.goalkeeper.api.model.entity.Sex;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.goal.Sex;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import lombok.Getter;
 
 @Getter

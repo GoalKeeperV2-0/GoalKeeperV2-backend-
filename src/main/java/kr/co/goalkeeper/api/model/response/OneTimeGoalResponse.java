@@ -1,9 +1,9 @@
 package kr.co.goalkeeper.api.model.response;
 
 
-import kr.co.goalkeeper.api.model.entity.Certification;
-import kr.co.goalkeeper.api.model.entity.OneTimeCertification;
-import kr.co.goalkeeper.api.model.entity.OneTimeGoal;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.OneTimeCertification;
+import kr.co.goalkeeper.api.model.entity.goal.OneTimeGoal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

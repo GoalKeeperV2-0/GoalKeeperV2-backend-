@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.goal;
 
 import kr.co.goalkeeper.api.NotificationSender;
 import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;

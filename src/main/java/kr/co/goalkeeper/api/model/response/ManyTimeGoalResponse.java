@@ -1,6 +1,9 @@
 package kr.co.goalkeeper.api.model.response;
 
-import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeCertification;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoalCertDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

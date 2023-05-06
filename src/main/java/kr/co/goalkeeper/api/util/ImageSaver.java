@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.util;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import org.springframework.web.multipart.MultipartFile;
 

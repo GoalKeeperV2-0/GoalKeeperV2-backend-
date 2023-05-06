@@ -1,4 +1,4 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.goal;
 
 public enum Reward {
     HIGH_RETURN,LOW_RETURN;

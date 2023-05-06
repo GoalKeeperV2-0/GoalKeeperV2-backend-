@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.model.request;
 
-import kr.co.goalkeeper.api.model.entity.Sex;
+import kr.co.goalkeeper.api.model.entity.goal.Sex;
 import lombok.Getter;
 
 @Getter

@@ -1,9 +1,9 @@
 package kr.co.goalkeeper.api.repository;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.Certification;
-import kr.co.goalkeeper.api.model.entity.CertificationState;
-import kr.co.goalkeeper.api.model.entity.GoalState;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.CertificationState;
+import kr.co.goalkeeper.api.model.entity.goal.GoalState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

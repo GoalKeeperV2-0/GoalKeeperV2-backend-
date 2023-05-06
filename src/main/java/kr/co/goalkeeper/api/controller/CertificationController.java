@@ -1,6 +1,9 @@
 package kr.co.goalkeeper.api.controller;
 
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.Goal;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeCertification;
+import kr.co.goalkeeper.api.model.entity.goal.OneTimeCertification;
 import kr.co.goalkeeper.api.model.request.ManyTimeCertificationRequest;
 import kr.co.goalkeeper.api.model.request.OnetimeCertificationRequest;
 import kr.co.goalkeeper.api.model.response.*;

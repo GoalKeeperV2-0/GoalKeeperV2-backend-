@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.entity.Goal;
-import kr.co.goalkeeper.api.model.entity.GoalState;
+import kr.co.goalkeeper.api.model.entity.goal.Goal;
+import kr.co.goalkeeper.api.model.entity.goal.GoalState;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;

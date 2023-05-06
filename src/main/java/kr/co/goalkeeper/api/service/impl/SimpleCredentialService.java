@@ -2,7 +2,7 @@ package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.Category;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthAccessToken;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static kr.co.goalkeeper.api.model.entity.User.EMPTYUSER;
+import static kr.co.goalkeeper.api.model.entity.goal.User.EMPTYUSER;
 
 @Service
 class SimpleCredentialService implements CredentialService {

@@ -2,6 +2,7 @@ package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.model.response.CertificationPageResponse;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
@@ -20,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static kr.co.goalkeeper.api.model.entity.CertificationState.*;
+import static kr.co.goalkeeper.api.model.entity.goal.CertificationState.*;
 
 
 @Service

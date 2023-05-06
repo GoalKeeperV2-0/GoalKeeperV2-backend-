@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.service.port;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
 import kr.co.goalkeeper.api.model.response.CertificationPageResponse;
 
 public interface CertificationGetService {

@@ -2,6 +2,7 @@ package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalResponse;
 import kr.co.goalkeeper.api.model.response.ManyTimeGoalResponse;

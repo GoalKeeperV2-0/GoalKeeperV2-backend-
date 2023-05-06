@@ -3,7 +3,7 @@ package kr.co.goalkeeper.api.model.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import kr.co.goalkeeper.api.model.entity.CertificationState;
+import kr.co.goalkeeper.api.model.entity.goal.CertificationState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

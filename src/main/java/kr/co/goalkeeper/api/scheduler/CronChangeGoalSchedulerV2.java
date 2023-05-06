@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.scheduler;
 
-import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalBatchRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalBatchRepository;
@@ -58,7 +58,7 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
             checkOneTimeGoal(endDate,page+1);
         }
     }
-    private void addFailCertToOneTimeGoal(Slice<OneTimeGoal> oneTimeGoals,LocalDate endDate){
+    private void addFailCertToOneTimeGoal(Slice<OneTimeGoal> oneTimeGoals, LocalDate endDate){
         for (OneTimeGoal oneTimeGoal:oneTimeGoals) {
             OneTimeCertification oneTimeCertification = OneTimeCertification.getFailInstance(oneTimeGoal,endDate);
             ImageSaver.saveCertificationPicture(oneTimeCertification,pictureRootPath);

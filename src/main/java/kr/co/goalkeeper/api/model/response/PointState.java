@@ -1,8 +1,8 @@
 package kr.co.goalkeeper.api.model.response;
 
 import kr.co.goalkeeper.api.model.entity.CategoryType;
-import kr.co.goalkeeper.api.model.entity.User;
-import kr.co.goalkeeper.api.model.entity.UserCategoryPoint;
+import kr.co.goalkeeper.api.model.entity.goal.User;
+import kr.co.goalkeeper.api.model.entity.goal.UserCategoryPoint;
 import lombok.Getter;
 
 import java.util.HashMap;

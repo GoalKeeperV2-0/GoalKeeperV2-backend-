@@ -1,10 +1,10 @@
 package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.Certification;
-import kr.co.goalkeeper.api.model.entity.CertificationState;
-import kr.co.goalkeeper.api.model.entity.User;
-import kr.co.goalkeeper.api.model.entity.Verification;
+import kr.co.goalkeeper.api.model.entity.goal.Certification;
+import kr.co.goalkeeper.api.model.entity.goal.CertificationState;
+import kr.co.goalkeeper.api.model.entity.goal.User;
+import kr.co.goalkeeper.api.model.entity.goal.Verification;
 import kr.co.goalkeeper.api.model.request.VerificationRequest;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
