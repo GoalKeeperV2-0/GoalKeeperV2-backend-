@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.service.impl;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.PointState;
 import kr.co.goalkeeper.api.model.response.Statistics;
@@ -10,8 +10,8 @@ import kr.co.goalkeeper.api.repository.UserRepository;
 import kr.co.goalkeeper.api.service.port.StatisticsService;
 import org.springframework.stereotype.Service;
 
-import static kr.co.goalkeeper.api.model.entity.GoalState.*;
-import static kr.co.goalkeeper.api.model.entity.GoalState.FAIL;
+import static kr.co.goalkeeper.api.model.entity.goal.GoalState.*;
+import static kr.co.goalkeeper.api.model.entity.goal.GoalState.FAIL;
 
 @Service
 public class SimpleStatisticsService implements StatisticsService {

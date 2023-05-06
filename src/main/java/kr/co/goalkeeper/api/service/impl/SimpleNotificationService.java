@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.service.impl;
 
-import kr.co.goalkeeper.api.model.entity.Notification;
+import kr.co.goalkeeper.api.model.entity.goal.Notification;
 import kr.co.goalkeeper.api.repository.NotificationRepository;
 import kr.co.goalkeeper.api.service.port.NotificationService;
 import org.springframework.data.domain.Pageable;

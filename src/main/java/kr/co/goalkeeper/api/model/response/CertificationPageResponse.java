@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.model.response;
 
-import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
@@ -17,7 +17,7 @@ public class CertificationPageResponse {
         certificationResponses = Page.empty();
         alreadyVerification = new ArrayList<>();
     }
-    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications, Set<Certification> certificationsInGoalIds,Set<ManyTimeGoalCertDate> certDates){
+    public CertificationPageResponse(Page<Certification> certificationResponses, List<Verification> verifications, Set<Certification> certificationsInGoalIds, Set<ManyTimeGoalCertDate> certDates){
         this.certificationResponses = certificationResponses.map(certification -> {
             if(certification instanceof ManyTimeCertification) {
                 Set<Certification> sameGoalCerts = sameGoalFiltering(certification,certificationsInGoalIds);

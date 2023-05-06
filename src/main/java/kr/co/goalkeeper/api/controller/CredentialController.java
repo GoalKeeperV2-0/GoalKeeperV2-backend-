@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;

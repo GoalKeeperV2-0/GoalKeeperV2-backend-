@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoalCertDate;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoalCertDateId;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoalCertDate;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoalCertDateId;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

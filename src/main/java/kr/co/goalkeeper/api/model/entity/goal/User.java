@@ -1,6 +1,8 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.goal;
 
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
+import kr.co.goalkeeper.api.model.entity.Category;
+import kr.co.goalkeeper.api.model.entity.CategoryType;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
@@ -60,7 +62,7 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private Set<UserCategoryPoint> userCategoryPointSet;
 
-    public static final List<User> getTestInstances(List<Category> categoryList,int count){
+    public static final List<User> getTestInstances(List<Category> categoryList, int count){
         List<User> users = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             User user = new User();
@@ -113,7 +115,7 @@ public class User {
     public void joinComplete(){
         joinComplete = true;
     }
-    protected void plusPoint(@Positive int point,CategoryType categoryType){
+    protected void plusPoint(@Positive int point, CategoryType categoryType){
         this.point+=point;
         UserCategoryPoint usp = findUSPFromSetByCategoryType(categoryType);
         usp.addPoint(point);

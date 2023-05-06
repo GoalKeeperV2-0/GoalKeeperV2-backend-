@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.model.request.*;
 import kr.co.goalkeeper.api.model.response.*;
 import kr.co.goalkeeper.api.service.port.*;
@@ -192,7 +193,7 @@ class GoalkeeperApplicationTests {
 		certDates.add(LocalDate.now());
 		certDates.add(LocalDate.now().plusDays(1));
 		certDates.add(LocalDate.now().plusDays(5));
-		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200,Reward.HIGH_RETURN,
+		ManyTimeGoalRequest manyTimeGoalRequest = ManyTimeGoalRequest.getTestInstance(CategoryType.STUDY,200, Reward.HIGH_RETURN,
 				LocalDate.now().plusDays(5),certDates);
 		User user1 = credentialService.getUserById(1);
 		ManyTimeGoal manyTimeGoal = new ManyTimeGoal(manyTimeGoalRequest,user1);

@@ -1,6 +1,10 @@
 package kr.co.goalkeeper.api.controller;
 
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.GoalState;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.goal.OneTimeGoal;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import kr.co.goalkeeper.api.model.request.OneTimeGoalRequest;
 import kr.co.goalkeeper.api.model.response.*;
@@ -55,7 +59,7 @@ public class GoalController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{category:[A-Z]+}/{state}")
-    public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByCategoryAndUserAndState(@PathVariable("category")CategoryType categoryType,@PathVariable GoalState state, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
+    public ResponseEntity<Response<Page<GoalResponse>>> getGoalsByCategoryAndUserAndState(@PathVariable("category")CategoryType categoryType, @PathVariable GoalState state, @RequestHeader("Authorization") String accessToken, @RequestParam int page){
         long userId = credentialService.getUserId(accessToken);
         Page<GoalResponse> result = goalGetService.getGoalsByUserIdAndCategoryAndState(userId,categoryType,state,page);
         Response<Page<GoalResponse>> response = new Response<>("자신이 등록한 목표 조회에 성공했습니다.",result);

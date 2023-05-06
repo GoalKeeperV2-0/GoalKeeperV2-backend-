@@ -2,7 +2,7 @@ package kr.co.goalkeeper.api.service.impl;
 
 import io.jsonwebtoken.*;
 import kr.co.goalkeeper.api.exception.GoalkeeperException;
-import kr.co.goalkeeper.api.model.entity.User;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;

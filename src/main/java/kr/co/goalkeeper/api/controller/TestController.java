@@ -1,7 +1,7 @@
 package kr.co.goalkeeper.api.controller;
 
-import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.model.request.*;
 import kr.co.goalkeeper.api.model.response.CertificationPageResponse;
 import kr.co.goalkeeper.api.model.response.CertificationResponse;
@@ -61,7 +61,7 @@ public class TestController {
             }
             content = generateRandomString(20);
             title = generateRandomString(10);
-            OneTimeGoalRequest oneTimeGoalRequest = OneTimeGoalRequest.getTestInstance(title,content,CategoryType.EXERCISE,100,Reward.LOW_RETURN,LocalDate.now());
+            OneTimeGoalRequest oneTimeGoalRequest = OneTimeGoalRequest.getTestInstance(title,content,CategoryType.EXERCISE,100, Reward.LOW_RETURN,LocalDate.now());
             OneTimeGoal oneTimeGoal = new OneTimeGoal(oneTimeGoalRequest,user);
             oneTimeGoal = oneTimeGoalService.createOneTimeGoal(oneTimeGoal);
             content = generateRandomString(20);

@@ -1,6 +1,9 @@
 package kr.co.goalkeeper.api.aop;
 
-import kr.co.goalkeeper.api.model.entity.*;
+import kr.co.goalkeeper.api.model.entity.goal.Goal;
+import kr.co.goalkeeper.api.model.entity.goal.Notification;
+import kr.co.goalkeeper.api.model.entity.goal.NotificationType;
+import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.request.GoalRequest;
 import kr.co.goalkeeper.api.model.response.CertificationResponse;
 import kr.co.goalkeeper.api.model.response.ManyTimeCertificationResponse;
@@ -21,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static kr.co.goalkeeper.api.model.entity.NotificationType.*;
+import static kr.co.goalkeeper.api.model.entity.goal.NotificationType.*;
 
 @Aspect
 @Component
@@ -46,7 +49,7 @@ public class NotificationAspect {
         notificationService.sendNotification(notification);
         log.info("목표 등록 알림 생성 완료");
     }
-    private Notification makeNotification(NotificationType notificationType,String content,String accessToken){
+    private Notification makeNotification(NotificationType notificationType, String content, String accessToken){
         long userId = credentialService.getUserId(accessToken);
         User user = credentialService.getUserById(userId);
         return Notification.builder()

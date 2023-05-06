@@ -1,5 +1,6 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.goal;
 
+import kr.co.goalkeeper.api.model.entity.Category;
 import kr.co.goalkeeper.api.model.request.ManyTimeGoalRequest;
 import lombok.AccessLevel;
 import lombok.Builder;

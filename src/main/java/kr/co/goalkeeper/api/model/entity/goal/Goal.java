@@ -1,6 +1,7 @@
-package kr.co.goalkeeper.api.model.entity;
+package kr.co.goalkeeper.api.model.entity.goal;
 
 import kr.co.goalkeeper.api.NotificationSender;
+import kr.co.goalkeeper.api.model.entity.Category;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kr.co.goalkeeper.api.model.entity.GoalState.*;
+import static kr.co.goalkeeper.api.model.entity.goal.GoalState.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

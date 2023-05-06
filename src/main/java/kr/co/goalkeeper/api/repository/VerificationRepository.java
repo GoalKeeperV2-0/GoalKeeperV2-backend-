@@ -1,6 +1,6 @@
 package kr.co.goalkeeper.api.repository;
 
-import kr.co.goalkeeper.api.model.entity.Verification;
+import kr.co.goalkeeper.api.model.entity.goal.Verification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

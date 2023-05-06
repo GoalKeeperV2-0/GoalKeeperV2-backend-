@@ -1,10 +1,10 @@
 package kr.co.goalkeeper.api.scheduler;
 
 import kr.co.goalkeeper.api.NotificationSender;
-import kr.co.goalkeeper.api.model.entity.Goal;
-import kr.co.goalkeeper.api.model.entity.GoalState;
-import kr.co.goalkeeper.api.model.entity.ManyTimeGoal;
-import kr.co.goalkeeper.api.model.entity.Notification;
+import kr.co.goalkeeper.api.model.entity.goal.Goal;
+import kr.co.goalkeeper.api.model.entity.goal.GoalState;
+import kr.co.goalkeeper.api.model.entity.goal.ManyTimeGoal;
+import kr.co.goalkeeper.api.model.entity.goal.Notification;
 import kr.co.goalkeeper.api.repository.GoalBatchRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalBatchRepository;
 import lombok.AllArgsConstructor;
