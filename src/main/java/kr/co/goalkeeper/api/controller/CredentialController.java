@@ -1,10 +1,12 @@
 package kr.co.goalkeeper.api.controller;
 
+import kr.co.goalkeeper.api.exception.GoalkeeperException;
 import kr.co.goalkeeper.api.model.entity.goal.User;
 import kr.co.goalkeeper.api.model.oauth.OAuthType;
 import kr.co.goalkeeper.api.model.request.AdditionalUserInfo;
 import kr.co.goalkeeper.api.model.request.OAuthRequest;
 import kr.co.goalkeeper.api.model.request.UpdateUserRequest;
+import kr.co.goalkeeper.api.model.response.ErrorMessage;
 import kr.co.goalkeeper.api.model.response.GoalKeeperToken;
 import kr.co.goalkeeper.api.model.response.Response;
 import kr.co.goalkeeper.api.model.response.UserResponse;
@@ -17,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Optional;
 
 
 @RestController
@@ -51,7 +54,10 @@ public class CredentialController {
 
     @GetMapping("/refresh")
     public ResponseEntity<Response<?>> reCreateTokens(HttpServletRequest request, HttpServletResponse response){
-        Cookie[] cookies = request.getCookies();
+        Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElseThrow(() -> {
+            ErrorMessage errorMessage = new ErrorMessage(401,"리프레쉬 토큰이 없습니다.");
+            return new GoalkeeperException(errorMessage);
+        });
         String refreshToken = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().contentEquals("refreshToken"))
                 .findFirst().orElseThrow().getValue();
