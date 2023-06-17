@@ -4,8 +4,6 @@ import kr.co.goalkeeper.api.model.entity.goal.*;
 import kr.co.goalkeeper.api.repository.CertificationRepository;
 import kr.co.goalkeeper.api.repository.ManyTimeGoalBatchRepository;
 import kr.co.goalkeeper.api.repository.OneTimeGoalBatchRepository;
-import kr.co.goalkeeper.api.service.port.ManyTimeCertificationService;
-import kr.co.goalkeeper.api.service.port.OneTimeCertificationService;
 import kr.co.goalkeeper.api.util.ImageSaver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,15 +27,11 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
     @Value("${file-save-location}")
     private String pictureRootPath;
     private final OneTimeGoalBatchRepository goalBatchRepository;
-    private final OneTimeCertificationService oneTimeCertificationService;
-    private final ManyTimeCertificationService manyTimeCertificationService;
     private final ManyTimeGoalBatchRepository manyTimeGoalBatchRepository;
 
-    public CronChangeGoalSchedulerV2(OneTimeGoalBatchRepository goalBatchRepository, OneTimeCertificationService oneTimeCertificationService, ManyTimeCertificationService manyTimeCertificationService, ManyTimeGoalBatchRepository manyTimeGoalBatchRepository,
+    public CronChangeGoalSchedulerV2(OneTimeGoalBatchRepository goalBatchRepository, ManyTimeGoalBatchRepository manyTimeGoalBatchRepository,
                                      CertificationRepository certificationRepository) {
         this.goalBatchRepository = goalBatchRepository;
-        this.oneTimeCertificationService = oneTimeCertificationService;
-        this.manyTimeCertificationService = manyTimeCertificationService;
         this.manyTimeGoalBatchRepository = manyTimeGoalBatchRepository;
         this.certificationRepository = certificationRepository;
     }
@@ -95,6 +89,21 @@ public class CronChangeGoalSchedulerV2 implements ChangeGoalScheduler {
         addFailCertToManyTimeGoal(noCertAtCertDate,certDate);
         if(noCertAtCertDate.hasNext()){
             checkNoCert(certDate,page+1);
+        }
+    }
+    @Transactional
+    @Scheduled(cron="0 * * * * *")
+    @Async
+    @Override
+    public void checkTimeOutCert() {
+        LocalDate base = LocalDate.now().minusDays(7L);
+        certTimeOut(base,0);
+    }
+    private void certTimeOut(LocalDate base, int page){
+        Slice<Certification> timeOutCerts = certificationRepository.findAllByDateBeforeAndState(base,CertificationState.ONGOING,PageRequest.of(page,100));
+        timeOutCerts.getContent().forEach(Certification::timeOut);
+        if(timeOutCerts.hasNext()){
+            certTimeOut(base,page+1);
         }
     }
 }

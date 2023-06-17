@@ -6,6 +6,7 @@ import kr.co.goalkeeper.api.model.entity.goal.CertificationState;
 import kr.co.goalkeeper.api.model.entity.goal.GoalState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -26,4 +27,6 @@ public interface CertificationRepository extends JpaRepository<Certification,Lon
     @EntityGraph(attributePaths = "goal")
     @Override
     Optional<Certification> findById(Long aLong);
+    @EntityGraph(attributePaths = "goal")
+    Slice<Certification> findAllByDateBeforeAndState(LocalDate date,CertificationState state,Pageable pageable);
 }

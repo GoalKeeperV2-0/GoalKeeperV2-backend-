@@ -13,4 +13,9 @@ public interface ChangeGoalScheduler {
      * 인증날에 인증이 올라오지 않은 지속 목표 처리
      */
     void checkNoCertificationAtCertDay();
+
+    /**
+     * 인증 기간이 지난 인증 실패 처리
+     */
+    void checkTimeOutCert();
 }
