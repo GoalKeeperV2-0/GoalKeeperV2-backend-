@@ -61,4 +61,9 @@ public class OneTimeCertification extends Certification {
     public void changeGoalStateToWait(){
         goal.certCreated();
     }
+
+    @Override
+    public void timeOut() {
+        fail();
+    }
 }

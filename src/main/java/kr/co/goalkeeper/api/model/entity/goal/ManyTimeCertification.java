@@ -75,7 +75,7 @@ public class ManyTimeCertification extends Certification {
         if(failCount>=Math.round(0.7 * requiredSuccessCount)){ // 현재 인증이 실패할 조건
             fail();
             ((ManyTimeGoal)goal).failCertification();
-            Notification notification = makeFailNotification();
+            Notification notification = makeFailNotification("인증 실패");
             NotificationSender.send(notification);
         }
     }
@@ -88,13 +88,20 @@ public class ManyTimeCertification extends Certification {
             goal.certCreated();
         }
     }
-
-    private Notification makeFailNotification(){
+    private Notification makeFailNotification(String message){
         return Notification.builder()
                 .createdDate(LocalDate.now())
                 .isRead(false)
                 .receiver(goal.user)
                 .notificationType(NotificationType.CERT_RESULT)
-                .content("인증 실패").build();
+                .content(message).build();
+    }
+
+    @Override
+    public void timeOut() {
+        fail();
+        ((ManyTimeGoal)goal).failCertification();
+        Notification notification = makeFailNotification("인증 기간이 지났습니다.");
+        NotificationSender.send(notification);
     }
 }

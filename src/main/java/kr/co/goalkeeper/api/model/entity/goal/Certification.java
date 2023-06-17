@@ -62,4 +62,5 @@ public abstract class Certification {
         state = FAIL;
     }
     public abstract void changeGoalStateToWait();
+    public abstract void timeOut();
 }
