@@ -72,7 +72,7 @@ class GoalKeeperTokenService {
                 refreshTokenRepository.deleteRefreshToken(refreshToken);
                 return createToken(user,oAuthType);
             }else {
-                ErrorMessage errorMessage = new ErrorMessage(401, "리프레쉬 토큰이 잘못되었습니다.");
+                ErrorMessage errorMessage = new ErrorMessage(401, "잘못된 리프레쉬 토큰입니다.");
                 throw new GoalkeeperException(errorMessage);
             }
         }catch (ExpiredJwtException e){
